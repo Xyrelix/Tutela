@@ -1,0 +1,62 @@
+Tutela/
+├── apps/
+│   ├── api/
+│   │   ├── prisma/
+│   │   │   ├── migrations/
+│   │   │   │   ├── 20260909065736_init/
+│   │   │   │   │   └── migration.sql
+│   │   │   │   ├── 20260909152136_phase3_alerts_and_revoke/
+│   │   │   │   │   └── migration.sql
+│   │   │   │   └── migration_lock.toml
+│   │   │   ├── schema.prisma
+│   │   │   └── seed.ts
+│   │   ├── src/
+│   │   │   ├── actions/
+│   │   │   │   ├── alerts.ts
+│   │   │   │   ├── revoke.ts
+│   │   │   │   ├── routes.ts
+│   │   │   │   └── telegramBot.ts
+│   │   │   ├── auth/
+│   │   │   │   ├── middleware.ts
+│   │   │   │   ├── rbac.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── db/
+│   │   │   │   └── client.ts
+│   │   │   ├── decision-engine/
+│   │   │   │   ├── known-drainers.json
+│   │   │   │   ├── llmReasoning.ts
+│   │   │   │   └── rules.ts
+│   │   │   ├── lib/
+│   │   │   │   └── asyncHandler.ts
+│   │   │   ├── monitoring/
+│   │   │   │   └── webhook.ts
+│   │   │   ├── wallets/
+│   │   │   │   └── routes.ts
+│   │   │   └── index.ts
+│   │   ├── .env.example
+│   │   ├── .eslintrc.cjs
+│   │   ├── Dockerfile
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   └── web/
+│       ├── src/
+│       │   ├── api/
+│       │   │   └── client.ts
+│       │   ├── pages/
+│       │   │   ├── AlertHistory.tsx
+│       │   │   ├── ApprovalManager.tsx
+│       │   │   ├── RiskFeed.tsx
+│       │   │   └── WalletList.tsx
+│       │   ├── App.tsx
+│       │   └── main.tsx
+│       ├── index.html
+│       ├── package.json
+│       └── tailwind.config.js
+├── .gitignore
+├── docker-compose.yml
+├── IMPLEMENTATION.md
+├── INTEGRATION.md
+├── LICENSE
+├── README.md
+└── file-tree.txt
