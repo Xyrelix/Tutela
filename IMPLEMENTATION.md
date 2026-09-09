@@ -173,21 +173,23 @@ npx prisma generate
 
 ```bash
 cd ../web
-npx create-vite@latest . -- --template react-ts
-npm install
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-npm install axios react-router-dom
-npm install recharts   # risk feed / dashboard charts
-npm install lucide-react
+npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
+npm install axios lucide-react recharts wagmi viem @tanstack/react-query
 ```
 
-`tailwind.config.js` — set `content: ["./index.html", "./src/**/*.{ts,tsx}"]`.
+Routing is Next.js's file-based App Router (`src/app/*/page.tsx`) — no `react-router-dom` needed.
+Tailwind v4 is wired in via `@tailwindcss/postcss`; no separate `tailwind.config.js` to edit.
+
+Create `apps/web/.env.local` (never commit — see `.gitignore`):
+```
+NEXT_PUBLIC_API_URL="http://localhost:4000"
+```
 
 Dev server:
 ```bash
 npm run dev
 ```
+Runs on `http://localhost:3000` by default.
 
 ---
 
@@ -274,7 +276,7 @@ cd apps/api && npm run dev
 cd apps/web && npm run dev
 ```
 
-Backend on `http://localhost:4000`, frontend on `http://localhost:5173` (Vite default).
+Backend on `http://localhost:4000`, frontend on `http://localhost:3000` (Next.js default).
 
 ---
 
@@ -304,6 +306,6 @@ RUN npm run build
 CMD ["npm", "start"]
 ```
 
-Frontend: static build (`npm run build` → `dist/`) deployed to Vercel/Netlify, or served via the same Render service behind a reverse proxy.
+Frontend: deploy `apps/web` directly to Vercel (zero-config native Next.js support — `vercel --prod` or connect the repo in the dashboard). Set `NEXT_PUBLIC_API_URL` there to the deployed API's URL.
 
 Full external-service setup (Alchemy, Anthropic, Telegram, SMTP, Neon, Upstash) is in `INTEGRATION.md`.

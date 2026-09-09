@@ -30,7 +30,7 @@ Tutela is neither — it's a **persistent agent** that watches wallets continuou
 | Agent framework | Custom decision engine (rules + LLM), modeled on Aegis's `decision.js` pattern | Deterministic checks first, LLM for ambiguous cases |
 | Alerts | Telegraf (Telegram bot) + email (nodemailer) | Reuse Aegis/BizIQ integrations |
 | Auth | JWT + RBAC (permission-based, not just role-based) | Same pattern as BizIQ's `onboarding:override` permission model |
-| Frontend | React + TypeScript + Tailwind | Dashboard: wallets, risk feed, approvals, alerts |
+| Frontend | Next.js (App Router) + TypeScript + Tailwind | Dashboard: wallets, risk feed, approvals, alerts. Deploys natively to Vercel |
 | Account abstraction (stretch) | Safe (Gnosis Safe) / ERC-4337 session keys | Needed for true autonomous revoke without a live user signature |
 
 ---
@@ -195,8 +195,11 @@ tutela/
 │   │   │   └── db/
 │   │   │       └── schema.prisma
 │   │   └── package.json
-│   └── web/                 # React + TypeScript dashboard
+│   └── web/                 # Next.js (App Router) + TypeScript dashboard
 │       ├── src/
+│       │   ├── app/          # file-based routes: wallets, risk-feed, approvals, alerts
+│       │   ├── components/
+│       │   └── lib/          # typed API client
 │       └── package.json
 ├── docker-compose.yml
 └── README.md

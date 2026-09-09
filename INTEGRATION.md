@@ -95,7 +95,7 @@ Mirrors your BizIQ stack.
 | Upstash (Redis) | Job queues, rate limiting, session cache | Apply the same `keepAlive` + heartbeat fix used on BizIQ for idle connection drops |
 | Render | Hosting (API + worker) | Deploy via Docker, same as BizIQ |
 | Cloudflare | DNS / edge | If using a custom domain for the dashboard |
-| Vercel or Netlify | Frontend hosting | Simplest path for the React dashboard build output |
+| Vercel | Frontend hosting | Native Next.js support — connect the repo, set `NEXT_PUBLIC_API_URL`, zero extra config |
 
 ---
 
@@ -112,6 +112,7 @@ ALCHEMY_API_KEY
 ALCHEMY_WEBHOOK_SIGNING_KEY
 ANTHROPIC_API_KEY
 TELEGRAM_BOT_TOKEN
+TELEGRAM_BOT_USERNAME
 SMTP_HOST
 SMTP_PORT
 SMTP_USER
@@ -119,6 +120,7 @@ SMTP_PASS
 WALLETCONNECT_PROJECT_ID   # only if supporting WalletConnect
 PORT
 NODE_ENV
+NEXT_PUBLIC_API_URL   # apps/web — deployed API URL
 ```
 
 ---
