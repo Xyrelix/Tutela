@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  passwordHash   String
+  role           String   @default("user")
+  permissions    String[] @default([])
+  telegramChatId String?
+  wallets        Wallet[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Wallet {
+  id        String     @id @default(cuid())
+  address   String
+  chain     String
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scans     Scan[]
+  alerts    Alert[]
+  approvals Approval[]
+  createdAt DateTime   @default(now())
+
+  @@unique([address, chain, userId])
+}
+
+model Scan {
+  id        String   @id @default(cuid())
+  walletId  String
+  wallet    Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  txHash    String?
+  riskScore Int
+  verdict   String
+  reasoning String?
+  createdAt DateTime @default(now())
+}
+
+model Approval {
+  id           String   @id @default(cuid())
+  walletId     String
+  wallet       Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  spender      String
+  tokenAddress String
+  amount       String
+  status       String   @default("active")
+  detectedAt   DateTime @default(now())
+}
+
+model Alert {
+  id        String   @id @default(cuid())
+  walletId  String
+  wallet    Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  type      String
+  message   String
+  sent      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
