@@ -33,8 +33,8 @@ interface ResponsiveHeroBannerProps {
 }
 
 const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
-    logoUrl = "https://cdn.21st.dev/assets/mirror/c4/c4d5f159140e3ccc35a8bd4f043453cb9e2692f700206e43855ff598c171b924.png",
-    backgroundImageUrl = "https://cdn.21st.dev/assets/mirror/a8/a8cf38f65f7315f95eba8c803c4a80a9d78cb2ea36fbfee49828396e4a0b9737.jpg",
+    logoUrl,
+    backgroundImageUrl,
     navLinks = [
         { label: "Home", href: "#", isActive: true },
         { label: "Missions", href: "#" },
@@ -54,33 +54,37 @@ const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
     secondaryButtonText = "Watch Launch",
     secondaryButtonHref = "#",
     partnersTitle = "Partnering with leading space agencies worldwide",
-    partners = [
-        { logoUrl: "https://cdn.21st.dev/assets/mirror/96/964eca0b0415aebc2718799b530b39d6f552b39634f3fb2072e769df17c6668f.png", href: "#" },
-        { logoUrl: "https://cdn.21st.dev/assets/mirror/90/900ad16bdb8bd723836996d2283c47420e719ba8c9a4f7d24ff67e59056e88fe.png", href: "#" },
-        { logoUrl: "https://cdn.21st.dev/assets/mirror/1b/1b66b155997cb81da3bdabeb8da22771b07f4ac5273d6a19d629c77cf75a861f.png", href: "#" },
-        { logoUrl: "https://cdn.21st.dev/assets/mirror/cb/cb112906d9fa8a57380201b1385c5534075020542dab48d5f29f2e35a3e19bc1.png", href: "#" },
-        { logoUrl: "https://cdn.21st.dev/assets/mirror/f6/f68e2933c2f24ef4b28fb81328350831eb56bf42244dee50e2b7f6efd7497783.png", href: "#" }
-    ]
+    partners = []
 }) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
         <section className="w-full isolate min-h-screen overflow-hidden relative">
-            <img
-                src={backgroundImageUrl}
-                alt=""
-                className="w-full h-full object-cover absolute top-0 right-0 bottom-0 left-0"
-            />
+            {backgroundImageUrl ? (
+                <img
+                    src={backgroundImageUrl}
+                    alt=""
+                    className="w-full h-full object-cover absolute top-0 right-0 bottom-0 left-0"
+                />
+            ) : (
+                <div className="w-full h-full absolute top-0 right-0 bottom-0 left-0 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black" />
+            )}
             <div className="pointer-events-none absolute inset-0 ring-1 ring-black/30" />
 
             <header className="z-10 xl:top-4 relative">
                 <div className="mx-6">
                     <div className="flex items-center justify-between pt-4">
-                        <a
-                            href="#"
-                            className="inline-flex items-center justify-center bg-center w-[100px] h-[40px] bg-cover rounded"
-                            style={{ backgroundImage: `url(${logoUrl})` }}
-                        />
+                        {logoUrl ? (
+                            <a
+                                href="#"
+                                className="inline-flex items-center justify-center bg-center w-[100px] h-[40px] bg-cover rounded"
+                                style={{ backgroundImage: `url(${logoUrl})` }}
+                            />
+                        ) : (
+                            <a href="/" className="text-lg font-semibold text-white font-sans">
+                                Tutela
+                            </a>
+                        )}
 
                         <nav className="hidden md:flex items-center gap-2">
                             <div className="flex items-center gap-1 rounded-full bg-white/5 px-1 py-1 ring-1 ring-white/10 backdrop-blur">
@@ -168,21 +172,23 @@ const ResponsiveHeroBanner: React.FC<ResponsiveHeroBannerProps> = ({
                         </div>
                     </div>
 
-                    <div className="mx-auto mt-20 max-w-5xl">
-                        <p className="animate-fade-slide-in-1 text-sm text-white/70 text-center">
-                            {partnersTitle}
-                        </p>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 animate-fade-slide-in-2 text-white/70 mt-6 items-center justify-items-center gap-4">
-                            {partners.map((partner, index) => (
-                                <a
-                                    key={index}
-                                    href={partner.href}
-                                    className="inline-flex items-center justify-center bg-center w-[120px] h-[36px] bg-cover rounded-full opacity-80 hover:opacity-100 transition-opacity"
-                                    style={{ backgroundImage: `url(${partner.logoUrl})` }}
-                                />
-                            ))}
+                    {partners.length > 0 && (
+                        <div className="mx-auto mt-20 max-w-5xl">
+                            <p className="animate-fade-slide-in-1 text-sm text-white/70 text-center">
+                                {partnersTitle}
+                            </p>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 animate-fade-slide-in-2 text-white/70 mt-6 items-center justify-items-center gap-4">
+                                {partners.map((partner, index) => (
+                                    <a
+                                        key={index}
+                                        href={partner.href}
+                                        className="inline-flex items-center justify-center bg-center w-[120px] h-[36px] bg-cover rounded-full opacity-80 hover:opacity-100 transition-opacity"
+                                        style={{ backgroundImage: `url(${partner.logoUrl})` }}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </section>

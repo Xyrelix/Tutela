@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { clearToken, getToken } from '@/lib/api-client';
 
@@ -14,6 +14,7 @@ const LINKS = [
 
 export function NavBar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,10 @@ export function NavBar() {
     clearToken();
     setAuthed(false);
     router.push('/login');
+  }
+
+  if (pathname === '/') {
+    return null;
   }
 
   return (

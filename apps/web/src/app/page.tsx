@@ -1,21 +1,20 @@
-import Link from "next/link";
+import ResponsiveHeroBanner from "@/components/ui/responsive-hero-banner";
 
 export default function Home() {
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold">Tutela</h1>
-      <p className="max-w-xl text-zinc-600 dark:text-zinc-400">
-        A persistent monitoring agent for EVM wallets: watches registered wallets for risky token
-        approvals and drainer contracts, then alerts you and can prepare revocation transactions.
-      </p>
-      <div className="flex gap-4 text-sm">
-        <Link href="/login" className="underline">
-          Log in
-        </Link>
-        <Link href="/register" className="underline">
-          Register
-        </Link>
-      </div>
-    </div>
+    <ResponsiveHeroBanner
+      navLinks={[{ label: "Log in", href: "/login" }]}
+      ctaButtonText="Get Started"
+      ctaButtonHref="/register"
+      badgeLabel="Live"
+      badgeText="Persistent wallet monitoring, not just pre-signature checks"
+      title="Guard Your Wallet"
+      titleLine2="Around The Clock"
+      description="Tutela watches your registered wallets for risky token approvals, drainer contracts, and anomalous transactions in real time — then alerts you and prepares revocation before funds are at risk."
+      primaryButtonText="Get Started"
+      primaryButtonHref="/register"
+      secondaryButtonText="Log In"
+      secondaryButtonHref="/login"
+    />
   );
 }

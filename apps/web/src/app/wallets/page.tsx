@@ -38,7 +38,7 @@ export default function WalletsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="mx-auto w-full max-w-5xl flex flex-col gap-8 px-6 py-8">
       <h1 className="text-xl font-semibold">Wallets</h1>
 
       <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-3">

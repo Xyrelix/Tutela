@@ -35,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <NavBar />
-          <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8">{children}</main>
+          <main className="flex-1">{children}</main>
         </ThemeProvider>
       </body>
     </html>

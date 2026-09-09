@@ -28,7 +28,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="mx-auto max-w-sm">
+    <div className="mx-auto max-w-sm px-6 py-8">
       <h1 className="mb-6 text-xl font-semibold">Register</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
