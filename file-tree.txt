@@ -41,18 +41,35 @@ Tutela/
 │   │   └── tsconfig.json
 │   └── web/
 │       ├── src/
-│       │   ├── api/
-│       │   │   └── client.ts
-│       │   ├── pages/
-│       │   │   ├── AlertHistory.tsx
-│       │   │   ├── ApprovalManager.tsx
-│       │   │   ├── RiskFeed.tsx
-│       │   │   └── WalletList.tsx
-│       │   ├── App.tsx
-│       │   └── main.tsx
-│       ├── index.html
+│       │   ├── app/
+│       │   │   ├── alerts/
+│       │   │   │   └── page.tsx
+│       │   │   ├── approvals/
+│       │   │   │   └── page.tsx
+│       │   │   ├── login/
+│       │   │   │   └── page.tsx
+│       │   │   ├── register/
+│       │   │   │   └── page.tsx
+│       │   │   ├── risk-feed/
+│       │   │   │   └── page.tsx
+│       │   │   ├── wallets/
+│       │   │   │   └── page.tsx
+│       │   │   ├── favicon.ico
+│       │   │   ├── globals.css
+│       │   │   ├── layout.tsx
+│       │   │   └── page.tsx
+│       │   ├── components/
+│       │   │   └── NavBar.tsx
+│       │   └── lib/
+│       │       └── api-client.ts
+│       ├── .env.local.example
+│       ├── .gitignore
+│       ├── eslint.config.mjs
+│       ├── next.config.ts
+│       ├── package-lock.json
 │       ├── package.json
-│       └── tailwind.config.js
+│       ├── postcss.config.mjs
+│       └── tsconfig.json
 ├── .gitignore
 ├── docker-compose.yml
 ├── IMPLEMENTATION.md
