@@ -4,6 +4,7 @@ import { id as keccakId } from 'ethers';
 import { prisma } from '../db/client';
 import { evaluateApproval, Verdict } from '../decision-engine/rules';
 import { reasonAboutApproval } from '../decision-engine/llmReasoning';
+import { dispatchAlert } from '../actions/alerts';
 import { asyncHandler } from '../lib/asyncHandler';
 
 declare global {
@@ -108,13 +109,15 @@ router.post(
           data: { walletId: wallet.id, spender, tokenAddress: activity.rawContract.address, amount },
         });
 
-        await prisma.alert.create({
+        const alert = await prisma.alert.create({
           data: {
             walletId: wallet.id,
             type: verdict === 'malicious' ? 'drainer_contract' : 'risky_approval',
             message: reasoning,
           },
         });
+
+        await dispatchAlert(alert.id);
       }
     }
 
