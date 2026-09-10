@@ -12,6 +12,7 @@ model User {
   email                     String    @unique
   passwordHash              String
   role                      String    @default("user")
+  plan                      String    @default("free")
   permissions               String[]  @default([])
   telegramChatId            String?
   telegramLinkCode          String?

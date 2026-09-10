@@ -7,6 +7,7 @@ import authRoutes from './auth/routes';
 import walletRoutes from './wallets/routes';
 import webhookRoutes from './monitoring/webhook';
 import actionRoutes from './actions/routes';
+import dashboardRoutes from './dashboard/routes';
 import { startTelegramBot } from './actions/telegramBot';
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/wallets', walletRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/actions', actionRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
