@@ -8,7 +8,6 @@ import {
   Check,
   ChevronDown,
   Clock3,
-  GitBranch,
   Menu,
   Play,
   ShieldCheck,
@@ -18,6 +17,7 @@ import {
   Zap,
 } from 'lucide-react';
 import ShaderDemoATC from '@/components/ui/atc-shader';
+import { HoverFooter } from '@/components/ui/hover-footer';
 
 const navItems = [
   { label: 'Product', href: '#product' },
@@ -510,28 +510,7 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <footer className="border-t border-white/[0.07] px-5 py-8 sm:px-8 lg:px-10">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 text-xs text-white/35 sm:flex-row sm:items-center sm:justify-between">
-          <Link href="/">
-            <BrandMark />
-          </Link>
-          <div className="flex gap-5">
-            <a href="#product" className="hover:text-white">
-              Product
-            </a>
-            <a href="#pricing" className="hover:text-white">
-              Pricing
-            </a>
-            <Link href="/login" className="hover:text-white">
-              Log in
-            </Link>
-            <a href="https://github.com" aria-label="GitHub" className="hover:text-white">
-              <GitBranch className="h-4 w-4" />
-            </a>
-          </div>
-          <span>Ã‚Â© 2026 Tutela Security</span>
-        </div>
-      </footer>
+      <HoverFooter />
     </div>
   );
 }
