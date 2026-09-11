@@ -114,9 +114,15 @@ export function HoverFooter() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="absolute inset-x-0 -bottom-7 text-center font-instrument-serif text-[clamp(7rem,20vw,17rem)] leading-none tracking-[-0.08em] text-white/[0.045] transition-colors duration-500 hover:text-[#2457ff]/[0.13]"
+            className="group absolute inset-x-0 -bottom-28 flex justify-center transition-opacity duration-500 hover:opacity-100"
           >
-            Tutela
+            <Image
+              src="/Tutela_name.png"
+              alt="Tutela"
+              width={832}
+              height={256}
+              className="h-auto w-[80%] opacity-[0.045] transition-opacity duration-500 group-hover:opacity-[0.13]"
+            />
           </motion.div>
         </div>
 
