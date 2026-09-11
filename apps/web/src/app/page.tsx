@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ArrowRight,
   Bell,
@@ -210,44 +210,62 @@ function BrowserPreview() {
 export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [yearly, setYearly] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 0);
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#090a0d] text-white selection:bg-[#2457ff] selection:text-white">
-      <header className="relative z-20 mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
-        <Link href="/" aria-label="Tutela home">
-          <BrandMark />
-        </Link>
-        <nav className="hidden items-center gap-8 text-[13px] text-white/55 md:flex">
-          {navItems.map((item) => (
-            <a key={item.href} href={item.href} className="transition-colors hover:text-white">
-              {item.label}
-            </a>
-          ))}
-        </nav>
-        <div className="hidden items-center gap-5 md:flex">
-          <Link
-            href="/login"
-            className="text-[13px] text-white/60 transition-colors hover:text-white"
-          >
-            Log in
+      <header
+        className={`fixed inset-x-0 top-0 z-20 border-b transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ${
+          scrolled
+            ? 'border-white/[0.08] bg-[#090a0d]/90 shadow-[0_12px_30px_rgba(0,0,0,0.18)] backdrop-blur-md'
+            : 'border-transparent bg-transparent'
+        }`}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
+          <Link href="/" aria-label="Tutela home">
+            <BrandMark />
           </Link>
-          <Link
-            href="/register"
-            className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-medium text-[#090a0d] transition-transform hover:scale-[1.03]"
+          <nav className="hidden items-center gap-8 text-[13px] text-white/55 md:flex">
+            {navItems.map((item) => (
+              <a key={item.href} href={item.href} className="transition-colors hover:text-white">
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <div className="hidden items-center gap-5 md:flex">
+            <Link
+              href="/login"
+              className="text-[13px] text-white/60 transition-colors hover:text-white"
+            >
+              Log in
+            </Link>
+            <Link
+              href="/register"
+              className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-medium text-[#090a0d] transition-transform hover:scale-[1.03]"
+            >
+              Get started <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 md:hidden"
+            aria-label="Toggle navigation"
           >
-            Get started <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+            {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
         </div>
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 md:hidden"
-          aria-label="Toggle navigation"
-        >
-          {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
       </header>
       {mobileOpen && (
-        <div className="mx-5 rounded-xl border border-white/10 bg-[#13151a] p-4 md:hidden">
+        <div className="fixed top-[76px] right-5 left-5 z-20 rounded-xl border border-white/10 bg-[#13151a] p-4 md:hidden">
           <div className="grid gap-1 text-sm text-white/70">
             {navItems.map((item) => (
               <a
