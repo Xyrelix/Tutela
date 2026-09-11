@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import {
   ArrowRight,
@@ -75,12 +76,13 @@ const plans = [
 
 function BrandMark() {
   return (
-    <span className="flex items-center gap-2 text-[15px] font-semibold tracking-[-0.03em] text-white">
-      <span className="grid h-7 w-7 place-items-center rounded-[9px] bg-[#2457ff] shadow-[0_0_25px_rgba(36,87,255,0.4)]">
-        <ShieldCheck className="h-4 w-4 text-white" strokeWidth={2.4} />
-      </span>
-      Tutela
-    </span>
+    <Image
+      src="/Tutela_3.png"
+      alt="Tutela"
+      width={832}
+      height={256}
+      className="h-[58px] w-[187px] object-contain"
+    />
   );
 }
 
@@ -102,11 +104,14 @@ function BrowserPreview() {
         </div>
         <div className="grid min-h-[380px] grid-cols-1 md:grid-cols-[190px_1fr]">
           <aside className="hidden border-r border-white/[0.08] p-5 md:block">
-            <div className="mb-8 flex items-center gap-2 text-xs font-semibold text-white">
-              <span className="grid h-6 w-6 place-items-center rounded-md bg-[#2457ff]">
-                <ShieldCheck className="h-3.5 w-3.5" />
-              </span>
-              Tutela
+            <div className="mb-8">
+              <Image
+                src="/Tutela_3.png"
+                alt="Tutela"
+                width={832}
+                height={256}
+                className="h-[45px] w-[146px] object-contain object-left"
+              />
             </div>
             <div className="space-y-2 text-[11px] text-white/40">
               <div className="rounded-md bg-[#2457ff]/15 px-3 py-2 text-white">Overview</div>

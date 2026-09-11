@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Bell, GitBranch, Mail, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, Bell, GitBranch, Mail } from 'lucide-react';
 
 const linkGroups = [
   {
@@ -30,11 +31,14 @@ export function HoverFooter() {
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-12 pb-14 md:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_0.8fr_1fr] lg:gap-10">
           <div>
-            <Link href="/" className="group inline-flex items-center gap-2">
-              <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-[#2457ff] shadow-[0_0_28px_rgba(36,87,255,0.35)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                <ShieldCheck className="h-4 w-4 text-white" strokeWidth={2.4} />
-              </span>
-              <span className="text-xl font-semibold tracking-[-0.04em] text-white">Tutela</span>
+            <Link href="/" className="group inline-flex">
+              <Image
+                src="/Tutela_3.png"
+                alt="Tutela"
+                width={832}
+                height={256}
+                className="h-[70px] w-[229px] object-contain object-left transition-transform duration-300 group-hover:scale-105"
+              />
             </Link>
             <p className="mt-5 max-w-xs text-sm leading-6 text-white/45">
               Persistent monitoring for the wallets, approvals, and decisions that matter.
