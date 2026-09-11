@@ -24,11 +24,8 @@ export const metadata: Metadata = {
   title: 'Tutela',
   description: 'Persistent monitoring agent for EVM wallets',
   icons: {
-    icon: [
-      { url: '/Tutela_logo.png', type: 'image/png' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-    ],
-    shortcut: '/Tutela_logo.png',
+    icon: '/Tutela logo.png',
+    shortcut: '/Tutela logo.png',
   },
 };
 
