@@ -39,7 +39,7 @@ export default function LoginPage() {
             <span className="h-1.5 w-1.5 rounded-full bg-[#6dce9a]" />
             Private wallet access
           </div>
-          <h1 className="font-instrument-serif text-6xl leading-[0.94] tracking-[-0.05em]">
+          <h1 className="font-sans text-6xl leading-[0.94] tracking-[-0.05em]">
             Your wallet is
             <br />
             <span className="text-white/40">the key.</span>

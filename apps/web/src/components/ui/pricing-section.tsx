@@ -73,7 +73,7 @@ export default function PricingSection() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="mt-5 font-instrument-serif text-5xl leading-none tracking-[-0.05em] sm:text-7xl"
+            className="mt-5 font-sans text-5xl leading-none tracking-[-0.05em] sm:text-7xl"
           >
             Protection that
             <br />

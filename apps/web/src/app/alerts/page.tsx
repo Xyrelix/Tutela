@@ -107,7 +107,7 @@ export default function AlertsPage() {
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#ff6257]" />
               Security operations
             </div>
-            <h1 className="font-instrument-serif text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
+            <h1 className="font-sans text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
               Stay ahead of
               <br />
               <span className="text-white/40">the important things.</span>

@@ -82,7 +82,7 @@ export default function ApprovalsPage() {
               <span className="h-1.5 w-1.5 rounded-full bg-[#ffb15c]" />
               Approval control
             </div>
-            <h1 className="font-instrument-serif text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
+            <h1 className="font-sans text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
               Know what can
               <br />
               <span className="text-white/40">move your funds.</span>

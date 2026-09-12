@@ -95,7 +95,7 @@ export default function RiskFeedPage() {
               <span className="h-1.5 w-1.5 rounded-full bg-[#ffb15c]" />
               Live risk intelligence
             </div>
-            <h1 className="font-instrument-serif text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
+            <h1 className="font-sans text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
               The signal
               <br />
               <span className="text-white/40">behind every sign.</span>

@@ -39,7 +39,7 @@ export default function RegisterPage() {
             <span className="h-1.5 w-1.5 rounded-full bg-[#6dce9a]" />
             Start protecting
           </div>
-          <h1 className="font-instrument-serif text-6xl leading-[0.94] tracking-[-0.05em]">
+          <h1 className="font-sans text-6xl leading-[0.94] tracking-[-0.05em]">
             Turn a wallet
             <br />
             <span className="text-white/40">into a signal.</span>

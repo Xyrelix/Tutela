@@ -61,7 +61,7 @@ function BrandMark() {
 
 function BrowserPreview() {
   return (
-    <div className="relative mx-auto mt-16 max-w-6xl px-4 sm:mt-20">
+    <div className="relative mx-auto mt-12 max-w-6xl px-0 sm:mt-16 lg:mt-0 lg:max-w-none">
       <div className="absolute -inset-8 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(36,87,255,0.22),transparent_62%)] blur-2xl" />
       <div className="overflow-hidden rounded-[18px] border border-white/[0.14] bg-[#101217] shadow-[0_30px_100px_rgba(0,0,0,0.48)]">
         <div className="flex h-11 items-center justify-between border-b border-white/[0.08] bg-[#15171d] px-4">
@@ -185,6 +185,51 @@ function BrowserPreview() {
   );
 }
 
+function CryptoObject() {
+  return (
+    <div className="relative mx-auto h-[360px] w-full max-w-[440px] sm:h-[430px]">
+      <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2457ff]/20 blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 h-[270px] w-[190px] -translate-x-1/2 -translate-y-1/2 rounded-[28px] border border-[#6dce9a]/35 bg-[#6dce9a]/[0.035] shadow-[0_0_70px_rgba(109,206,154,0.12)] backdrop-blur-sm sm:h-[330px] sm:w-[230px]">
+        <div className="absolute inset-5 rounded-[20px] border border-white/[0.08] bg-[#101217]/35 p-4">
+          <div className="flex items-center justify-between text-white/35">
+            <ShieldCheck className="h-5 w-5 text-[#6dce9a]" />
+            <span className="font-mono text-[9px] tracking-[0.16em] uppercase">
+              TUTELA / SECURE
+            </span>
+          </div>
+          <div className="absolute right-4 bottom-4 left-4">
+            <p className="text-[9px] tracking-[0.16em] text-white/30 uppercase">Protection score</p>
+            <div className="mt-2 flex items-end justify-between">
+              <span className="text-3xl font-medium tracking-[-0.06em] text-white">98</span>
+              <span className="mb-1 text-[10px] text-[#6dce9a]">Excellent</span>
+            </div>
+            <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/10">
+              <div className="h-full w-[98%] rounded-full bg-gradient-to-r from-[#2457ff] to-[#6dce9a]" />
+            </div>
+          </div>
+        </div>
+      </div>
+      {[
+        ['₿', 'top-5 left-[8%]', 'text-[#ffcb8b]'],
+        ['Ξ', 'top-16 right-[5%]', 'text-[#8b9eff]'],
+        ['◎', 'bottom-16 left-[16%]', 'text-[#6dce9a]'],
+        ['₮', 'right-[2%] bottom-20', 'text-[#ffb15c]'],
+      ].map(([glyph, position, color], index) => (
+        <div
+          key={glyph}
+          className={`absolute ${position} grid h-12 w-12 animate-bounce place-items-center rounded-full border border-white/20 bg-white/[0.08] text-lg shadow-[0_0_28px_rgba(36,87,255,0.25)] backdrop-blur-md sm:h-14 sm:w-14 ${color}`}
+          style={{ animationDuration: `${3.8 + index * 0.6}s`, animationDelay: `${index * 0.3}s` }}
+        >
+          {glyph}
+        </div>
+      ))}
+      <div className="absolute right-[21%] bottom-4 flex items-center gap-2 rounded-full border border-white/10 bg-[#101217]/70 px-3 py-1.5 text-[10px] text-white/45 backdrop-blur-md">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#6dce9a]" /> Monitoring active
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -272,37 +317,43 @@ export default function Home() {
             <ShaderDemoATC />
           </div>
           <div className="pointer-events-none absolute top-0 left-1/2 z-[1] h-[560px] w-[900px] -translate-x-1/2 bg-[radial-gradient(ellipse,rgba(36,87,255,0.12),transparent_66%)]" />
-          <div className="relative z-10 mx-auto max-w-7xl">
-            <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-xs text-white/60">
-              <Sparkles className="h-3.5 w-3.5 text-[#6dce9a]" /> Persistent wallet security,
-              finally automated{' '}
-              <ChevronDown className="h-3.5 w-3.5 rotate-[-90deg] text-white/35" />
+          <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2 lg:gap-16">
+            <div>
+              <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-xs text-white/60">
+                <Sparkles className="h-3.5 w-3.5 text-[#6dce9a]" /> Persistent wallet security,
+                finally automated{' '}
+                <ChevronDown className="h-3.5 w-3.5 rotate-[-90deg] text-white/35" />
+              </div>
+              <h1 className="font-sans text-[clamp(3rem,6vw,6rem)] leading-[0.92] tracking-[-0.055em] text-white">
+                <span className="block lg:whitespace-nowrap">The security layer</span>
+                <span className="block text-white/45 lg:whitespace-nowrap">
+                  your wallet deserves.
+                </span>
+              </h1>
+              <p className="mt-7 max-w-xl text-[15px] leading-7 text-white/50 sm:text-base">
+                Tutela watches your wallets around the clock, explains what looks risky, and helps
+                you act before a bad approval becomes a bad day.
+              </p>
+              <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row">
+                <Link
+                  href="/register"
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#2457ff] px-6 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.22)] transition-transform hover:scale-[1.03] sm:w-auto"
+                >
+                  Protect a wallet <ArrowRight className="h-4 w-4" />
+                </Link>
+                <a
+                  href="#product"
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white/10 px-6 py-3 text-sm text-white/65 transition-colors hover:border-white/25 hover:text-white sm:w-auto"
+                >
+                  <Play className="h-3.5 w-3.5 fill-current" /> See how it works
+                </a>
+              </div>
             </div>
-            <h1 className="font-instrument-serif text-[clamp(3.5rem,8vw,7rem)] leading-[0.92] tracking-[-0.055em] text-white">
-              The security layer
-              <br />
-              <span className="text-white/45">your wallet deserves.</span>
-            </h1>
-            <p className="mt-7 max-w-xl text-[15px] leading-7 text-white/50 sm:text-base">
-              Tutela watches your wallets around the clock, explains what looks risky, and helps you
-              act before a bad approval becomes a bad day.
-            </p>
-            <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row">
-              <Link
-                href="/register"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#2457ff] px-6 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.22)] transition-transform hover:scale-[1.03] sm:w-auto"
-              >
-                Protect a wallet <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href="#product"
-                className="flex w-full items-center justify-center gap-2 rounded-full border border-white/10 px-6 py-3 text-sm text-white/65 transition-colors hover:border-white/25 hover:text-white sm:w-auto"
-              >
-                <Play className="h-3.5 w-3.5 fill-current" /> See how it works
-              </a>
-            </div>
+            <CryptoObject />
           </div>
-          <BrowserPreview />
+          <div className="mt-14 sm:mt-20 lg:mt-24">
+            <BrowserPreview />
+          </div>
         </section>
         <section className="border-y border-white/[0.07] bg-[#0c0e12] px-5 py-7 sm:px-8">
           <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-10 gap-y-5 text-xs text-white/35 sm:justify-between">
@@ -321,7 +372,7 @@ export default function Home() {
             <p className="mb-5 text-[11px] tracking-[0.22em] text-[#6dce9a] uppercase">
               A quieter kind of confidence
             </p>
-            <h2 className="font-instrument-serif text-5xl leading-none tracking-[-0.04em] text-white sm:text-6xl">
+            <h2 className="font-sans text-5xl leading-none tracking-[-0.04em] text-white sm:text-6xl">
               Less noise.
               <br />
               <span className="text-white/40">More control.</span>
@@ -358,7 +409,7 @@ export default function Home() {
               <p className="mb-5 text-[11px] tracking-[0.22em] text-[#ffb15c] uppercase">
                 A response loop that closes
               </p>
-              <h2 className="font-instrument-serif text-5xl leading-[0.96] tracking-[-0.04em] text-white sm:text-6xl">
+              <h2 className="font-sans text-5xl leading-[0.96] tracking-[-0.04em] text-white sm:text-6xl">
                 From first signal
                 <br />
                 <span className="text-white/40">to final sign-off.</span>
@@ -430,7 +481,7 @@ export default function Home() {
               <p className="text-[11px] tracking-[0.22em] text-[#6dce9a] uppercase">
                 Your next approval is already on its way
               </p>
-              <h2 className="mt-4 max-w-xl font-instrument-serif text-4xl leading-none tracking-[-0.04em] text-white sm:text-5xl">
+              <h2 className="mt-4 max-w-xl font-sans text-4xl leading-none tracking-[-0.04em] text-white sm:text-5xl">
                 Make sure it is one you trust.
               </h2>
             </div>
