@@ -34,8 +34,8 @@ export function NavBar() {
   }
 
   return (
-    <header className="border-b border-black/10 dark:border-white/10">
-      <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+    <header className="border-b border-white/[0.08] bg-[#090a0d]">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
         <Link href="/" aria-label="Tutela home">
           <Image
             src="/Tutela_3.png"
