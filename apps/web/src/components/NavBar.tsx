@@ -35,8 +35,8 @@ export function NavBar() {
 
   return (
     <header className="border-b border-white/[0.08] bg-[#090a0d]">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
-        <Link href="/" aria-label="Tutela home">
+      <nav className="mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-5 py-5 sm:px-8 lg:px-10">
+        <Link href="/" aria-label="Tutela home" className="justify-self-start">
           <Image
             src="/Tutela_3.png"
             alt="Tutela"
@@ -45,28 +45,31 @@ export function NavBar() {
             className="h-9 w-[117px] object-contain"
           />
         </Link>
-        <div className="flex items-center gap-4 text-sm sm:gap-6">
+        <div className="hidden items-center gap-6 text-[13px] text-white/55 md:flex">
           {LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="hidden text-white/55 transition-colors hover:text-white sm:block"
-            >
+            <Link key={link.href} href={link.href} className="transition-colors hover:text-white">
               {link.label}
             </Link>
           ))}
-          {authed && (
-            <button onClick={handleLogout} className="hover:underline">
+        </div>
+        <div className="flex items-center gap-5 justify-self-end text-[13px]">
+          {authed ? (
+            <button
+              onClick={handleLogout}
+              className="text-white/60 transition-colors hover:text-white"
+            >
               Log out
             </button>
-          )}
-          {!authed && (
+          ) : (
             <>
-              <Link href="/login" className="hover:underline">
+              <Link href="/login" className="text-white/60 transition-colors hover:text-white">
                 Log in
               </Link>
-              <Link href="/register" className="hidden hover:underline sm:block">
-                Register
+              <Link
+                href="/register"
+                className="hidden rounded-full bg-white px-4 py-2 font-medium text-[#090a0d] transition-transform hover:scale-[1.03] sm:block"
+              >
+                Get started
               </Link>
             </>
           )}

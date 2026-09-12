@@ -67,7 +67,7 @@ export default function RegisterPage() {
             alt="Tutela"
             width={832}
             height={256}
-            className="h-10 w-[130px] object-contain object-left lg:hidden"
+            className="h-9 w-[117px] object-contain object-left lg:hidden"
           />
           <div className="mt-7 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#2457ff]/30 bg-[#2457ff]/10 text-[#8b9eff] lg:mt-0">
             <LockKeyhole className="h-5 w-5" />
