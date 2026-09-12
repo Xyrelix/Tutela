@@ -1,5 +1,13 @@
 import axios from 'axios';
 
+declare global {
+  interface Window {
+    ethereum?: {
+      request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+    };
+  }
+}
+
 const TOKEN_KEY = 'tutela_token';
 
 export function getToken(): string | null {
@@ -74,14 +82,43 @@ export interface UnsignedTransaction {
   value: string;
 }
 
-export async function login(email: string, password: string): Promise<string> {
-  const { data } = await apiClient.post<{ token: string }>('/api/auth/login', { email, password });
+export async function getWalletChallenge(
+  walletAddress: string,
+  mode: 'login' | 'register'
+): Promise<string> {
+  const { data } = await apiClient.post<{ message: string }>('/api/auth/challenge', {
+    walletAddress,
+    mode,
+  });
+  return data.message;
+}
+
+export async function verifyWallet(message: string, signature: string): Promise<string> {
+  const { data } = await apiClient.post<{ token: string }>('/api/auth/verify', {
+    message,
+    signature,
+  });
   return data.token;
 }
 
-export async function register(email: string, password: string): Promise<string> {
-  const { data } = await apiClient.post<{ token: string }>('/api/auth/register', { email, password });
-  return data.token;
+export async function authenticateWallet(mode: 'login' | 'register'): Promise<string> {
+  if (!window.ethereum) {
+    throw new Error('NO_WALLET');
+  }
+
+  const accounts = (await window.ethereum.request({ method: 'eth_requestAccounts' })) as string[];
+  const walletAddress = accounts[0];
+  if (!walletAddress) {
+    throw new Error('NO_ACCOUNT');
+  }
+
+  const message = await getWalletChallenge(walletAddress, mode);
+  const signature = (await window.ethereum.request({
+    method: 'personal_sign',
+    params: [message, walletAddress],
+  })) as string;
+
+  return verifyWallet(message, signature);
 }
 
 export async function listWallets(): Promise<Wallet[]> {

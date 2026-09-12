@@ -2,12 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { login, setToken } from '@/lib/api-client';
+import { authenticateWallet, setToken } from '@/lib/api-client';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -17,11 +15,13 @@ export default function LoginPage() {
     setSubmitting(true);
 
     try {
-      const token = await login(email, password);
+      const token = await authenticateWallet('login');
       setToken(token);
       router.push('/wallets');
     } catch {
-      setError('Invalid email or password.');
+      setError(
+        'Could not verify this wallet. Make sure it has a Tutela account and approve the signature request.'
+      );
     } finally {
       setSubmitting(false);
     }
@@ -29,31 +29,16 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto max-w-sm px-6 py-8">
-      <h1 className="mb-6 text-xl font-semibold">Log in</h1>
+      <h1 className="mb-2 text-xl font-semibold">Welcome back</h1>
+      <p className="mb-6 text-sm text-zinc-500">Use your wallet address to access Tutela.</p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="email"
-          required
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded border border-black/20 px-3 py-2 dark:border-white/20"
-        />
-        <input
-          type="password"
-          required
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="rounded border border-black/20 px-3 py-2 dark:border-white/20"
-        />
         {error && <p className="text-sm text-red-600">{error}</p>}
         <button
           type="submit"
           disabled={submitting}
           className="rounded bg-foreground px-4 py-2 text-background disabled:opacity-50"
         >
-          {submitting ? 'Logging in…' : 'Log in'}
+          {submitting ? 'Verifying wallet…' : 'Verify wallet'}
         </button>
       </form>
     </div>

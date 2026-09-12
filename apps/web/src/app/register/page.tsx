@@ -2,12 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { register, setToken } from '@/lib/api-client';
+import { authenticateWallet, setToken } from '@/lib/api-client';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -17,11 +15,13 @@ export default function RegisterPage() {
     setSubmitting(true);
 
     try {
-      const token = await register(email, password);
+      const token = await authenticateWallet('register');
       setToken(token);
       router.push('/wallets');
     } catch {
-      setError('Could not register. Email may already be in use, or the password is too short (min 8 characters).');
+      setError(
+        'Could not verify this wallet. Connect an available wallet and approve the signature request.'
+      );
     } finally {
       setSubmitting(false);
     }
@@ -29,32 +29,18 @@ export default function RegisterPage() {
 
   return (
     <div className="mx-auto max-w-sm px-6 py-8">
-      <h1 className="mb-6 text-xl font-semibold">Register</h1>
+      <h1 className="mb-2 text-xl font-semibold">Protect a wallet</h1>
+      <p className="mb-6 text-sm text-zinc-500">
+        Create your Tutela account with a wallet address.
+      </p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="email"
-          required
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded border border-black/20 px-3 py-2 dark:border-white/20"
-        />
-        <input
-          type="password"
-          required
-          minLength={8}
-          placeholder="Password (min 8 characters)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="rounded border border-black/20 px-3 py-2 dark:border-white/20"
-        />
         {error && <p className="text-sm text-red-600">{error}</p>}
         <button
           type="submit"
           disabled={submitting}
           className="rounded bg-foreground px-4 py-2 text-background disabled:opacity-50"
         >
-          {submitting ? 'Creating account…' : 'Register'}
+          {submitting ? 'Verifying wallet…' : 'Create account with wallet'}
         </button>
       </form>
     </div>
