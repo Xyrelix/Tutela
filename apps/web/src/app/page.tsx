@@ -295,12 +295,12 @@ export default function Home() {
         </div>
       )}
       <main>
-        <section className="relative px-5 pt-20 pb-10 text-center sm:px-8 sm:pt-28 lg:pt-36">
+        <section className="relative px-5 pt-20 pb-10 text-left sm:px-8 sm:pt-28 lg:pt-36">
           <div className="pointer-events-none absolute inset-0 z-0 h-[620px] [mask-image:linear-gradient(to_bottom,black_0%,transparent_90%)] opacity-35">
             <ShaderDemoATC />
           </div>
           <div className="pointer-events-none absolute top-0 left-1/2 z-[1] h-[560px] w-[900px] -translate-x-1/2 bg-[radial-gradient(ellipse,rgba(36,87,255,0.12),transparent_66%)]" />
-          <div className="relative z-10 mx-auto max-w-4xl">
+          <div className="relative z-10 mx-auto max-w-7xl">
             <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-xs text-white/60">
               <Sparkles className="h-3.5 w-3.5 text-[#6dce9a]" /> Persistent wallet security,
               finally automated{' '}
@@ -311,11 +311,11 @@ export default function Home() {
               <br />
               <span className="text-white/45">your wallet deserves.</span>
             </h1>
-            <p className="mx-auto mt-7 max-w-xl text-[15px] leading-7 text-white/50 sm:text-base">
+            <p className="mt-7 max-w-xl text-[15px] leading-7 text-white/50 sm:text-base">
               Tutela watches your wallets around the clock, explains what looks risky, and helps you
               act before a bad approval becomes a bad day.
             </p>
-            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row">
               <Link
                 href="/register"
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-[#2457ff] px-6 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.22)] transition-transform hover:scale-[1.03] sm:w-auto"
