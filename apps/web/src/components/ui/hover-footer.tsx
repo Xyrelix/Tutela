@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Bell, GitBranch, Mail } from 'lucide-react';
+import { ArrowUpRight, Bell, GitBranch, Send } from 'lucide-react';
 
 const linkGroups = [
   {
@@ -84,14 +84,18 @@ export function HoverFooter() {
             </p>
             <div className="mt-5 flex items-center gap-3">
               <a
-                href="mailto:hello@tutela.security"
-                aria-label="Email Tutela"
+                href="https://t.me/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Open Tutela on Telegram"
                 className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/50 transition-all hover:border-[#2457ff] hover:bg-[#2457ff]/15 hover:text-white"
               >
-                <Mail className="h-4 w-4" />
+                <Send className="h-4 w-4" />
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/Xyrelix/Tutela"
+                target="_blank"
+                rel="noreferrer"
                 aria-label="Tutela on GitHub"
                 className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/50 transition-all hover:border-[#2457ff] hover:bg-[#2457ff]/15 hover:text-white"
               >
