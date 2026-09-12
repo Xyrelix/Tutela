@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import {
   ArrowRight,
   Bell,
-  Check,
   ChevronDown,
   Clock3,
   Menu,
@@ -19,6 +18,7 @@ import {
 } from 'lucide-react';
 import ShaderDemoATC from '@/components/ui/atc-shader';
 import { HoverFooter } from '@/components/ui/hover-footer';
+import PricingSection from '@/components/ui/pricing-section';
 
 const navItems = [
   { label: 'Product', href: '#product' },
@@ -44,33 +44,6 @@ const features = [
     eyebrow: '03 / Respond',
     title: 'Move from alert to action',
     text: 'Prepare revocations and route urgent alerts to the people who can protect the wallet fastest.',
-  },
-];
-
-const plans = [
-  {
-    name: 'Scout',
-    description: 'For keeping an eye on a few important wallets.',
-    monthly: 0,
-    features: ['3 monitored wallets', 'Risk feed', 'Email alerts'],
-  },
-  {
-    name: 'Sentinel',
-    description: 'For teams that need a faster response loop.',
-    monthly: 29,
-    features: [
-      '25 monitored wallets',
-      'Approval intelligence',
-      'Prepared revocations',
-      'Telegram alerts',
-    ],
-    featured: true,
-  },
-  {
-    name: 'Command',
-    description: 'For treasury and security operations at scale.',
-    monthly: 99,
-    features: ['Unlimited wallets', 'Custom policies', 'Priority response', 'Team access'],
   },
 ];
 
@@ -214,7 +187,6 @@ function BrowserPreview() {
 
 export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [yearly, setYearly] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -451,69 +423,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section id="pricing" className="mx-auto max-w-7xl px-5 py-28 sm:px-8 lg:px-10">
-          <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
-            <div>
-              <p className="mb-5 text-[11px] tracking-[0.22em] text-[#6dce9a] uppercase">
-                Simple by design
-              </p>
-              <h2 className="font-instrument-serif text-5xl leading-none tracking-[-0.04em] text-white sm:text-6xl">
-                Protection that
-                <br />
-                <span className="text-white/40">scales with you.</span>
-              </h2>
-            </div>
-            <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1 text-xs">
-              <button
-                onClick={() => setYearly(false)}
-                className={`rounded-full px-4 py-2 ${!yearly ? 'bg-white text-black' : 'text-white/45'}`}
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setYearly(true)}
-                className={`rounded-full px-4 py-2 ${yearly ? 'bg-white text-black' : 'text-white/45'}`}
-              >
-                Yearly <span className="ml-1 text-[#2457ff]">-20%</span>
-              </button>
-            </div>
-          </div>
-          <div className="mt-14 grid gap-4 lg:grid-cols-3">
-            {plans.map((plan) => (
-              <article
-                key={plan.name}
-                className={`relative rounded-2xl border p-7 ${plan.featured ? 'border-[#2457ff]/60 bg-[#111725]' : 'border-white/[0.09] bg-[#0c0e12]'}`}
-              >
-                {plan.featured && (
-                  <span className="absolute top-6 right-6 rounded-full bg-[#2457ff] px-2.5 py-1 text-[10px] font-medium">
-                    Most popular
-                  </span>
-                )}
-                <p className="text-sm text-white/60">{plan.name}</p>
-                <p className="mt-5 text-4xl font-medium tracking-[-0.05em] text-white">
-                  {plan.monthly === 0
-                    ? '$0'
-                    : `$${yearly ? Math.round(plan.monthly * 0.8) : plan.monthly}`}
-                  <span className="text-sm font-normal text-white/35"> / mo</span>
-                </p>
-                <p className="mt-3 min-h-12 text-sm leading-5 text-white/40">{plan.description}</p>
-                <Link
-                  href="/register"
-                  className={`mt-7 flex items-center justify-center rounded-full py-2.5 text-sm ${plan.featured ? 'bg-[#2457ff] text-white' : 'border border-white/10 text-white/70'}`}
-                >
-                  Get started <ArrowRight className="ml-2 h-3.5 w-3.5" />
-                </Link>
-                <div className="mt-8 space-y-3 border-t border-white/[0.08] pt-6">
-                  {plan.features.map((item) => (
-                    <p key={item} className="flex items-center gap-2 text-xs text-white/55">
-                      <Check className="h-3.5 w-3.5 text-[#6dce9a]" /> {item}
-                    </p>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+        <PricingSection />
         <section className="px-5 pt-8 pb-24 sm:px-8 lg:px-10">
           <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 rounded-2xl border border-white/[0.1] bg-[#111725] p-8 sm:p-12 lg:flex-row lg:items-center">
             <div>
