@@ -11,6 +11,7 @@ import {
   ShieldAlert,
   ShieldCheck,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Scan } from '@/lib/api-client';
 
 const MOCK_SCANS: Scan[] = [
@@ -85,6 +86,35 @@ export default function RiskFeedPage() {
   const critical = scans.filter((scan) => scan.riskScore >= 80).length;
   const review = scans.filter((scan) => scan.riskScore >= 50 && scan.riskScore < 80).length;
   const clear = scans.filter((scan) => scan.riskScore < 50).length;
+  const summaryCards: Array<{
+    label: string;
+    value: number;
+    detail: string;
+    Icon: LucideIcon;
+    color: string;
+  }> = [
+    {
+      label: 'Critical signals',
+      value: critical,
+      detail: 'Needs attention now',
+      Icon: ShieldAlert,
+      color: '#ff6257',
+    },
+    {
+      label: 'Review signals',
+      value: review,
+      detail: 'Worth a closer look',
+      Icon: AlertTriangle,
+      color: '#ffb15c',
+    },
+    {
+      label: 'Clear signals',
+      value: clear,
+      detail: 'No action needed',
+      Icon: ShieldCheck,
+      color: '#6dce9a',
+    },
+  ];
 
   return (
     <main className="min-h-screen bg-[#090a0d] px-5 py-10 text-white sm:px-8 lg:px-10">
@@ -112,19 +142,15 @@ export default function RiskFeedPage() {
         </div>
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
-          {[
-            ['Critical signals', critical, 'Needs attention now', ShieldAlert, '#ff6257'],
-            ['Review signals', review, 'Worth a closer look', AlertTriangle, '#ffb15c'],
-            ['Clear signals', clear, 'No action needed', ShieldCheck, '#6dce9a'],
-          ].map(([label, value, detail, Icon, color]) => (
+          {summaryCards.map(({ label, value, detail, Icon, color }) => (
             <div key={label as string} className="bg-[#101217] p-6 sm:p-7">
               <div className="flex items-center justify-between text-[11px] text-white/40">
-                <span>{label as string}</span>
-                <Icon className="h-4 w-4" style={{ color: color as string }} />
+                <span>{label}</span>
+                <Icon className="h-4 w-4" style={{ color }} />
               </div>
-              <p className="mt-5 text-3xl font-medium tracking-[-0.05em]">{value as number}</p>
-              <p className="mt-2 text-xs" style={{ color: `${color as string}cc` }}>
-                {detail as string}
+              <p className="mt-5 text-3xl font-medium tracking-[-0.05em]">{value}</p>
+              <p className="mt-2 text-xs" style={{ color: `${color}cc` }}>
+                {detail}
               </p>
             </div>
           ))}

@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   X,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Approval } from '@/lib/api-client';
 
 const MOCK_APPROVALS: Approval[] = [
@@ -55,6 +56,35 @@ export default function ApprovalsPage() {
   const [prepared, setPrepared] = useState<Record<string, boolean>>({});
   const [notice, setNotice] = useState<string | null>(null);
   const activeCount = approvals.filter((approval) => approval.status === 'active').length;
+  const summaryCards: Array<{
+    label: string;
+    value: number;
+    detail: string;
+    Icon: LucideIcon;
+    color: string;
+  }> = [
+    {
+      label: 'Active approvals',
+      value: activeCount,
+      detail: 'Review before signing',
+      Icon: ShieldAlert,
+      color: '#ffb15c',
+    },
+    {
+      label: 'Protected approvals',
+      value: approvals.length - activeCount,
+      detail: 'Revoked by your team',
+      Icon: ShieldCheck,
+      color: '#6dce9a',
+    },
+    {
+      label: 'Wallets covered',
+      value: new Set(approvals.map((approval) => approval.walletId)).size,
+      detail: 'Across monitored chains',
+      Icon: ClipboardCheck,
+      color: '#8b9eff',
+    },
+  ];
 
   function handlePrepare(approval: Approval) {
     setPrepared((current) => ({ ...current, [approval.id]: true }));
@@ -99,31 +129,15 @@ export default function ApprovalsPage() {
         </div>
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
-          {[
-            ['Active approvals', activeCount, 'Review before signing', ShieldAlert, '#ffb15c'],
-            [
-              'Protected approvals',
-              approvals.length - activeCount,
-              'Revoked by your team',
-              ShieldCheck,
-              '#6dce9a',
-            ],
-            [
-              'Wallets covered',
-              new Set(approvals.map((approval) => approval.walletId)).size,
-              'Across monitored chains',
-              ClipboardCheck,
-              '#8b9eff',
-            ],
-          ].map(([label, value, detail, Icon, color]) => (
+          {summaryCards.map(({ label, value, detail, Icon, color }) => (
             <div key={label as string} className="bg-[#101217] p-6 sm:p-7">
               <div className="flex items-center justify-between text-[11px] text-white/40">
-                <span>{label as string}</span>
-                <Icon className="h-4 w-4" style={{ color: color as string }} />
+                <span>{label}</span>
+                <Icon className="h-4 w-4" style={{ color }} />
               </div>
-              <p className="mt-5 text-3xl font-medium tracking-[-0.05em]">{value as number}</p>
-              <p className="mt-2 text-xs" style={{ color: `${color as string}cc` }}>
-                {detail as string}
+              <p className="mt-5 text-3xl font-medium tracking-[-0.05em]">{value}</p>
+              <p className="mt-2 text-xs" style={{ color: `${color}cc` }}>
+                {detail}
               </p>
             </div>
           ))}

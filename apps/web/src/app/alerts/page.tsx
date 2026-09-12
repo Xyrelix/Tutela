@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   X,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Alert } from '@/lib/api-client';
 
 const MOCK_ALERTS: Alert[] = [
@@ -92,6 +93,35 @@ export default function AlertsPage() {
   const urgentCount = alerts.filter((alert) => alert.type.includes('critical')).length;
   const unreadCount = alerts.filter((alert) => !alert.sent).length;
   const protectedCount = alerts.filter((alert) => alert.type.includes('secured')).length;
+  const summaryCards: Array<{
+    label: string;
+    value: number;
+    detail: string;
+    Icon: LucideIcon;
+    color: string;
+  }> = [
+    {
+      label: 'Urgent alerts',
+      value: urgentCount,
+      detail: 'Action recommended',
+      Icon: ShieldAlert,
+      color: '#ff6257',
+    },
+    {
+      label: 'Unreviewed',
+      value: unreadCount,
+      detail: 'Awaiting your attention',
+      Icon: Bell,
+      color: '#ffb15c',
+    },
+    {
+      label: 'Wallets secured',
+      value: protectedCount,
+      detail: 'Recent protective actions',
+      Icon: ShieldCheck,
+      color: '#6dce9a',
+    },
+  ];
 
   function resolveAlert(id: string) {
     setAlerts((current) => current.filter((alert) => alert.id !== id));
@@ -124,25 +154,15 @@ export default function AlertsPage() {
         </div>
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
-          {[
-            ['Urgent alerts', urgentCount, 'Action recommended', ShieldAlert, '#ff6257'],
-            ['Unreviewed', unreadCount, 'Awaiting your attention', Bell, '#ffb15c'],
-            [
-              'Wallets secured',
-              protectedCount,
-              'Recent protective actions',
-              ShieldCheck,
-              '#6dce9a',
-            ],
-          ].map(([label, value, detail, Icon, color]) => (
+          {summaryCards.map(({ label, value, detail, Icon, color }) => (
             <div key={label as string} className="bg-[#101217] p-6 sm:p-7">
               <div className="flex items-center justify-between text-[11px] text-white/40">
-                <span>{label as string}</span>
-                <Icon className="h-4 w-4" style={{ color: color as string }} />
+                <span>{label}</span>
+                <Icon className="h-4 w-4" style={{ color }} />
               </div>
-              <p className="mt-5 text-3xl font-medium tracking-[-0.05em]">{value as number}</p>
-              <p className="mt-2 text-xs" style={{ color: `${color as string}cc` }}>
-                {detail as string}
+              <p className="mt-5 text-3xl font-medium tracking-[-0.05em]">{value}</p>
+              <p className="mt-2 text-xs" style={{ color: `${color}cc` }}>
+                {detail}
               </p>
             </div>
           ))}
