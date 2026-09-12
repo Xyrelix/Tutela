@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { clearToken, getToken } from '@/lib/api-client';
@@ -18,7 +19,8 @@ export function NavBar() {
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    setAuthed(Boolean(getToken()));
+    const timer = window.setTimeout(() => setAuthed(Boolean(getToken())), 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   function handleLogout() {
@@ -34,31 +36,41 @@ export function NavBar() {
   return (
     <header className="border-b border-black/10 dark:border-white/10">
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-        <Link href="/" className="text-lg font-semibold">
-          Tutela
+        <Link href="/" aria-label="Tutela home">
+          <Image
+            src="/Tutela_3.png"
+            alt="Tutela"
+            width={832}
+            height={256}
+            className="h-9 w-[117px] object-contain"
+          />
         </Link>
-        {authed && (
-          <div className="flex items-center gap-6 text-sm">
-            {LINKS.map((link) => (
-              <Link key={link.href} href={link.href} className="hover:underline">
-                {link.label}
-              </Link>
-            ))}
+        <div className="flex items-center gap-4 text-sm sm:gap-6">
+          {LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="hidden text-white/55 transition-colors hover:text-white sm:block"
+            >
+              {link.label}
+            </Link>
+          ))}
+          {authed && (
             <button onClick={handleLogout} className="hover:underline">
               Log out
             </button>
-          </div>
-        )}
-        {!authed && (
-          <div className="flex items-center gap-6 text-sm">
-            <Link href="/login" className="hover:underline">
-              Log in
-            </Link>
-            <Link href="/register" className="hover:underline">
-              Register
-            </Link>
-          </div>
-        )}
+          )}
+          {!authed && (
+            <>
+              <Link href="/login" className="hover:underline">
+                Log in
+              </Link>
+              <Link href="/register" className="hidden hover:underline sm:block">
+                Register
+              </Link>
+            </>
+          )}
+        </div>
       </nav>
     </header>
   );
