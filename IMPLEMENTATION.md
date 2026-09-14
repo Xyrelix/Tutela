@@ -293,18 +293,45 @@ Use `supertest` for route tests, `ts-jest` for unit tests on the decision engine
 
 ## 9. Deployment (when ready)
 
-Reuse your BizIQ pattern: Docker build → Render (or similar). Minimal `Dockerfile` for `apps/api`:
+Backend: Docker build → Render, **free web service tier** (this project doesn't need to scale yet,
+so the free tier's spin-down-after-idle behavior is an accepted tradeoff — see `INTEGRATION.md`
+§6 for what that means for the Telegram bot's polling loop). `apps/api/Dockerfile`:
 
 ```dockerfile
 FROM node:20-slim
+
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci
+
 COPY . .
+
 RUN npx prisma generate
 RUN npm run build
-CMD ["npm", "start"]
+
+EXPOSE 4000
+
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
 ```
+
+Notes on why it's built this way (verified locally with `docker build` + `docker run` against the
+local Postgres/Redis containers before ever touching Render):
+- `npm ci` (not `--omit=dev`) — `prisma generate` and `npm run build` (`tsc`) both need
+  dev-only packages (`prisma`, `typescript`). Skipping dev deps here breaks the build.
+- The `apt-get install openssl` line is required — without it, Prisma's engine can't detect the
+  right libssl on `node:20-slim` and silently falls back to a guess, which errors at *runtime*,
+  not build time.
+- The container's `CMD` runs `prisma migrate deploy` on every boot, so schema changes ship
+  automatically with each deploy — no separate manual migration step.
+- Render sets `PORT` itself; `src/index.ts` already reads `process.env.PORT` so no config needed
+  there.
+
+On Render: set the service's Root Directory to `apps/api`, instance type to the free tier, and
+paste in the full env var checklist from `INTEGRATION.md` §7 (`DATABASE_URL` pointing at Neon,
+`REDIS_URL` at Upstash — not Render's own free Postgres, which expires after a fixed period).
 
 Frontend: deploy `apps/web` directly to Vercel (zero-config native Next.js support — `vercel --prod` or connect the repo in the dashboard). Set `NEXT_PUBLIC_API_URL` there to the deployed API's URL.
 

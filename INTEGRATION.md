@@ -93,7 +93,7 @@ Mirrors your BizIQ stack.
 |---|---|---|
 | Neon (Postgres) | Production DB | Watch for autosuspend causing Prisma `57P01` errors, as seen on BizIQ — same fix (keep-alive ping or a higher-tier plan) |
 | Upstash (Redis) | Job queues, rate limiting, session cache | Apply the same `keepAlive` + heartbeat fix used on BizIQ for idle connection drops |
-| Render | Hosting (API + worker) | Deploy via Docker, same as BizIQ |
+| Render | Hosting (single web service) | Deploy via Docker, free tier — accepted tradeoff: the service spins down after ~15 min idle and cold-starts on the next request. This also pauses the Telegram bot's long-polling loop while asleep (`actions/telegramBot.ts`'s `bot.launch()`), so alerts queue up and deliver on the next wake rather than instantly. A background "Worker" service type is *not* a fit here — it has no public URL, so it can't receive Alchemy's webhook POSTs or serve the frontend's API calls at all. Revisit the paid tier (no spin-down) if this becomes a real problem. |
 | Cloudflare | DNS / edge | If using a custom domain for the dashboard |
 | Vercel | Frontend hosting | Native Next.js support — connect the repo, set `NEXT_PUBLIC_API_URL`, zero extra config |
 
