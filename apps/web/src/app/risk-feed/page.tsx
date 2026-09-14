@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   AlertTriangle,
   ArrowUpRight,
@@ -12,50 +13,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Scan } from '@/lib/api-client';
-
-const MOCK_SCANS: Scan[] = [
-  {
-    id: 'scan-1',
-    walletId: 'mock-alex',
-    txHash: '0x91...3a1',
-    riskScore: 92,
-    verdict: 'Critical approval',
-    reasoning: 'High allowance · unknown deployer · empty contract history',
-    createdAt: '2026-09-12T09:41:00.000Z',
-    wallet: { address: '0x71C7...4A2E', chain: 'ethereum' },
-  },
-  {
-    id: 'scan-2',
-    walletId: 'mock-treasury',
-    txHash: '0x72...d91',
-    riskScore: 68,
-    verdict: 'Review recommended',
-    reasoning: 'New contract · moderate allowance · first interaction',
-    createdAt: '2026-09-12T08:18:00.000Z',
-    wallet: { address: '0x8B2F...91C0', chain: 'base' },
-  },
-  {
-    id: 'scan-3',
-    walletId: 'mock-vault',
-    txHash: '0x44...be2',
-    riskScore: 18,
-    verdict: 'Looks safe',
-    reasoning: 'Known protocol · established deployer · normal allowance',
-    createdAt: '2026-09-11T16:04:00.000Z',
-    wallet: { address: '0x4D90...C81B', chain: 'ethereum' },
-  },
-  {
-    id: 'scan-4',
-    walletId: 'mock-alex',
-    txHash: '0x11...8f4',
-    riskScore: 41,
-    verdict: 'Low confidence',
-    reasoning: 'Limited contract history · no malicious signals found',
-    createdAt: '2026-09-10T13:27:00.000Z',
-    wallet: { address: '0x71C7...4A2E', chain: 'ethereum' },
-  },
-];
+import { getToken, listScans, Scan } from '@/lib/api-client';
 
 function riskMeta(score: number) {
   if (score >= 80) return { label: 'Critical', color: '#ff6257', icon: ShieldAlert };
@@ -64,9 +22,23 @@ function riskMeta(score: number) {
 }
 
 export default function RiskFeedPage() {
-  const [scans] = useState(MOCK_SCANS);
+  const router = useRouter();
+  const [scans, setScans] = useState<Scan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    if (!getToken()) {
+      router.push('/login');
+      return;
+    }
+    listScans()
+      .then(setScans)
+      .catch(() => setError('Could not load scans.'))
+      .finally(() => setLoading(false));
+  }, [router]);
 
   const visibleScans = useMemo(
     () =>
@@ -194,6 +166,15 @@ export default function RiskFeedPage() {
               </div>
             </div>
           </div>
+          {loading ? (
+            <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-white/40">
+              Loading scans…
+            </div>
+          ) : error ? (
+            <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-[#ff6257]">
+              {error}
+            </div>
+          ) : (
           <div className="space-y-3">
             {visibleScans.map((scan) => {
               const meta = riskMeta(scan.riskScore);
@@ -257,7 +238,8 @@ export default function RiskFeedPage() {
               );
             })}
           </div>
-          {visibleScans.length === 0 && (
+          )}
+          {!loading && !error && visibleScans.length === 0 && (
             <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-white/45">
               No scans match this view.
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   ArrowRight,
   Check,
@@ -13,49 +14,34 @@ import {
   X,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Approval } from '@/lib/api-client';
-
-const MOCK_APPROVALS: Approval[] = [
-  {
-    id: 'approval-1',
-    walletId: 'mock-alex',
-    spender: '0x9D31...A80F',
-    tokenAddress: 'USDC',
-    amount: 'Unlimited',
-    status: 'active',
-    revokeTxHash: null,
-    detectedAt: '2026-09-12T09:41:00.000Z',
-    wallet: { address: '0x71C7...4A2E', chain: 'ethereum' },
-  },
-  {
-    id: 'approval-2',
-    walletId: 'mock-treasury',
-    spender: '0xA44C...19E2',
-    tokenAddress: 'WETH',
-    amount: '12.50 WETH',
-    status: 'active',
-    revokeTxHash: null,
-    detectedAt: '2026-09-11T17:12:00.000Z',
-    wallet: { address: '0x8B2F...91C0', chain: 'base' },
-  },
-  {
-    id: 'approval-3',
-    walletId: 'mock-vault',
-    spender: '0x72F0...C114',
-    tokenAddress: 'DAI',
-    amount: '4,200 DAI',
-    status: 'revoked',
-    revokeTxHash: '0x31...c82',
-    detectedAt: '2026-09-09T12:06:00.000Z',
-    wallet: { address: '0x4D90...C81B', chain: 'ethereum' },
-  },
-];
+import {
+  Approval,
+  confirmRevoke,
+  getToken,
+  listApprovals,
+  prepareRevoke,
+  UnsignedTransaction,
+} from '@/lib/api-client';
 
 export default function ApprovalsPage() {
-  const [approvals, setApprovals] = useState(MOCK_APPROVALS);
-  const [prepared, setPrepared] = useState<Record<string, boolean>>({});
+  const router = useRouter();
+  const [approvals, setApprovals] = useState<Approval[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [prepared, setPrepared] = useState<Record<string, UnsignedTransaction>>({});
   const [notice, setNotice] = useState<string | null>(null);
   const activeCount = approvals.filter((approval) => approval.status === 'active').length;
+
+  useEffect(() => {
+    if (!getToken()) {
+      router.push('/login');
+      return;
+    }
+    listApprovals()
+      .then(setApprovals)
+      .catch(() => setError('Could not load approvals.'))
+      .finally(() => setLoading(false));
+  }, [router]);
   const summaryCards: Array<{
     label: string;
     value: number;
@@ -86,21 +72,41 @@ export default function ApprovalsPage() {
     },
   ];
 
-  function handlePrepare(approval: Approval) {
-    setPrepared((current) => ({ ...current, [approval.id]: true }));
-    setNotice(`Revoke transaction prepared for ${approval.tokenAddress}.`);
+  async function handlePrepare(approval: Approval) {
+    try {
+      const tx = await prepareRevoke(approval.id);
+      setPrepared((current) => ({ ...current, [approval.id]: tx }));
+      setNotice(`Revoke transaction prepared for ${approval.tokenAddress}.`);
+    } catch {
+      setNotice('Could not prepare the revoke transaction.');
+    }
   }
 
-  function handleConfirm(approval: Approval) {
-    setApprovals((current) =>
-      current.map((item) =>
-        item.id === approval.id
-          ? { ...item, status: 'revoked', revokeTxHash: '0xDEMO...7F42' }
-          : item
-      )
-    );
-    setPrepared((current) => ({ ...current, [approval.id]: false }));
-    setNotice(`${approval.tokenAddress} approval revoked in demo mode.`);
+  async function handleConfirm(approval: Approval) {
+    const tx = prepared[approval.id];
+    if (!tx || !window.ethereum) {
+      setNotice('Connect a browser wallet to sign the revoke transaction.');
+      return;
+    }
+
+    try {
+      const accounts = (await window.ethereum.request({ method: 'eth_requestAccounts' })) as string[];
+      const txHash = (await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [{ from: accounts[0], to: tx.to, data: tx.data, value: tx.value }],
+      })) as string;
+
+      const updated = await confirmRevoke(approval.id, txHash);
+      setApprovals((current) => current.map((item) => (item.id === approval.id ? updated : item)));
+      setPrepared((current) => {
+        const next = { ...current };
+        delete next[approval.id];
+        return next;
+      });
+      setNotice(`${approval.tokenAddress} approval revoked.`);
+    } catch {
+      setNotice('Revoke transaction was not completed.');
+    }
   }
 
   return (
@@ -147,9 +153,22 @@ export default function ApprovalsPage() {
           <div className="mb-5">
             <h2 className="text-lg font-medium tracking-[-0.03em]">Allowance inventory</h2>
             <p className="mt-1 text-xs text-white/35">
-              Prepared actions are simulated until wallet signing is enabled.
+              Prepare a revoke transaction, then sign it with your browser wallet.
             </p>
           </div>
+          {loading ? (
+            <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-white/40">
+              Loading approvals…
+            </div>
+          ) : error ? (
+            <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-[#ff6257]">
+              {error}
+            </div>
+          ) : approvals.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-white/45">
+              No approvals detected yet.
+            </div>
+          ) : (
           <div className="space-y-3">
             {approvals.map((approval) => {
               const active = approval.status === 'active';
@@ -227,9 +246,9 @@ export default function ApprovalsPage() {
                       ) : (
                         <div className="flex flex-col justify-between gap-3 rounded-xl border border-[#2457ff]/30 bg-[#2457ff]/[0.07] p-4 sm:flex-row sm:items-center">
                           <div>
-                            <p className="text-xs text-[#aabaff]">Demo transaction ready</p>
+                            <p className="text-xs text-[#aabaff]">Transaction ready to sign</p>
                             <p className="mt-1 font-mono text-[10px] text-white/40">
-                              To: 0xRevoke...Tutela
+                              To: {isPrepared.to}
                             </p>
                           </div>
                           <button
@@ -237,7 +256,7 @@ export default function ApprovalsPage() {
                             onClick={() => handleConfirm(approval)}
                             className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#6dce9a] px-4 py-2 text-xs font-medium text-[#08110d]"
                           >
-                            Confirm demo revoke <Check className="h-3.5 w-3.5" />
+                            Sign &amp; revoke <Check className="h-3.5 w-3.5" />
                           </button>
                         </div>
                       )}
@@ -257,6 +276,7 @@ export default function ApprovalsPage() {
               );
             })}
           </div>
+          )}
         </section>
 
         {notice && (

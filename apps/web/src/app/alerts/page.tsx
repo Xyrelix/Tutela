@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   AlertTriangle,
   ArrowUpRight,
@@ -15,46 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Alert } from '@/lib/api-client';
-
-const MOCK_ALERTS: Alert[] = [
-  {
-    id: 'alert-1',
-    walletId: 'mock-alex',
-    type: 'critical_approval',
-    message: 'Unlimited USDC approval detected on an unknown contract. Review before signing.',
-    sent: false,
-    createdAt: '2026-09-12T09:41:00.000Z',
-    wallet: { address: '0x71C7...4A2E', chain: 'ethereum' },
-  },
-  {
-    id: 'alert-2',
-    walletId: 'mock-treasury',
-    type: 'risk_score_changed',
-    message: 'Risk score moved from 34 to 68 after a new contract interaction.',
-    sent: true,
-    createdAt: '2026-09-12T08:18:00.000Z',
-    wallet: { address: '0x8B2F...91C0', chain: 'base' },
-  },
-  {
-    id: 'alert-3',
-    walletId: 'mock-vault',
-    type: 'wallet_secured',
-    message: 'Revocation confirmed. The DAI allowance is no longer active.',
-    sent: true,
-    createdAt: '2026-09-11T16:04:00.000Z',
-    wallet: { address: '0x4D90...C81B', chain: 'ethereum' },
-  },
-  {
-    id: 'alert-4',
-    walletId: 'mock-alex',
-    type: 'new_activity',
-    message: 'A monitored wallet interacted with a contract for the first time.',
-    sent: true,
-    createdAt: '2026-09-10T13:27:00.000Z',
-    wallet: { address: '0x71C7...4A2E', chain: 'ethereum' },
-  },
-];
+import { Alert, getToken, listAlerts } from '@/lib/api-client';
 
 function alertMeta(type: string) {
   if (type.includes('critical')) return { label: 'Critical', color: '#ff6257', icon: ShieldAlert };
@@ -68,10 +30,24 @@ function alertTitle(type: string) {
 }
 
 export default function AlertsPage() {
-  const [alerts, setAlerts] = useState(MOCK_ALERTS);
+  const router = useRouter();
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState('all');
   const [notice, setNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!getToken()) {
+      router.push('/login');
+      return;
+    }
+    listAlerts()
+      .then(setAlerts)
+      .catch(() => setError('Could not load alerts.'))
+      .finally(() => setLoading(false));
+  }, [router]);
 
   const visibleAlerts = useMemo(
     () =>
@@ -206,6 +182,15 @@ export default function AlertsPage() {
               </div>
             </div>
           </div>
+          {loading ? (
+            <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-white/40">
+              Loading alerts…
+            </div>
+          ) : error ? (
+            <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-[#ff6257]">
+              {error}
+            </div>
+          ) : (
           <div className="space-y-3">
             {visibleAlerts.map((alert) => {
               const meta = alertMeta(alert.type);
@@ -274,7 +259,8 @@ export default function AlertsPage() {
               );
             })}
           </div>
-          {visibleAlerts.length === 0 && (
+          )}
+          {!loading && !error && visibleAlerts.length === 0 && (
             <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-white/45">
               No alerts match this view.
             </div>

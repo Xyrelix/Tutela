@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Activity,
   ArrowUpRight,
@@ -14,47 +15,7 @@ import {
   WalletCards,
   X,
 } from 'lucide-react';
-import { deleteWallet, Wallet } from '@/lib/api-client';
-
-function randomAddress() {
-  const bytes = new Uint8Array(20);
-  crypto.getRandomValues(bytes);
-  return `0x${Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')}`;
-}
-
-function createMockWallet(chain: string, id: string): Wallet {
-  return {
-    id,
-    address: randomAddress(),
-    chain,
-    userId: 'mock-user',
-    createdAt: new Date().toISOString(),
-  };
-}
-
-const INITIAL_MOCK_WALLETS: Wallet[] = [
-  {
-    id: 'mock-alex',
-    address: '0x71C7...4A2E',
-    chain: 'ethereum',
-    userId: 'mock-user',
-    createdAt: '2026-09-10T09:41:00.000Z',
-  },
-  {
-    id: 'mock-treasury',
-    address: '0x8B2F...91C0',
-    chain: 'base',
-    userId: 'mock-user',
-    createdAt: '2026-09-08T14:12:00.000Z',
-  },
-  {
-    id: 'mock-vault',
-    address: '0x4D90...C81B',
-    chain: 'ethereum',
-    userId: 'mock-user',
-    createdAt: '2026-09-04T11:27:00.000Z',
-  },
-];
+import { deleteWallet, getToken, listWallets, registerWallet, Wallet } from '@/lib/api-client';
 
 const CHAIN_META: Record<string, { label: string; color: string; mark: string }> = {
   ethereum: { label: 'Ethereum', color: '#8b9eff', mark: 'Ξ' },
@@ -67,12 +28,30 @@ function shortAddress(address: string) {
 }
 
 export default function WalletsPage() {
-  const [wallets, setWallets] = useState<Wallet[]>(INITIAL_MOCK_WALLETS);
+  const router = useRouter();
+  const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [chainFilter, setChainFilter] = useState('all');
   const [copied, setCopied] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [newAddress, setNewAddress] = useState('');
+  const [newChain, setNewChain] = useState('ethereum');
+  const [formError, setFormError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!getToken()) {
+      router.push('/login');
+      return;
+    }
+    listWallets()
+      .then(setWallets)
+      .catch(() => setError('Could not load wallets.'))
+      .finally(() => setLoading(false));
+  }, [router]);
 
   const filteredWallets = wallets.filter((wallet) => {
     const matchesChain = chainFilter === 'all' || wallet.chain === chainFilter;
@@ -82,15 +61,26 @@ export default function WalletsPage() {
     return matchesChain && matchesQuery;
   });
 
-  function handleMockConnect() {
-    const nextWallet = createMockWallet('base', `mock-${Date.now()}`);
-    setWallets((current) => [nextWallet, ...current]);
-    setModalOpen(false);
-    setNotice('Demo wallet connected and monitoring is ready.');
+  async function handleAdd(event: React.FormEvent) {
+    event.preventDefault();
+    setFormError(null);
+    setSubmitting(true);
+
+    try {
+      const wallet = await registerWallet(newAddress, newChain);
+      setWallets((current) => [wallet, ...current]);
+      setNewAddress('');
+      setModalOpen(false);
+      setNotice('Wallet added to monitoring.');
+    } catch {
+      setFormError('Could not add wallet. Check the address format.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   async function handleDelete(wallet: Wallet) {
-    if (!wallet.id.startsWith('mock-')) await deleteWallet(wallet.id);
+    await deleteWallet(wallet.id);
     setWallets((current) => current.filter((item) => item.id !== wallet.id));
     setNotice('Wallet removed from monitoring.');
   }
@@ -128,7 +118,7 @@ export default function WalletsPage() {
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2457ff] px-5 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)] transition-transform hover:scale-[1.02]"
           >
             <WalletCards className="h-4 w-4" />
-            Connect a wallet
+            Add a wallet
           </button>
         </div>
 
@@ -186,7 +176,13 @@ export default function WalletsPage() {
             </div>
           </div>
           <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#101217]">
-            {filteredWallets.length === 0 ? (
+            {loading ? (
+              <div className="px-6 py-16 text-center text-sm text-white/40">
+                Loading wallets…
+              </div>
+            ) : error ? (
+              <div className="px-6 py-16 text-center text-sm text-[#ff6257]">{error}</div>
+            ) : filteredWallets.length === 0 ? (
               <div className="px-6 py-16 text-center">
                 <p className="text-sm text-white/60">No wallets match this view.</p>
                 <button
@@ -194,7 +190,7 @@ export default function WalletsPage() {
                   onClick={() => setModalOpen(true)}
                   className="mt-4 text-xs text-[#6dce9a] hover:underline"
                 >
-                  Connect a wallet
+                  Add a wallet
                 </button>
               </div>
             ) : (
@@ -290,12 +286,12 @@ export default function WalletsPage() {
             <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#111318] p-6 shadow-2xl">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-[10px] tracking-[0.2em] text-[#6dce9a] uppercase">Demo mode</p>
-                  <h2 id="connect-title" className="mt-2 text-xl font-medium">
-                    Connect a wallet
+                  <h2 id="connect-title" className="text-xl font-medium">
+                    Add a wallet
                   </h2>
                   <p className="mt-2 text-sm leading-6 text-white/45">
-                    This preview uses a simulated connection. No wallet or transaction is requested.
+                    Register an address to monitor. No signature required — Tutela only watches
+                    it, it never controls it.
                   </p>
                 </div>
                 <button
@@ -307,19 +303,32 @@ export default function WalletsPage() {
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <button
-                type="button"
-                onClick={handleMockConnect}
-                className="mt-7 flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-4 text-sm transition-colors hover:border-[#2457ff]/60 hover:bg-[#2457ff]/10"
-              >
-                <span className="flex items-center gap-3">
-                  <span className="grid h-9 w-9 place-items-center rounded-lg bg-[#2457ff]/20 text-[#8b9eff]">
-                    <WalletCards className="h-4 w-4" />
-                  </span>
-                  Tutela demo wallet
-                </span>
-                <Plus className="h-4 w-4 text-white/40" />
-              </button>
+              <form onSubmit={handleAdd} className="mt-6 flex flex-col gap-4">
+                <input
+                  required
+                  placeholder="0x…"
+                  value={newAddress}
+                  onChange={(event) => setNewAddress(event.target.value)}
+                  className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 font-mono text-sm text-white outline-none placeholder:text-white/25"
+                />
+                <select
+                  value={newChain}
+                  onChange={(event) => setNewChain(event.target.value)}
+                  className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white outline-none"
+                >
+                  <option value="ethereum">Ethereum</option>
+                  <option value="base">Base</option>
+                </select>
+                {formError && <p className="text-xs text-[#ff6257]">{formError}</p>}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2457ff] px-4 py-3 text-sm font-medium transition-transform hover:scale-[1.02] disabled:opacity-50"
+                >
+                  <Plus className="h-4 w-4" />
+                  {submitting ? 'Adding…' : 'Add wallet'}
+                </button>
+              </form>
             </div>
           </div>
         )}
