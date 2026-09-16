@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { NavBar } from '@/components/NavBar';
+import { NavBar, Sidebar } from '@/components/NavBar';
 import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
 
@@ -18,7 +18,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       <body className="flex min-h-full flex-col">
         <ThemeProvider>
           <NavBar />
-          <main className="flex-1">{children}</main>
+          <div className="flex flex-1">
+            <Sidebar />
+            <main className="min-w-0 flex-1">{children}</main>
+          </div>
         </ThemeProvider>
       </body>
     </html>
