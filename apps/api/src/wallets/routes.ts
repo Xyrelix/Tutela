@@ -4,6 +4,7 @@ import { prisma } from '../db/client';
 import { requireAuth } from '../auth/middleware';
 import { requirePermission } from '../auth/rbac';
 import { asyncHandler } from '../lib/asyncHandler';
+import { FREE_WALLET_LIMIT, isPro } from '../lib/plans';
 
 const router = Router();
 
@@ -34,6 +35,22 @@ router.post(
     if (!parsed.success) {
       res.status(400).json({ error: parsed.error.flatten() });
       return;
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: req.user!.sub } });
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    if (!isPro(user.plan)) {
+      const walletCount = await prisma.wallet.count({ where: { userId: user.id } });
+      if (walletCount >= FREE_WALLET_LIMIT) {
+        res.status(403).json({
+          error: `Free plan is limited to ${FREE_WALLET_LIMIT} monitored wallets. Upgrade to Pro for unlimited wallets.`,
+        });
+        return;
+      }
     }
 
     const wallet = await prisma.wallet.create({

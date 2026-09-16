@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { isAxiosError } from 'axios';
 import {
   Activity,
   ArrowUpRight,
@@ -15,7 +16,9 @@ import {
   WalletCards,
   X,
 } from 'lucide-react';
-import { deleteWallet, getToken, listWallets, registerWallet, Wallet } from '@/lib/api-client';
+import { deleteWallet, getMe, getToken, listWallets, Me, registerWallet, Wallet } from '@/lib/api-client';
+
+const FREE_WALLET_LIMIT = 3;
 
 const CHAIN_META: Record<string, { label: string; color: string; mark: string }> = {
   ethereum: { label: 'Ethereum', color: '#8b9eff', mark: 'Ξ' },
@@ -41,6 +44,7 @@ export default function WalletsPage() {
   const [newChain, setNewChain] = useState('ethereum');
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [me, setMe] = useState<Me | null>(null);
 
   useEffect(() => {
     if (!getToken()) {
@@ -51,7 +55,13 @@ export default function WalletsPage() {
       .then(setWallets)
       .catch(() => setError('Could not load wallets.'))
       .finally(() => setLoading(false));
+    getMe()
+      .then(setMe)
+      .catch(() => {});
   }, [router]);
+
+  const isFreePlan = me?.plan === 'free';
+  const atWalletLimit = isFreePlan && wallets.length >= FREE_WALLET_LIMIT;
 
   const filteredWallets = wallets.filter((wallet) => {
     const matchesChain = chainFilter === 'all' || wallet.chain === chainFilter;
@@ -72,8 +82,12 @@ export default function WalletsPage() {
       setNewAddress('');
       setModalOpen(false);
       setNotice('Wallet added to monitoring.');
-    } catch {
-      setFormError('Could not add wallet. Check the address format.');
+    } catch (err) {
+      const serverMessage =
+        isAxiosError(err) && typeof err.response?.data?.error === 'string'
+          ? err.response.data.error
+          : null;
+      setFormError(serverMessage ?? 'Could not add wallet. Check the address format.');
     } finally {
       setSubmitting(false);
     }
@@ -111,11 +125,19 @@ export default function WalletsPage() {
               Tutela monitors the wallets that matter and turns on-chain noise into decisions you
               can trust.
             </p>
+            {isFreePlan && (
+              <p className="mt-3 text-xs text-white/35">
+                {wallets.length} of {FREE_WALLET_LIMIT} wallets used on the Free plan
+                {atWalletLimit && ' — upgrade to Pro for unlimited wallets'}.
+              </p>
+            )}
           </div>
           <button
             type="button"
             onClick={() => setModalOpen(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2457ff] px-5 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)] transition-transform hover:scale-[1.02]"
+            disabled={atWalletLimit}
+            title={atWalletLimit ? 'Free plan wallet limit reached' : undefined}
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2457ff] px-5 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
           >
             <WalletCards className="h-4 w-4" />
             Add a wallet

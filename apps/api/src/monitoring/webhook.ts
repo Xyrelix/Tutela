@@ -6,6 +6,7 @@ import { evaluateApproval, Verdict } from '../decision-engine/rules';
 import { reasonAboutApproval } from '../decision-engine/llmReasoning';
 import { dispatchAlert } from '../actions/alerts';
 import { asyncHandler } from '../lib/asyncHandler';
+import { isPro } from '../lib/plans';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -69,6 +70,7 @@ router.post(
 
       const wallet = await prisma.wallet.findFirst({
         where: { address: { equals: activity.fromAddress, mode: 'insensitive' } },
+        include: { user: true },
       });
       if (!wallet) {
         continue;
@@ -88,16 +90,23 @@ router.post(
       let reasoning = ruleResult.reasons.join('; ');
 
       if (ruleResult.verdict === 'ambiguous') {
-        const llmVerdict = await reasonAboutApproval({
-          spender,
-          tokenAddress: activity.rawContract.address,
-          amount,
-          contractVerified: null,
-          ruleResult,
-        });
-        verdict = llmVerdict.verdict;
-        riskScore = llmVerdict.riskScore;
-        reasoning = llmVerdict.reasoning;
+        if (isPro(wallet.user.plan)) {
+          const llmVerdict = await reasonAboutApproval({
+            spender,
+            tokenAddress: activity.rawContract.address,
+            amount,
+            contractVerified: null,
+            ruleResult,
+          });
+          verdict = llmVerdict.verdict;
+          riskScore = llmVerdict.riskScore;
+          reasoning = llmVerdict.reasoning;
+        } else {
+          verdict = 'suspicious';
+          riskScore = 60;
+          reasoning =
+            'Ambiguous case could not be auto-cleared by rules alone — upgrade to Pro for AI-powered risk analysis on cases like this.';
+        }
       }
 
       await prisma.scan.create({
