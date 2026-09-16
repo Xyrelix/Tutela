@@ -9,11 +9,18 @@ import {
   CaretDown,
   Circle,
   Clock,
+  CurrencyBtc,
+  CurrencyCircleDollar,
   CurrencyEth,
+  Diamond,
+  Gear,
+  Hexagon,
+  Key,
   List,
   Play,
   Polygon,
   ShieldCheck,
+  ShieldWarning,
   Sparkle,
   Triangle,
   Wallet,
@@ -83,7 +90,7 @@ function BrowserPreview() {
             <i className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
           </div>
           <div className="hidden items-center gap-2 rounded-md border border-white/[0.08] bg-black/20 px-4 py-1 text-[10px] text-white/30 sm:flex">
-            app.tutela.security / overview
+            app.tutela.security / wallets
           </div>
           <div className="h-2 w-12 rounded-full bg-white/10" />
         </div>
@@ -99,10 +106,18 @@ function BrowserPreview() {
               />
             </div>
             <div className="space-y-2 text-[11px] text-white/40">
-              <div className="rounded-md bg-[#2457ff]/15 px-3 py-2 text-white">Overview</div>
-              <div className="px-3 py-2">Wallets</div>
-              <div className="px-3 py-2">Risk feed</div>
-              <div className="px-3 py-2">Approvals</div>
+              <div className="flex items-center gap-2 rounded-md bg-[#2457ff]/15 px-3 py-2 text-white">
+                <Wallet className="h-3.5 w-3.5" /> Wallets
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2">
+                <ShieldWarning className="h-3.5 w-3.5" /> Risk feed
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2">
+                <Key className="h-3.5 w-3.5" /> Approvals
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2">
+                <Bell className="h-3.5 w-3.5" /> Alerts
+              </div>
             </div>
             <div className="mt-24 rounded-lg border border-white/[0.08] p-3">
               <div className="mb-2 h-1.5 w-12 rounded-full bg-white/15" />
@@ -115,11 +130,11 @@ function BrowserPreview() {
               <div>
                 <p className="text-[11px] text-white/35">Tuesday, September 10, 2026</p>
                 <h3 className="mt-1 text-lg font-medium tracking-[-0.03em] text-white">
-                  Good morning, Alex
+                  Good morning, <span className="font-mono text-white/60">0x71C…9e3F</span>
                 </h3>
               </div>
               <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5">
-                <Bell className="h-3.5 w-3.5 text-white/70" />
+                <Gear className="h-3.5 w-3.5 text-white/70" />
               </div>
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -199,7 +214,7 @@ function BrowserPreview() {
 
 function CryptoObject() {
   return (
-    <div className="relative mx-auto h-[420px] w-full max-w-[380px] sm:h-[520px] sm:max-w-[440px]">
+    <div className="relative mx-auto h-[420px] w-full max-w-[300px] sm:h-[520px] sm:max-w-[360px]">
       <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2457ff]/25 blur-3xl" />
 
       <div className="absolute top-1/2 left-1/2 h-[92%] w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-[44px] border-[10px] border-[#15171c] bg-black shadow-[0_40px_120px_rgba(0,0,0,0.55)] sm:w-[68%]">
@@ -220,17 +235,19 @@ function CryptoObject() {
       </div>
 
       {[
-        ['₿', 'top-2 left-[0%]', 'text-[#ffcb8b]'],
-        ['Ξ', 'top-14 right-[-2%]', 'text-[#8b9eff]'],
-        ['◎', 'bottom-14 left-[2%]', 'text-[#6dce9a]'],
-        ['₮', 'right-[-4%] bottom-16', 'text-[#ffb15c]'],
-      ].map(([glyph, position, color], index) => (
+        { Icon: CurrencyBtc, position: 'top-2 left-[0%]', color: '#ffcb8b' },
+        { Icon: CurrencyEth, position: 'top-14 right-[-2%]', color: '#8b9eff' },
+        { Icon: Hexagon, position: 'top-1/2 left-[-6%] -translate-y-1/2', color: '#f9bd4f' },
+        { Icon: Diamond, position: 'top-1/2 right-[-6%] -translate-y-1/2', color: '#b28dff' },
+        { Icon: Circle, position: 'bottom-14 left-[2%]', color: '#6dce9a' },
+        { Icon: CurrencyCircleDollar, position: 'right-[-4%] bottom-16', color: '#ffb15c' },
+      ].map(({ Icon, position, color }, index) => (
         <div
-          key={glyph}
-          className={`absolute ${position} grid h-12 w-12 animate-bounce place-items-center rounded-full border border-white/20 bg-white/[0.08] text-lg shadow-[0_0_28px_rgba(36,87,255,0.25)] backdrop-blur-md sm:h-14 sm:w-14 ${color}`}
+          key={position}
+          className={`absolute ${position} grid h-12 w-12 animate-bounce place-items-center rounded-full border border-white/20 bg-white/[0.08] shadow-[0_0_28px_rgba(36,87,255,0.25)] backdrop-blur-md sm:h-14 sm:w-14`}
           style={{ animationDuration: `${3.8 + index * 0.6}s`, animationDelay: `${index * 0.3}s` }}
         >
-          {glyph}
+          <Icon className="h-5 w-5 sm:h-6 sm:w-6" style={{ color }} />
         </div>
       ))}
 

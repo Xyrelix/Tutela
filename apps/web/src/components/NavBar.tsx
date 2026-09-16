@@ -4,14 +4,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { Gear } from '@phosphor-icons/react';
 import { clearToken, getToken } from '@/lib/api-client';
 
 const LINKS = [
+  { href: '/dashboard', label: 'Dashboard' },
   { href: '/wallets', label: 'Wallets' },
   { href: '/risk-feed', label: 'Risk Feed' },
   { href: '/approvals', label: 'Approvals' },
   { href: '/alerts', label: 'Alerts' },
-  { href: '/settings', label: 'Settings' },
 ];
 
 export function NavBar() {
@@ -80,12 +81,21 @@ export function NavBar() {
         </div>
         <div className="flex items-center gap-5 justify-self-end text-[13px]">
           {authed ? (
-            <button
-              onClick={handleLogout}
-              className="text-white/60 transition-colors hover:text-white"
-            >
-              Log out
-            </button>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/settings"
+                aria-label="Settings"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/60 transition-colors hover:border-white/25 hover:text-white"
+              >
+                <Gear className="h-4 w-4" />
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="rounded-full bg-white px-4 py-2 font-medium text-[#090a0d] transition-transform hover:scale-[1.03]"
+              >
+                Log out
+              </button>
+            </div>
           ) : (
             <>
               <Link href="/login" className="text-white/60 transition-colors hover:text-white">

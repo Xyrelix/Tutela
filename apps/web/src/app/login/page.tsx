@@ -19,7 +19,7 @@ export default function LoginPage() {
     try {
       const token = await authenticateWallet('login');
       setToken(token);
-      router.push('/wallets');
+      router.push('/dashboard');
     } catch {
       setError(
         'Could not verify this wallet. Make sure it has a Tutela account and approve the signature request.'

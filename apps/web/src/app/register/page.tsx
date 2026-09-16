@@ -19,7 +19,7 @@ export default function RegisterPage() {
     try {
       const token = await authenticateWallet('register');
       setToken(token);
-      router.push('/wallets');
+      router.push('/dashboard');
     } catch {
       setError(
         'Could not verify this wallet. Connect an available wallet and approve the signature request.'
