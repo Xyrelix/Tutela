@@ -34,24 +34,49 @@ export function NavBar() {
     return null;
   }
 
+  const isAuthPage = pathname === '/login' || pathname === '/register';
+
+  if (isAuthPage) {
+    return (
+      <header className="border-b border-white/[0.08] bg-[#090a0d]">
+        <nav className="mx-auto flex max-w-5xl items-center justify-center px-5 py-5 sm:px-8 lg:px-10">
+          <Link href="/" aria-label="Tutela home">
+            <Image
+              src="/Tutela_nav.png"
+              alt="Tutela"
+              width={610}
+              height={163}
+              className="h-[31px] w-auto object-contain"
+            />
+          </Link>
+        </nav>
+      </header>
+    );
+  }
+
   return (
     <header className="border-b border-white/[0.08] bg-[#090a0d]">
       <nav className="mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-5 py-5 sm:px-8 lg:px-10">
         <Link href="/" aria-label="Tutela home" className="justify-self-start">
           <Image
-            src="/Tutela_3.png"
+            src="/Tutela_nav.png"
             alt="Tutela"
-            width={832}
-            height={256}
-            className="h-9 w-[117px] object-contain"
+            width={610}
+            height={163}
+            className="h-[31px] w-auto object-contain object-left"
           />
         </Link>
         <div className="hidden items-center gap-6 text-[13px] text-white/55 md:flex">
-          {LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="transition-colors hover:text-white">
-              {link.label}
-            </Link>
-          ))}
+          {authed &&
+            LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="transition-colors hover:text-white"
+              >
+                {link.label}
+              </Link>
+            ))}
         </div>
         <div className="flex items-center gap-5 justify-self-end text-[13px]">
           {authed ? (

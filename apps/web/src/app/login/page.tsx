@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, CheckCircle, LockKey, ShieldCheck, Wallet } from '@phosphor-icons/react';
-import Image from 'next/image';
 import { authenticateWallet, setToken } from '@/lib/api-client';
 
 export default function LoginPage() {
@@ -63,14 +62,7 @@ export default function LoginPage() {
         </div>
 
         <div className="mx-auto w-full max-w-md rounded-2xl border border-white/[0.1] bg-[#101217]/95 p-6 shadow-[0_30px_100px_rgba(0,0,0,0.35)] sm:p-8">
-          <Image
-            src="/Tutela_3.png"
-            alt="Tutela"
-            width={832}
-            height={256}
-            className="h-9 w-[117px] object-contain object-left lg:hidden"
-          />
-          <div className="mt-7 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#2457ff]/30 bg-[#2457ff]/10 text-[#8b9eff] lg:mt-0">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#2457ff]/30 bg-[#2457ff]/10 text-[#8b9eff]">
             <LockKey className="h-5 w-5" />
           </div>
           <p className="mt-7 text-[10px] tracking-[0.22em] text-[#6dce9a] uppercase">
