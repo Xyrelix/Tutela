@@ -40,11 +40,21 @@ interface AlchemyWebhookPayload {
 function verifySignature(req: Request): boolean {
   const signature = req.header('x-alchemy-signature');
   const signingKey = process.env.ALCHEMY_WEBHOOK_SIGNING_KEY;
+  console.log('[webhook-debug]', {
+    hasSignatureHeader: Boolean(signature),
+    signatureLength: signature?.length,
+    hasSigningKey: Boolean(signingKey),
+    signingKeyLength: signingKey?.length,
+    hasRawBody: Boolean(req.rawBody),
+    rawBodyLength: req.rawBody?.length,
+  });
+
   if (!signature || !signingKey || !req.rawBody) {
     return false;
   }
 
   const expected = crypto.createHmac('sha256', signingKey).update(req.rawBody, 'utf8').digest('hex');
+  console.log('[webhook-debug] expectedLength:', expected.length, 'receivedLength:', signature.length);
   const expectedBuf = Buffer.from(expected);
   const signatureBuf = Buffer.from(signature);
 
