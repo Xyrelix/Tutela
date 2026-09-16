@@ -12,7 +12,7 @@ const plans = [
     description: 'A clear first layer of protection for the wallets that matter most.',
     monthly: 0,
     yearly: 0,
-    features: ['3 monitored wallets', 'Risk feed', 'Email alerts'],
+    features: ['3 monitored wallets', 'Risk feed', 'In-app alerts'],
     includes: [
       'Free includes:',
       'Continuous wallet watch',

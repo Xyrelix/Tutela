@@ -7,11 +7,15 @@ import {
   ArrowRight,
   Bell,
   CaretDown,
+  Circle,
   Clock,
+  CurrencyEth,
   List,
   Play,
+  Polygon,
   ShieldCheck,
   Sparkle,
+  Triangle,
   Wallet,
   X,
   Lightning,
@@ -24,6 +28,14 @@ const navItems = [
   { label: 'Product', href: '#product' },
   { label: 'How it works', href: '#workflow' },
   { label: 'Pricing', href: '#pricing' },
+];
+
+const chainLogos = [
+  { label: 'ethereum', Icon: CurrencyEth },
+  { label: 'base', Icon: Circle },
+  { label: 'polygon', Icon: Polygon },
+  { label: 'arbitrum', Icon: Triangle },
+  { label: 'optimism', Icon: Circle },
 ];
 
 const features = [
@@ -50,11 +62,11 @@ const features = [
 function BrandMark() {
   return (
     <Image
-      src="/Tutela_3.png"
+      src="/Tutela_nav.png"
       alt="Tutela"
-      width={832}
-      height={256}
-      className="h-[58px] w-[187px] object-contain"
+      width={610}
+      height={163}
+      className="h-[31px] w-auto object-contain object-left"
     />
   );
 }
@@ -286,19 +298,9 @@ export default function Home() {
         </div>
       </header>
       {mobileOpen && (
-        <div className="fixed top-[76px] right-5 left-5 z-20 rounded-xl border border-white/10 bg-[#13151a] p-4 md:hidden">
+        <div className="fixed top-[76px] right-5 z-20 w-fit rounded-xl border border-white/10 bg-[#13151a] p-4 md:hidden">
           <div className="grid gap-1 text-sm text-white/70">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-white"
-              >
-                {item.label}
-              </a>
-            ))}
-            <Link href="/login" className="rounded-lg px-3 py-2 hover:bg-white/5">
+            <Link href="/login" className="rounded-lg px-3 py-2 text-center hover:bg-white/5">
               Log in
             </Link>
             <Link
@@ -311,7 +313,7 @@ export default function Home() {
         </div>
       )}
       <main>
-        <section className="relative px-5 pt-20 pb-10 text-left sm:px-8 sm:pt-28 lg:pt-36">
+        <section className="relative px-5 pt-20 pb-10 text-center sm:px-8 sm:pt-28 lg:pt-36 lg:text-left">
           <div className="pointer-events-none absolute inset-0 z-0 h-[620px] [mask-image:linear-gradient(to_bottom,black_0%,transparent_90%)] opacity-35">
             <ShaderDemoATC />
           </div>
@@ -329,11 +331,11 @@ export default function Home() {
                   your wallet deserves.
                 </span>
               </h1>
-              <p className="mt-7 max-w-xl text-[15px] leading-7 text-white/50 sm:text-base">
+              <p className="mx-auto mt-7 max-w-xl text-[15px] leading-7 text-white/50 sm:text-base lg:mx-0">
                 Tutela watches your wallets around the clock, explains what looks risky, and helps
                 you act before a bad approval becomes a bad day.
               </p>
-              <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row">
+              <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
                 <Link
                   href="/register"
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-[#2457ff] px-6 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.22)] transition-transform hover:scale-[1.03] sm:w-auto"
@@ -354,16 +356,24 @@ export default function Home() {
             <BrowserPreview />
           </div>
         </section>
-        <section className="border-y border-white/[0.07] bg-[#0c0e12] px-5 py-7 sm:px-8">
-          <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-10 gap-y-5 text-xs text-white/35 sm:justify-between">
-            <span className="text-[10px] tracking-[0.22em] text-white/25 uppercase">
+        <section className="overflow-hidden border-y border-white/[0.07] bg-[#0c0e12] py-7">
+          <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-5 sm:flex-row sm:gap-10 sm:px-8">
+            <span className="shrink-0 text-[10px] tracking-[0.22em] text-white/25 uppercase">
               Built for the wallets that matter
             </span>
-            <span className="font-mono">ethereum</span>
-            <span className="font-mono">base</span>
-            <span className="font-mono">polygon</span>
-            <span className="font-mono">arbitrum</span>
-            <span className="font-mono">optimism</span>
+            <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
+              <div className="flex w-max animate-marquee items-center gap-12 hover:[animation-play-state:paused]">
+                {[...chainLogos, ...chainLogos].map(({ label, Icon }, index) => (
+                  <span
+                    key={`${label}-${index}`}
+                    className="flex items-center gap-2 font-mono text-xs whitespace-nowrap text-white/35"
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
         <section id="product" className="mx-auto max-w-7xl px-5 py-28 sm:px-8 lg:px-10">
@@ -437,7 +447,7 @@ export default function Home() {
                   [
                     '09:43',
                     'Risk engine found 3 signals',
-                    'New deployer Ã‚Â· empty history Ã‚Â· high allowance',
+                    'New deployer · empty history · high allowance',
                     'Score: 92 / critical',
                   ],
                   [

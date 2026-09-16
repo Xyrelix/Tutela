@@ -130,19 +130,11 @@ export function HoverFooter() {
           </motion.div>
         </div>
 
-        <div className="flex flex-col gap-4 border-t border-white/[0.07] pt-6 text-xs text-white/35 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col items-center justify-center gap-4 border-t border-white/[0.07] pt-6 text-xs text-white/35 sm:flex-row sm:gap-16">
           <span>© 2026 Tutela Security</span>
-          <div className="flex flex-wrap gap-5">
-            <Link href="/login" className="transition-colors hover:text-white">
-              Log in
-            </Link>
-            <Link href="/register" className="transition-colors hover:text-white">
-              Create account
-            </Link>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#6dce9a]" /> Systems operational
-            </span>
-          </div>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#6dce9a]" /> Systems operational
+          </span>
         </div>
       </div>
     </footer>
