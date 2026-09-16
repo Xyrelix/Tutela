@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { prisma } from '../db/client';
 import { asyncHandler } from '../lib/asyncHandler';
+import { requireAuth } from './middleware';
 
 const router = Router();
 const challenges = new Map<string, { walletAddress: string; mode: 'login' | 'register'; issuedAt: number }>();
@@ -99,6 +100,26 @@ router.post(
     }
 
     res.json({ token: signToken({ id: user.id, role: user.role, permissions: user.permissions }) });
+  })
+);
+
+router.get(
+  '/me',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const user = await prisma.user.findUnique({ where: { id: req.user!.sub } });
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    res.json({
+      id: user.id,
+      walletAddress: user.walletAddress,
+      role: user.role,
+      plan: user.plan,
+      telegramLinked: Boolean(user.telegramChatId),
+    });
   })
 );
 

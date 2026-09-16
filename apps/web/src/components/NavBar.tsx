@@ -11,6 +11,7 @@ const LINKS = [
   { href: '/risk-feed', label: 'Risk Feed' },
   { href: '/approvals', label: 'Approvals' },
   { href: '/alerts', label: 'Alerts' },
+  { href: '/settings', label: 'Settings' },
 ];
 
 export function NavBar() {

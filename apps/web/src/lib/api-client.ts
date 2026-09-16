@@ -82,6 +82,20 @@ export interface UnsignedTransaction {
   value: string;
 }
 
+export interface Me {
+  id: string;
+  walletAddress: string;
+  role: string;
+  plan: string;
+  telegramLinked: boolean;
+}
+
+export interface TelegramLinkCode {
+  code: string;
+  expiresAt: string;
+  botUsername?: string;
+}
+
 export async function getWalletChallenge(
   walletAddress: string,
   mode: 'login' | 'register'
@@ -159,5 +173,15 @@ export async function confirmRevoke(approvalId: string, txHash: string): Promise
   const { data } = await apiClient.post<Approval>(`/api/actions/revoke/${approvalId}/confirm`, {
     txHash,
   });
+  return data;
+}
+
+export async function getMe(): Promise<Me> {
+  const { data } = await apiClient.get<Me>('/api/auth/me');
+  return data;
+}
+
+export async function getTelegramLinkCode(): Promise<TelegramLinkCode> {
+  const { data } = await apiClient.post<TelegramLinkCode>('/api/actions/telegram/link-code');
   return data;
 }
