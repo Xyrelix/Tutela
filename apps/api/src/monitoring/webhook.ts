@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
-import { id as keccakId } from 'ethers';
 import { prisma } from '../db/client';
 import { evaluateApproval, Verdict } from '../decision-engine/rules';
 import { reasonAboutApproval } from '../decision-engine/llmReasoning';
@@ -19,42 +18,34 @@ declare global {
 
 const router = Router();
 
-const APPROVAL_TOPIC = keccakId('Approval(address,address,uint256)');
-
-interface AlchemyActivity {
-  fromAddress: string;
-  rawContract: { address: string };
-  log?: {
-    topics: string[];
-    data: string;
-  };
+// Matches the GraphQL query configured on the Alchemy Custom Webhook:
+//   { block { logs(filter: { topics: [...] }) { topics data account { address } transaction { hash from { address } } } } }
+interface AlchemyGraphqlLog {
+  topics: string[];
+  data: string;
+  account: { address: string };
+  transaction: { hash: string; from: { address: string } };
 }
 
-interface AlchemyWebhookPayload {
+interface AlchemyGraphqlWebhookPayload {
   webhookId: string;
-  event: {
-    activity: AlchemyActivity[];
+  event?: {
+    data?: {
+      block?: {
+        logs?: AlchemyGraphqlLog[];
+      };
+    };
   };
 }
 
 function verifySignature(req: Request): boolean {
   const signature = req.header('x-alchemy-signature');
   const signingKey = process.env.ALCHEMY_WEBHOOK_SIGNING_KEY;
-  console.log('[webhook-debug]', {
-    hasSignatureHeader: Boolean(signature),
-    signatureLength: signature?.length,
-    hasSigningKey: Boolean(signingKey),
-    signingKeyLength: signingKey?.length,
-    hasRawBody: Boolean(req.rawBody),
-    rawBodyLength: req.rawBody?.length,
-  });
-
   if (!signature || !signingKey || !req.rawBody) {
     return false;
   }
 
   const expected = crypto.createHmac('sha256', signingKey).update(req.rawBody, 'utf8').digest('hex');
-  console.log('[webhook-debug] expectedLength:', expected.length, 'receivedLength:', signature.length);
   const expectedBuf = Buffer.from(expected);
   const signatureBuf = Buffer.from(signature);
 
@@ -69,17 +60,22 @@ router.post(
       return;
     }
 
-    const payload = req.body as AlchemyWebhookPayload;
-    const activities = payload.event?.activity ?? [];
+    const payload = req.body as AlchemyGraphqlWebhookPayload;
+    const logs = payload.event?.data?.block?.logs ?? [];
 
-    for (const activity of activities) {
-      const topics = activity.log?.topics ?? [];
-      if (topics[0] !== APPROVAL_TOPIC || topics.length < 3) {
+    for (const log of logs) {
+      const topics = log.topics ?? [];
+      if (topics.length < 3) {
+        continue;
+      }
+
+      const walletAddress = log.transaction?.from?.address;
+      if (!walletAddress) {
         continue;
       }
 
       const wallet = await prisma.wallet.findFirst({
-        where: { address: { equals: activity.fromAddress, mode: 'insensitive' } },
+        where: { address: { equals: walletAddress, mode: 'insensitive' } },
         include: { user: true },
       });
       if (!wallet) {
@@ -87,13 +83,10 @@ router.post(
       }
 
       const spender = `0x${topics[2].slice(-40)}`;
-      const amount = BigInt(activity.log?.data ?? '0x0').toString();
+      const tokenAddress = log.account.address;
+      const amount = BigInt(log.data ?? '0x0').toString();
 
-      const ruleResult = evaluateApproval({
-        spender,
-        tokenAddress: activity.rawContract.address,
-        amount,
-      });
+      const ruleResult = evaluateApproval({ spender, tokenAddress, amount });
 
       let verdict: Verdict = ruleResult.verdict;
       let riskScore = ruleResult.riskScore;
@@ -103,7 +96,7 @@ router.post(
         if (isPro(wallet.user.plan)) {
           const llmVerdict = await reasonAboutApproval({
             spender,
-            tokenAddress: activity.rawContract.address,
+            tokenAddress,
             amount,
             contractVerified: null,
             ruleResult,
@@ -120,12 +113,12 @@ router.post(
       }
 
       await prisma.scan.create({
-        data: { walletId: wallet.id, riskScore, verdict, reasoning },
+        data: { walletId: wallet.id, txHash: log.transaction.hash, riskScore, verdict, reasoning },
       });
 
       if (verdict !== 'safe') {
         await prisma.approval.create({
-          data: { walletId: wallet.id, spender, tokenAddress: activity.rawContract.address, amount },
+          data: { walletId: wallet.id, spender, tokenAddress, amount },
         });
 
         const alert = await prisma.alert.create({
