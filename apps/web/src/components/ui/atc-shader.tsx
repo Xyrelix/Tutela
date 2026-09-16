@@ -51,6 +51,16 @@ export default function ShaderDemoATC({ className = '' }: ShaderDemoATCProps) {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const isSmallScreen = window.matchMedia('(max-width: 767px)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isSmallScreen || prefersReducedMotion) {
+      console.warn(
+        '[ShaderDemoATC] Skipping WebGL shader on small/reduced-motion screens, falling back to static gradient.'
+      );
+      window.setTimeout(() => setUnsupported(true), 0);
+      return;
+    }
+
     const gl = canvas.getContext('webgl2', { premultipliedAlpha: false });
     if (!gl) {
       console.warn('[ShaderDemoATC] WebGL2 not available, falling back to static gradient.');

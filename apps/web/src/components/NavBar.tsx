@@ -9,6 +9,7 @@ import {
   Gear,
   Key,
   ShieldWarning,
+  SignOut,
   SquaresFour,
   Wallet as WalletIcon,
 } from '@phosphor-icons/react';
@@ -35,14 +36,8 @@ function useAuthed() {
 }
 
 export function NavBar() {
-  const router = useRouter();
   const pathname = usePathname();
   const authed = useAuthed();
-
-  function handleLogout() {
-    clearToken();
-    router.push('/login');
-  }
 
   if (pathname === '/') {
     return null;
@@ -52,7 +47,7 @@ export function NavBar() {
 
   if (isAuthPage) {
     return (
-      <header className="border-b border-white/[0.08] bg-[#090a0d]">
+      <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#090a0d]">
         <nav className="mx-auto flex max-w-5xl items-center justify-center px-5 py-5 sm:px-8 lg:px-10">
           <Link href="/" aria-label="Tutela home">
             <Image
@@ -69,9 +64,13 @@ export function NavBar() {
   }
 
   return (
-    <header className="border-b border-white/[0.08] bg-[#090a0d]">
+    <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#090a0d]">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
-        <Link href="/" aria-label="Tutela home">
+        <Link
+          href="/"
+          aria-label="Tutela home"
+          className="md:absolute md:top-1/2 md:left-[112px] md:-translate-x-1/2 md:-translate-y-1/2"
+        >
           <Image
             src="/Tutela_nav.png"
             alt="Tutela"
@@ -80,23 +79,15 @@ export function NavBar() {
             className="h-[31px] w-auto object-contain"
           />
         </Link>
-        <div className="flex items-center gap-5 text-[13px]">
+        <div className="flex items-center gap-5 text-[13px] md:ml-auto">
           {authed ? (
-            <div className="flex items-center gap-3">
-              <Link
-                href="/settings"
-                aria-label="Settings"
-                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/60 transition-colors hover:border-white/25 hover:text-white"
-              >
-                <Gear className="h-4 w-4" />
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="rounded-full bg-white px-4 py-2 font-medium text-[#090a0d] transition-transform hover:scale-[1.03]"
-              >
-                Log out
-              </button>
-            </div>
+            <Link
+              href="/settings"
+              aria-label="Settings"
+              className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/60 transition-colors hover:border-white/25 hover:text-white"
+            >
+              <Gear className="h-4 w-4" />
+            </Link>
           ) : (
             <>
               <Link href="/login" className="text-white/60 transition-colors hover:text-white">
@@ -117,8 +108,14 @@ export function NavBar() {
 }
 
 export function Sidebar() {
+  const router = useRouter();
   const pathname = usePathname();
   const authed = useAuthed();
+
+  function handleLogout() {
+    clearToken();
+    router.push('/login');
+  }
 
   const isAuthPage = pathname === '/login' || pathname === '/register';
   if (pathname === '/' || isAuthPage || !authed) {
@@ -126,7 +123,7 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="hidden w-56 shrink-0 border-r border-white/[0.08] bg-[#0c0e12] px-4 py-6 md:block">
+    <aside className="sticky top-[76px] z-20 hidden h-[calc(100vh-76px)] w-56 shrink-0 flex-col overflow-y-auto border-r border-white/[0.08] bg-[#0c0e12] px-4 py-6 md:flex">
       <nav className="space-y-1 text-[13px]">
         {LINKS.map((link) => {
           const isActive = pathname === link.href;
@@ -146,6 +143,13 @@ export function Sidebar() {
           );
         })}
       </nav>
+      <button
+        onClick={handleLogout}
+        className="mt-auto flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[13px] text-white/55 transition-colors hover:bg-white/5 hover:text-white"
+      >
+        <SignOut className="h-4 w-4" />
+        Log out
+      </button>
     </aside>
   );
 }
