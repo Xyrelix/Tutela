@@ -3,22 +3,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  AlertTriangle,
+  Warning,
   ArrowUpRight,
-  CheckCircle2,
-  Clock3,
-  Filter,
-  Search,
-  ShieldAlert,
+  CheckCircle,
+  Clock,
+  Funnel,
+  MagnifyingGlass,
+  ShieldWarning,
   ShieldCheck,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+} from '@phosphor-icons/react';
+import type { Icon } from '@phosphor-icons/react';
 import { getToken, listScans, Scan } from '@/lib/api-client';
 
 function riskMeta(score: number) {
-  if (score >= 80) return { label: 'Critical', color: '#ff6257', icon: ShieldAlert };
-  if (score >= 50) return { label: 'Review', color: '#ffb15c', icon: AlertTriangle };
-  return { label: 'Clear', color: '#6dce9a', icon: CheckCircle2 };
+  if (score >= 80) return { label: 'Critical', color: '#ff6257', icon: ShieldWarning };
+  if (score >= 50) return { label: 'Review', color: '#ffb15c', icon: Warning };
+  return { label: 'Clear', color: '#6dce9a', icon: CheckCircle };
 }
 
 export default function RiskFeedPage() {
@@ -62,21 +62,21 @@ export default function RiskFeedPage() {
     label: string;
     value: number;
     detail: string;
-    Icon: LucideIcon;
+    Icon: Icon;
     color: string;
   }> = [
     {
       label: 'Critical signals',
       value: critical,
       detail: 'Needs attention now',
-      Icon: ShieldAlert,
+      Icon: ShieldWarning,
       color: '#ff6257',
     },
     {
       label: 'Review signals',
       value: review,
       detail: 'Worth a closer look',
-      Icon: AlertTriangle,
+      Icon: Warning,
       color: '#ffb15c',
     },
     {
@@ -138,7 +138,7 @@ export default function RiskFeedPage() {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <label className="flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-xs text-white/35">
-                <Search className="h-3.5 w-3.5" />
+                <MagnifyingGlass className="h-3.5 w-3.5" />
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
@@ -147,7 +147,7 @@ export default function RiskFeedPage() {
                 />
               </label>
               <div className="flex h-9 items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] p-1">
-                <Filter className="mx-2 h-3.5 w-3.5 text-white/30" />
+                <Funnel className="mx-2 h-3.5 w-3.5 text-white/30" />
                 {[
                   ['all', 'All'],
                   ['critical', 'Critical'],
@@ -215,7 +215,7 @@ export default function RiskFeedPage() {
                       </div>
                       <div className="text-right">
                         <p className="flex items-center justify-end gap-1 text-[10px] text-white/30">
-                          <Clock3 className="h-3 w-3" />
+                          <Clock className="h-3 w-3" />
                           {new Date(scan.createdAt).toLocaleString('en-US', {
                             month: 'short',
                             day: 'numeric',

@@ -2,11 +2,21 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle2, Copy, MessageCircle, ShieldCheck } from 'lucide-react';
+import {
+  CheckCircle,
+  ChatCircle,
+  Copy,
+  ShieldCheck,
+  Wallet as WalletIcon,
+} from '@phosphor-icons/react';
 import { getMe, getToken, getTelegramLinkCode, Me, TelegramLinkCode } from '@/lib/api-client';
 
 function secondsUntil(iso: string) {
   return Math.max(0, Math.round((new Date(iso).getTime() - Date.now()) / 1000));
+}
+
+function shortWallet(address: string) {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
 export default function SettingsPage() {
@@ -18,6 +28,7 @@ export default function SettingsPage() {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [walletCopied, setWalletCopied] = useState(false);
   const pollRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -78,21 +89,34 @@ export default function SettingsPage() {
     window.setTimeout(() => setCopied(false), 1600);
   }
 
+  async function copyWallet() {
+    if (!me) return;
+    await navigator.clipboard.writeText(me.walletAddress);
+    setWalletCopied(true);
+    window.setTimeout(() => setWalletCopied(false), 1600);
+  }
+
   const deepLink = linkCode?.botUsername
     ? `https://t.me/${linkCode.botUsername}?start=${linkCode.code}`
     : null;
 
   return (
     <main className="min-h-screen bg-[#090a0d] px-5 py-10 text-white sm:px-8 lg:px-10">
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-4xl">
         <div className="border-b border-white/[0.08] pb-8">
           <div className="mb-5 flex items-center gap-2 text-[10px] tracking-[0.22em] text-[#8b9eff] uppercase">
             <span className="h-1.5 w-1.5 rounded-full bg-[#8b9eff]" />
             Account
           </div>
-          <h1 className="font-sans text-4xl leading-none tracking-[-0.04em] sm:text-5xl">
-            Settings
+          <h1 className="font-sans text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
+            Your account,
+            <br />
+            <span className="text-white/40">your controls.</span>
           </h1>
+          <p className="mt-5 max-w-lg text-sm leading-6 text-white/45">
+            Manage the wallet you sign in with, your plan, and how Tutela reaches you when it
+            matters.
+          </p>
         </div>
 
         {loading ? (
@@ -101,18 +125,58 @@ export default function SettingsPage() {
           <p className="mt-8 text-sm text-[#ff6257]">{error}</p>
         ) : me ? (
           <div className="mt-8 flex flex-col gap-6">
+            <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
+              {[
+                ['Plan', me.plan, me.plan === 'free' ? 'Upgrade anytime' : 'Full access', ShieldCheck],
+                ['Wallet', shortWallet(me.walletAddress), 'Signed in with', WalletIcon],
+                [
+                  'Telegram',
+                  me.telegramLinked ? 'Linked' : 'Not linked',
+                  me.telegramLinked ? 'Alerts are active' : 'Connect to get alerts',
+                  ChatCircle,
+                ],
+              ].map(([label, value, detail, Icon]) => (
+                <div key={label as string} className="bg-[#101217] p-6 sm:p-7">
+                  <div className="flex items-center justify-between text-[11px] text-white/40">
+                    <span>{label as string}</span>
+                    <Icon className="h-4 w-4 text-[#6dce9a]" />
+                  </div>
+                  <p className="mt-5 text-3xl font-medium tracking-[-0.05em] text-white capitalize">
+                    {value as string}
+                  </p>
+                  <p className="mt-2 text-xs text-[#6dce9a]/80">{detail as string}</p>
+                </div>
+              ))}
+            </div>
+
             <div className="rounded-2xl border border-white/[0.08] bg-[#101217] p-6 sm:p-7">
-              <p className="text-[11px] tracking-[0.16em] text-white/30 uppercase">Wallet</p>
-              <p className="mt-2 font-mono text-sm text-white/80">{me.walletAddress}</p>
-              <p className="mt-4 text-[11px] tracking-[0.16em] text-white/30 uppercase">Plan</p>
-              <p className="mt-2 text-sm text-white/80 capitalize">{me.plan}</p>
+              <p className="text-[11px] tracking-[0.16em] text-white/30 uppercase">
+                Wallet address
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <span className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2 font-mono text-sm text-white/80">
+                  {me.walletAddress}
+                </span>
+                <button
+                  type="button"
+                  onClick={copyWallet}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-white/10 px-3 text-xs text-white/60 hover:border-white/25 hover:text-white"
+                >
+                  {walletCopied ? (
+                    <CheckCircle className="h-3.5 w-3.5 text-[#6dce9a]" />
+                  ) : (
+                    <Copy className="h-3.5 w-3.5" />
+                  )}
+                  {walletCopied ? 'Copied' : 'Copy'}
+                </button>
+              </div>
             </div>
 
             <div className="rounded-2xl border border-white/[0.08] bg-[#101217] p-6 sm:p-7">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-[#8b9eff]">
-                    <MessageCircle className="h-4 w-4" />
+                    <ChatCircle className="h-4 w-4" />
                   </span>
                   <div>
                     <h2 className="text-base font-medium">Telegram alerts</h2>
@@ -152,7 +216,7 @@ export default function SettingsPage() {
                           className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-white/10 px-3 text-xs text-white/60 hover:border-white/25 hover:text-white"
                         >
                           {copied ? (
-                            <CheckCircle2 className="h-3.5 w-3.5 text-[#6dce9a]" />
+                            <CheckCircle className="h-3.5 w-3.5 text-[#6dce9a]" />
                           ) : (
                             <Copy className="h-3.5 w-3.5" />
                           )}
@@ -179,7 +243,8 @@ export default function SettingsPage() {
                       )}
 
                       <p className="text-xs text-white/30">
-                        Expires in {secondsLeft}s — this page checks automatically once you've linked.
+                        Expires in {secondsLeft}s — this page checks automatically once you&apos;ve
+                        linked.
                       </p>
                     </div>
                   )}

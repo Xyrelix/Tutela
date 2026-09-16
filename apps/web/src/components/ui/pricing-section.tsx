@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import NumberFlow from '@number-flow/react';
 import { motion } from 'framer-motion';
-import { ArrowRight, CheckCheck, Database, ShieldCheck, Zap } from 'lucide-react';
+import { ArrowRight, Checks, Database, ShieldCheck, Lightning } from '@phosphor-icons/react';
 import { useState } from 'react';
 
 const plans = [
@@ -49,7 +49,7 @@ const plans = [
   },
 ];
 
-const featureIcons = [ShieldCheck, Database, Zap];
+const featureIcons = [ShieldCheck, Database, Lightning];
 
 export default function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);
@@ -144,7 +144,7 @@ export default function PricingSection() {
                 <ul className="mt-8 space-y-3 border-t border-white/[0.08] pt-6">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-center gap-2 text-xs text-white/55">
-                      <CheckCheck className="h-3.5 w-3.5 text-[#6dce9a]" />
+                      <Checks className="h-3.5 w-3.5 text-[#6dce9a]" />
                       {feature}
                     </li>
                   ))}

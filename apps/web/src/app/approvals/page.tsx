@@ -5,15 +5,15 @@ import { useRouter } from 'next/navigation';
 import {
   ArrowRight,
   Check,
-  CheckCircle2,
-  ClipboardCheck,
-  ExternalLink,
-  KeyRound,
-  ShieldAlert,
+  CheckCircle,
+  ListChecks,
+  ArrowSquareOut,
+  Key,
+  ShieldWarning,
   ShieldCheck,
   X,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+} from '@phosphor-icons/react';
+import type { Icon } from '@phosphor-icons/react';
 import {
   Approval,
   confirmRevoke,
@@ -46,14 +46,14 @@ export default function ApprovalsPage() {
     label: string;
     value: number;
     detail: string;
-    Icon: LucideIcon;
+    Icon: Icon;
     color: string;
   }> = [
     {
       label: 'Active approvals',
       value: activeCount,
       detail: 'Review before signing',
-      Icon: ShieldAlert,
+      Icon: ShieldWarning,
       color: '#ffb15c',
     },
     {
@@ -67,7 +67,7 @@ export default function ApprovalsPage() {
       label: 'Wallets covered',
       value: new Set(approvals.map((approval) => approval.walletId)).size,
       detail: 'Across monitored chains',
-      Icon: ClipboardCheck,
+      Icon: ListChecks,
       color: '#8b9eff',
     },
   ];
@@ -129,7 +129,7 @@ export default function ApprovalsPage() {
             </p>
           </div>
           <div className="flex items-center gap-2 rounded-full border border-[#ffb15c]/20 bg-[#ffb15c]/[0.06] px-4 py-2 text-xs text-[#ffcb8b]">
-            <ShieldAlert className="h-3.5 w-3.5" />
+            <ShieldWarning className="h-3.5 w-3.5" />
             {activeCount} active approvals
           </div>
         </div>
@@ -183,7 +183,7 @@ export default function ApprovalsPage() {
                       <span
                         className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl border ${active ? 'border-[#ffb15c]/25 bg-[#ffb15c]/[0.08] text-[#ffb15c]' : 'border-[#6dce9a]/25 bg-[#6dce9a]/[0.08] text-[#6dce9a]'}`}
                       >
-                        <KeyRound className="h-4 w-4" />
+                        <Key className="h-4 w-4" />
                       </span>
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
@@ -224,9 +224,9 @@ export default function ApprovalsPage() {
                         </p>
                         <p className="mt-1 flex items-center gap-1.5 text-xs text-white/60">
                           {active ? (
-                            <ShieldAlert className="h-3.5 w-3.5 text-[#ffb15c]" />
+                            <ShieldWarning className="h-3.5 w-3.5 text-[#ffb15c]" />
                           ) : (
-                            <CheckCircle2 className="h-3.5 w-3.5 text-[#6dce9a]" />
+                            <CheckCircle className="h-3.5 w-3.5 text-[#6dce9a]" />
                           )}
                           {approval.status}
                         </p>
@@ -269,7 +269,7 @@ export default function ApprovalsPage() {
                       rel="noreferrer"
                       className="mt-5 inline-flex items-center gap-1 text-xs text-white/40 hover:text-white"
                     >
-                      View revoke transaction <ExternalLink className="h-3 w-3" />
+                      View revoke transaction <ArrowSquareOut className="h-3 w-3" />
                     </a>
                   )}
                 </article>

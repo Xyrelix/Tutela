@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, CheckCircle2, LockKeyhole, ShieldCheck, WalletCards } from 'lucide-react';
+import { ArrowRight, CheckCircle, LockKey, ShieldCheck, Wallet } from '@phosphor-icons/react';
 import Image from 'next/image';
 import { authenticateWallet, setToken } from '@/lib/api-client';
 
@@ -55,7 +55,7 @@ export default function LoginPage() {
               'Read-only access to wallet activity',
             ].map((item) => (
               <p key={item} className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-[#6dce9a]" />
+                <CheckCircle className="h-4 w-4 text-[#6dce9a]" />
                 {item}
               </p>
             ))}
@@ -71,7 +71,7 @@ export default function LoginPage() {
             className="h-9 w-[117px] object-contain object-left lg:hidden"
           />
           <div className="mt-7 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#2457ff]/30 bg-[#2457ff]/10 text-[#8b9eff] lg:mt-0">
-            <LockKeyhole className="h-5 w-5" />
+            <LockKey className="h-5 w-5" />
           </div>
           <p className="mt-7 text-[10px] tracking-[0.22em] text-[#6dce9a] uppercase">
             Secure sign in
@@ -91,7 +91,7 @@ export default function LoginPage() {
               disabled={submitting}
               className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#2457ff] text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)] transition-transform hover:scale-[1.01] disabled:cursor-wait disabled:opacity-60"
             >
-              <WalletCards className="h-4 w-4" />
+              <Wallet className="h-4 w-4" />
               {submitting ? 'Waiting for signature…' : 'Verify with wallet'}
             </button>
           </form>

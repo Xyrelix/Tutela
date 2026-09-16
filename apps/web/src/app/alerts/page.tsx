@@ -3,24 +3,24 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  AlertTriangle,
+  Warning,
   ArrowUpRight,
   Bell,
   Check,
-  CheckCircle2,
-  Clock3,
-  Filter,
-  Search,
-  ShieldAlert,
+  CheckCircle,
+  Clock,
+  Funnel,
+  MagnifyingGlass,
+  ShieldWarning,
   ShieldCheck,
   X,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+} from '@phosphor-icons/react';
+import type { Icon } from '@phosphor-icons/react';
 import { Alert, getToken, listAlerts } from '@/lib/api-client';
 
 function alertMeta(type: string) {
-  if (type.includes('critical')) return { label: 'Critical', color: '#ff6257', icon: ShieldAlert };
-  if (type.includes('risk')) return { label: 'Review', color: '#ffb15c', icon: AlertTriangle };
+  if (type.includes('critical')) return { label: 'Critical', color: '#ff6257', icon: ShieldWarning };
+  if (type.includes('risk')) return { label: 'Review', color: '#ffb15c', icon: Warning };
   if (type.includes('secured')) return { label: 'Protected', color: '#6dce9a', icon: ShieldCheck };
   return { label: 'Activity', color: '#8b9eff', icon: Bell };
 }
@@ -73,14 +73,14 @@ export default function AlertsPage() {
     label: string;
     value: number;
     detail: string;
-    Icon: LucideIcon;
+    Icon: Icon;
     color: string;
   }> = [
     {
       label: 'Urgent alerts',
       value: urgentCount,
       detail: 'Action recommended',
-      Icon: ShieldAlert,
+      Icon: ShieldWarning,
       color: '#ff6257',
     },
     {
@@ -154,7 +154,7 @@ export default function AlertsPage() {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <label className="flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-xs text-white/35">
-                <Search className="h-3.5 w-3.5" />
+                <MagnifyingGlass className="h-3.5 w-3.5" />
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
@@ -163,7 +163,7 @@ export default function AlertsPage() {
                 />
               </label>
               <div className="flex h-9 items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] p-1">
-                <Filter className="mx-2 h-3.5 w-3.5 text-white/30" />
+                <Funnel className="mx-2 h-3.5 w-3.5 text-white/30" />
                 {[
                   ['all', 'All'],
                   ['urgent', 'Urgent'],
@@ -219,7 +219,7 @@ export default function AlertsPage() {
                           </span>
                         </div>
                         <time className="flex items-center gap-1 text-[10px] text-white/30">
-                          <Clock3 className="h-3 w-3" />
+                          <Clock className="h-3 w-3" />
                           {new Date(alert.createdAt).toLocaleString('en-US', {
                             month: 'short',
                             day: 'numeric',
@@ -242,7 +242,7 @@ export default function AlertsPage() {
                             onClick={() => resolveAlert(alert.id)}
                             className="inline-flex items-center gap-1.5 text-xs text-white/40 transition-colors hover:text-[#6dce9a]"
                           >
-                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            <CheckCircle className="h-3.5 w-3.5" />
                             Clear alert
                           </button>
                           <a

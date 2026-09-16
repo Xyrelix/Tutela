@@ -6,16 +6,16 @@ import { useEffect, useState } from 'react';
 import {
   ArrowRight,
   Bell,
-  ChevronDown,
-  Clock3,
-  Menu,
+  CaretDown,
+  Clock,
+  List,
   Play,
   ShieldCheck,
-  Sparkles,
+  Sparkle,
   Wallet,
   X,
-  Zap,
-} from 'lucide-react';
+  Lightning,
+} from '@phosphor-icons/react';
 import ShaderDemoATC from '@/components/ui/atc-shader';
 import { HoverFooter } from '@/components/ui/hover-footer';
 import PricingSection from '@/components/ui/pricing-section';
@@ -28,7 +28,7 @@ const navItems = [
 
 const features = [
   {
-    icon: Clock3,
+    icon: Clock,
     eyebrow: '01 / Watch',
     title: 'Always-on wallet intelligence',
     text: 'Tutela monitors every connected wallet and turns noisy on-chain activity into a short, useful signal.',
@@ -40,7 +40,7 @@ const features = [
     text: 'See the contract, the behavior, and the reason behind each score before an approval becomes a problem.',
   },
   {
-    icon: Zap,
+    icon: Lightning,
     eyebrow: '03 / Respond',
     title: 'Move from alert to action',
     text: 'Prepare revocations and route urgent alerts to the people who can protect the wallet fastest.',
@@ -187,33 +187,31 @@ function BrowserPreview() {
 
 function CryptoObject() {
   return (
-    <div className="relative mx-auto h-[360px] w-full max-w-[440px] sm:h-[430px]">
-      <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2457ff]/20 blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 h-[270px] w-[190px] -translate-x-1/2 -translate-y-1/2 rounded-[28px] border border-[#6dce9a]/35 bg-[#6dce9a]/[0.035] shadow-[0_0_70px_rgba(109,206,154,0.12)] backdrop-blur-sm sm:h-[330px] sm:w-[230px]">
-        <div className="absolute inset-5 rounded-[20px] border border-white/[0.08] bg-[#101217]/35 p-4">
-          <div className="flex items-center justify-between text-white/35">
-            <ShieldCheck className="h-5 w-5 text-[#6dce9a]" />
-            <span className="font-mono text-[9px] tracking-[0.16em] uppercase">
-              TUTELA / SECURE
-            </span>
-          </div>
-          <div className="absolute right-4 bottom-4 left-4">
-            <p className="text-[9px] tracking-[0.16em] text-white/30 uppercase">Protection score</p>
-            <div className="mt-2 flex items-end justify-between">
-              <span className="text-3xl font-medium tracking-[-0.06em] text-white">98</span>
-              <span className="mb-1 text-[10px] text-[#6dce9a]">Excellent</span>
-            </div>
-            <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/10">
-              <div className="h-full w-[98%] rounded-full bg-gradient-to-r from-[#2457ff] to-[#6dce9a]" />
-            </div>
-          </div>
+    <div className="relative mx-auto h-[420px] w-full max-w-[380px] sm:h-[520px] sm:max-w-[440px]">
+      <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#2457ff]/25 blur-3xl" />
+
+      <div className="absolute top-1/2 left-1/2 h-[92%] w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-[44px] border-[10px] border-[#15171c] bg-black shadow-[0_40px_120px_rgba(0,0,0,0.55)] sm:w-[68%]">
+        <div className="absolute top-3 left-1/2 z-10 h-6 w-24 -translate-x-1/2 rounded-full bg-[#15171c]" />
+        <div className="relative h-full w-full overflow-hidden rounded-[34px] bg-black">
+          <Image
+            src="/Tutela%201.png"
+            alt="Tutela app opening"
+            fill
+            sizes="(max-width: 640px) 320px, 380px"
+            className="object-contain"
+            priority
+          />
         </div>
+        <div className="absolute top-24 -left-[10px] h-8 w-[3px] rounded-full bg-[#0d0e11]" />
+        <div className="absolute top-36 -left-[10px] h-12 w-[3px] rounded-full bg-[#0d0e11]" />
+        <div className="absolute top-28 -right-[10px] h-16 w-[3px] rounded-full bg-[#0d0e11]" />
       </div>
+
       {[
-        ['₿', 'top-5 left-[8%]', 'text-[#ffcb8b]'],
-        ['Ξ', 'top-16 right-[5%]', 'text-[#8b9eff]'],
-        ['◎', 'bottom-16 left-[16%]', 'text-[#6dce9a]'],
-        ['₮', 'right-[2%] bottom-20', 'text-[#ffb15c]'],
+        ['₿', 'top-2 left-[0%]', 'text-[#ffcb8b]'],
+        ['Ξ', 'top-14 right-[-2%]', 'text-[#8b9eff]'],
+        ['◎', 'bottom-14 left-[2%]', 'text-[#6dce9a]'],
+        ['₮', 'right-[-4%] bottom-16', 'text-[#ffb15c]'],
       ].map(([glyph, position, color], index) => (
         <div
           key={glyph}
@@ -223,7 +221,8 @@ function CryptoObject() {
           {glyph}
         </div>
       ))}
-      <div className="absolute right-[21%] bottom-4 flex items-center gap-2 rounded-full border border-white/10 bg-[#101217]/70 px-3 py-1.5 text-[10px] text-white/45 backdrop-blur-md">
+
+      <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-[#101217]/70 px-3 py-1.5 text-[10px] text-white/45 backdrop-blur-md">
         <span className="h-1.5 w-1.5 rounded-full bg-[#6dce9a]" /> Monitoring active
       </div>
     </div>
@@ -282,7 +281,7 @@ export default function Home() {
             className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 bg-white/5 md:hidden"
             aria-label="Toggle navigation"
           >
-            {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            {mobileOpen ? <X className="h-4 w-4" /> : <List className="h-4 w-4" />}
           </button>
         </div>
       </header>
@@ -320,9 +319,9 @@ export default function Home() {
           <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2 lg:gap-16">
             <div>
               <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-xs text-white/60">
-                <Sparkles className="h-3.5 w-3.5 text-[#6dce9a]" /> Persistent wallet security,
+                <Sparkle className="h-3.5 w-3.5 text-[#6dce9a]" /> Persistent wallet security,
                 finally automated{' '}
-                <ChevronDown className="h-3.5 w-3.5 rotate-[-90deg] text-white/35" />
+                <CaretDown className="h-3.5 w-3.5 rotate-[-90deg] text-white/35" />
               </div>
               <h1 className="font-sans text-[clamp(3rem,6vw,6rem)] leading-[0.92] tracking-[-0.055em] text-white">
                 <span className="block lg:whitespace-nowrap">The security layer</span>

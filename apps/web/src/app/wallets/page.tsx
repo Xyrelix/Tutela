@@ -4,18 +4,18 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAxiosError } from 'axios';
 import {
-  Activity,
+  Pulse,
   ArrowUpRight,
   Check,
   Copy,
   Plus,
-  Search,
+  MagnifyingGlass,
   ShieldCheck,
-  Sparkles,
-  Trash2,
-  WalletCards,
+  Sparkle,
+  Trash,
+  Wallet as WalletIcon,
   X,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
 import { deleteWallet, getMe, getToken, listWallets, Me, registerWallet, Wallet } from '@/lib/api-client';
 
 const FREE_WALLET_LIMIT = 3;
@@ -139,7 +139,7 @@ export default function WalletsPage() {
             title={atWalletLimit ? 'Free plan wallet limit reached' : undefined}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2457ff] px-5 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
           >
-            <WalletCards className="h-4 w-4" />
+            <WalletIcon className="h-4 w-4" />
             Add a wallet
           </button>
         </div>
@@ -152,8 +152,8 @@ export default function WalletsPage() {
               'All systems monitored',
               ShieldCheck,
             ],
-            ['Networks active', chains.toString().padStart(2, '0'), 'Ethereum + Base', Activity],
-            ['Protection status', 'Good', 'No urgent action needed', Sparkles],
+            ['Networks active', chains.toString().padStart(2, '0'), 'Ethereum + Base', Pulse],
+            ['Protection status', 'Good', 'No urgent action needed', Sparkle],
           ].map(([label, value, detail, Icon]) => (
             <div key={label as string} className="bg-[#101217] p-6 sm:p-7">
               <div className="flex items-center justify-between text-[11px] text-white/40">
@@ -178,7 +178,7 @@ export default function WalletsPage() {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <label className="flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-xs text-white/35">
-                <Search className="h-3.5 w-3.5" />
+                <MagnifyingGlass className="h-3.5 w-3.5" />
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
@@ -277,7 +277,7 @@ export default function WalletsPage() {
                         className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 text-white/35 hover:border-[#ff6257]/50 hover:text-[#ff6257]"
                         title="Remove wallet"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>

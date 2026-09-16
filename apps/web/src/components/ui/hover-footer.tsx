@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Bell, GitBranch, Send } from 'lucide-react';
+import { ArrowUpRight, Bell, GithubLogo, TelegramLogo } from '@phosphor-icons/react';
 
 const linkGroups = [
   {
@@ -90,7 +90,7 @@ export function HoverFooter() {
                 aria-label="Open Tutela on Telegram"
                 className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/50 transition-all hover:border-[#2457ff] hover:bg-[#2457ff]/15 hover:text-white"
               >
-                <Send className="h-4 w-4" />
+                <TelegramLogo className="h-4 w-4" />
               </a>
               <a
                 href="https://github.com/Xyrelix/Tutela"
@@ -99,7 +99,7 @@ export function HoverFooter() {
                 aria-label="Tutela on GitHub"
                 className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/50 transition-all hover:border-[#2457ff] hover:bg-[#2457ff]/15 hover:text-white"
               >
-                <GitBranch className="h-4 w-4" />
+                <GithubLogo className="h-4 w-4" />
               </a>
               <a
                 href="/alerts"

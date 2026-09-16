@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const vertSrc = `#version 300 es
 precision highp float;
@@ -34,7 +34,7 @@ void main(){
     z += (d = length(cos(p / v) * v + v.zxx / 7.0) / (f = 2.0 + d / exp(p.y * 0.2)));
   }
 
-  o = tanh4(0.2 * o);
+  o = tanh4(0.45 * o);
   o.a = 1.0;
   fragColor = o;
 }`;
@@ -45,16 +45,16 @@ interface ShaderDemoATCProps {
 
 export default function ShaderDemoATC({ className = '' }: ShaderDemoATCProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const errorRef = useRef<HTMLPreElement>(null);
+  const [unsupported, setUnsupported] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const errorOutput = errorRef.current;
-    if (!canvas || !errorOutput) return;
+    if (!canvas) return;
 
     const gl = canvas.getContext('webgl2', { premultipliedAlpha: false });
     if (!gl) {
-      errorOutput.textContent = 'WebGL2 not available';
+      console.warn('[ShaderDemoATC] WebGL2 not available, falling back to static gradient.');
+      setUnsupported(true);
       return;
     }
 
@@ -86,7 +86,8 @@ export default function ShaderDemoATC({ className = '' }: ShaderDemoATCProps) {
         throw new Error(gl.getProgramInfoLog(program) || 'Shader link error');
       }
     } catch (error) {
-      errorOutput.textContent = `Shader error: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      console.warn('[ShaderDemoATC] Shader compile/link failed, falling back to static gradient:', error);
+      setUnsupported(true);
       return;
     }
 
@@ -136,13 +137,18 @@ export default function ShaderDemoATC({ className = '' }: ShaderDemoATCProps) {
     };
   }, []);
 
+  if (unsupported) {
+    return (
+      <div
+        className={`h-full w-full bg-[radial-gradient(ellipse_at_top,rgba(36,87,255,0.35),transparent_60%),radial-gradient(ellipse_at_bottom,rgba(109,206,154,0.2),transparent_60%)] bg-[#050609] ${className}`}
+        aria-hidden="true"
+      />
+    );
+  }
+
   return (
     <div className={`relative h-full w-full overflow-hidden ${className}`} aria-hidden="true">
       <canvas ref={canvasRef} className="block h-full w-full bg-[#050609]" />
-      <pre
-        ref={errorRef}
-        className="absolute top-2 left-2 text-[10px] whitespace-pre-wrap text-[#6dce9a]"
-      />
     </div>
   );
 }
