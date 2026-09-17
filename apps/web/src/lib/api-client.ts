@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { connect, getConnection, signMessage } from 'wagmi/actions';
+import { wagmiConfig } from './wagmi';
 
 declare global {
   interface Window {
@@ -116,21 +118,30 @@ export async function verifyWallet(message: string, signature: string): Promise<
 }
 
 export async function authenticateWallet(mode: 'login' | 'register'): Promise<string> {
-  if (!window.ethereum) {
-    throw new Error('NO_WALLET');
+  let connection = getConnection(wagmiConfig);
+
+  if (!connection.isConnected) {
+    const hasInjectedWallet = typeof window !== 'undefined' && Boolean(window.ethereum);
+    const preferredId = hasInjectedWallet ? 'injected' : 'walletConnect';
+    const connector =
+      wagmiConfig.connectors.find((candidate) => candidate.id === preferredId) ??
+      wagmiConfig.connectors[0];
+
+    if (!connector) {
+      throw new Error('NO_WALLET');
+    }
+
+    await connect(wagmiConfig, { connector });
+    connection = getConnection(wagmiConfig);
   }
 
-  const accounts = (await window.ethereum.request({ method: 'eth_requestAccounts' })) as string[];
-  const walletAddress = accounts[0];
+  const walletAddress = connection.address;
   if (!walletAddress) {
     throw new Error('NO_ACCOUNT');
   }
 
   const message = await getWalletChallenge(walletAddress, mode);
-  const signature = (await window.ethereum.request({
-    method: 'personal_sign',
-    params: [message, walletAddress],
-  })) as string;
+  const signature = await signMessage(wagmiConfig, { account: walletAddress, message });
 
   return verifyWallet(message, signature);
 }
