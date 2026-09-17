@@ -7,11 +7,10 @@ import { ArrowUpRight, EnvelopeSimple, GithubLogo, WhatsappLogo, XLogo } from '@
 
 const linkGroups = [
   {
-    title: 'Product',
+    title: 'Legal',
     links: [
-      { label: 'Overview', href: '#product' },
-      { label: 'How it works', href: '#workflow' },
-      { label: 'Pricing', href: '#pricing' },
+      { label: 'Terms', href: '/terms' },
+      { label: 'Privacy', href: '/privacy' },
     ],
   },
 ];
@@ -21,8 +20,8 @@ export function HoverFooter() {
     <footer className="relative isolate mt-8 overflow-hidden border-t border-white/[0.08] bg-[#0c0e12] px-5 pt-14 pb-7 sm:px-8 lg:px-10">
       <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-72 bg-[radial-gradient(ellipse_at_bottom,rgba(36,87,255,0.18),transparent_68%)]" />
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-12 pb-14 md:grid-cols-2 lg:grid-cols-[1.1fr_0.7fr_0.8fr_0.9fr] lg:gap-10">
-          <div>
+        <div className="grid gap-12 pb-14 md:grid-cols-2 lg:grid-cols-[1.4fr_0.7fr_0.7fr_0.7fr] lg:gap-10">
+          <div className="lg:-mr-[25.6px]">
             <Link href="/" className="group inline-flex">
               <Image
                 src="/Tutela_3.png"
@@ -69,22 +68,6 @@ export function HoverFooter() {
 
           <div>
             <h3 className="text-xs font-medium tracking-[0.18em] text-white/35 uppercase">
-              Stay protected
-            </h3>
-            <p className="mt-5 text-sm leading-6 text-white/45">
-              Get security signals and product updates without the noise.
-            </p>
-            <Link
-              href="#security"
-              className="group mt-4 inline-flex items-center gap-1.5 text-sm text-white/60 transition-colors hover:text-white"
-            >
-              How we keep you secure
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
-          </div>
-
-          <div>
-            <h3 className="text-xs font-medium tracking-[0.18em] text-white/35 uppercase">
               Contact
             </h3>
             <div className="mt-5 flex items-center gap-3">
@@ -124,6 +107,22 @@ export function HoverFooter() {
               </a>
             </div>
           </div>
+
+          <div>
+            <h3 className="text-xs font-medium tracking-[0.18em] text-white/35 uppercase">
+              Stay protected
+            </h3>
+            <p className="mt-5 text-sm leading-6 text-white/45">
+              Get security signals and product updates without the noise.
+            </p>
+            <Link
+              href="#security"
+              className="group mt-4 inline-flex items-center gap-1.5 text-sm text-white/60 transition-colors hover:text-white"
+            >
+              How we keep you secure
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          </div>
         </div>
 
         <div className="relative hidden h-48 overflow-hidden border-t border-white/[0.07] lg:block">
@@ -149,14 +148,6 @@ export function HoverFooter() {
             <span className="h-1.5 w-1.5 rounded-full bg-[#6dce9a]" /> Systems operational
           </span>
           <span>© 2026 Tutela Security</span>
-          <div className="flex items-center gap-5">
-            <Link href="/terms" className="transition-colors hover:text-white">
-              Terms
-            </Link>
-            <Link href="/privacy" className="transition-colors hover:text-white">
-              Privacy
-            </Link>
-          </div>
         </div>
       </div>
     </footer>
