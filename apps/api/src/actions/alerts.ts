@@ -1,4 +1,5 @@
 import { prisma } from '../db/client';
+import { isPro } from '../lib/plans';
 import { telegramBot } from './telegramBot';
 
 export async function sendTelegramAlert(chatId: string, message: string): Promise<void> {
@@ -18,8 +19,11 @@ export async function dispatchAlert(alertId: string): Promise<void> {
   }
 
   const { user } = alert.wallet;
+  const canReceiveTelegram = Boolean(user.telegramChatId) && isPro(user.plan);
   await Promise.allSettled([
-    user.telegramChatId ? sendTelegramAlert(user.telegramChatId, alert.message) : Promise.resolve(),
+    canReceiveTelegram
+      ? sendTelegramAlert(user.telegramChatId as string, alert.message)
+      : Promise.resolve(),
   ]);
 
   await prisma.alert.update({ where: { id: alert.id }, data: { sent: true } });

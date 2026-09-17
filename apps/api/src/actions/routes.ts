@@ -4,6 +4,7 @@ import { prisma } from '../db/client';
 import { requireAuth } from '../auth/middleware';
 import { requirePermission } from '../auth/rbac';
 import { asyncHandler } from '../lib/asyncHandler';
+import { isPro } from '../lib/plans';
 import { buildRevokeTransaction } from './revoke';
 import { generateTelegramLinkCode } from './telegramBot';
 
@@ -14,6 +15,12 @@ router.use(requireAuth);
 router.post(
   '/telegram/link-code',
   asyncHandler(async (req, res) => {
+    const user = await prisma.user.findUnique({ where: { id: req.user!.sub } });
+    if (!user || !isPro(user.plan)) {
+      res.status(403).json({ error: 'Telegram alerts require the Sentinel plan or above.' });
+      return;
+    }
+
     const result = await generateTelegramLinkCode(req.user!.sub);
     res.json(result);
   })

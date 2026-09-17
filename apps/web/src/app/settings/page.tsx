@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   CheckCircle,
@@ -99,6 +100,7 @@ export default function SettingsPage() {
   const deepLink = linkCode?.botUsername
     ? `https://t.me/${linkCode.botUsername}?start=${linkCode.code}`
     : null;
+  const isFreePlan = me?.plan === 'free';
 
   return (
     <main className="min-h-screen bg-[#090a0d] px-5 py-10 text-white sm:px-8 lg:px-10">
@@ -193,7 +195,19 @@ export default function SettingsPage() {
                 )}
               </div>
 
-              {!me.telegramLinked && (
+              {!me.telegramLinked && isFreePlan && (
+                <div className="mt-6 border-t border-white/[0.07] pt-5">
+                  <p className="text-xs text-white/45">
+                    Telegram alerts are a Sentinel-plan feature.{' '}
+                    <Link href="/#pricing" className="text-white hover:text-[#6dce9a]">
+                      Upgrade to Sentinel
+                    </Link>{' '}
+                    to get risky-approval alerts sent straight to Telegram.
+                  </p>
+                </div>
+              )}
+
+              {!me.telegramLinked && !isFreePlan && (
                 <div className="mt-6 border-t border-white/[0.07] pt-5">
                   {!linkCode ? (
                     <button
