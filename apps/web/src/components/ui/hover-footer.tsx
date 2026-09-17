@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Bell, GithubLogo, TelegramLogo } from '@phosphor-icons/react';
+import { ArrowUpRight, EnvelopeSimple, GithubLogo, WhatsappLogo, XLogo } from '@phosphor-icons/react';
 
 const linkGroups = [
   {
@@ -14,14 +14,6 @@ const linkGroups = [
       { label: 'Pricing', href: '#pricing' },
     ],
   },
-  {
-    title: 'Resources',
-    links: [
-      { label: 'Risk feed', href: '/risk-feed' },
-      { label: 'Approvals', href: '/approvals' },
-      { label: 'Wallets', href: '/wallets' },
-    ],
-  },
 ];
 
 export function HoverFooter() {
@@ -29,7 +21,7 @@ export function HoverFooter() {
     <footer className="relative isolate mt-8 overflow-hidden border-t border-white/[0.08] bg-[#0c0e12] px-5 pt-14 pb-7 sm:px-8 lg:px-10">
       <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-72 bg-[radial-gradient(ellipse_at_bottom,rgba(36,87,255,0.18),transparent_68%)]" />
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-12 pb-14 md:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_0.8fr_1fr] lg:gap-10">
+        <div className="grid gap-12 pb-14 md:grid-cols-2 lg:grid-cols-[1.1fr_0.7fr_0.8fr_0.9fr] lg:gap-10">
           <div>
             <Link href="/" className="group inline-flex">
               <Image
@@ -82,15 +74,44 @@ export function HoverFooter() {
             <p className="mt-5 text-sm leading-6 text-white/45">
               Get security signals and product updates without the noise.
             </p>
+            <Link
+              href="#security"
+              className="group mt-4 inline-flex items-center gap-1.5 text-sm text-white/60 transition-colors hover:text-white"
+            >
+              How we keep you secure
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          </div>
+
+          <div>
+            <h3 className="text-xs font-medium tracking-[0.18em] text-white/35 uppercase">
+              Contact
+            </h3>
             <div className="mt-5 flex items-center gap-3">
               <a
-                href="https://t.me/"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Open Tutela on Telegram"
+                href="mailto:officialoladayooladoyin@gmail.com"
+                aria-label="Email Tutela"
                 className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/50 transition-all hover:border-[#2457ff] hover:bg-[#2457ff]/15 hover:text-white"
               >
-                <TelegramLogo className="h-4 w-4" />
+                <EnvelopeSimple className="h-4 w-4" />
+              </a>
+              <a
+                href="https://x.com/Dayston_"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Tutela on X"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/50 transition-all hover:border-[#2457ff] hover:bg-[#2457ff]/15 hover:text-white"
+              >
+                <XLogo className="h-4 w-4" />
+              </a>
+              <a
+                href="https://wa.me/2347039951113"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Message Tutela on WhatsApp"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/50 transition-all hover:border-[#2457ff] hover:bg-[#2457ff]/15 hover:text-white"
+              >
+                <WhatsappLogo className="h-4 w-4" />
               </a>
               <a
                 href="https://github.com/Xyrelix/Tutela"
@@ -100,13 +121,6 @@ export function HoverFooter() {
                 className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/50 transition-all hover:border-[#2457ff] hover:bg-[#2457ff]/15 hover:text-white"
               >
                 <GithubLogo className="h-4 w-4" />
-              </a>
-              <a
-                href="/alerts"
-                aria-label="Open alerts"
-                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/50 transition-all hover:border-[#2457ff] hover:bg-[#2457ff]/15 hover:text-white"
-              >
-                <Bell className="h-4 w-4" />
               </a>
             </div>
           </div>
@@ -130,11 +144,19 @@ export function HoverFooter() {
           </motion.div>
         </div>
 
-        <div className="flex flex-col items-center justify-center gap-4 border-t border-white/[0.07] pt-6 text-xs text-white/35 sm:flex-row sm:gap-16">
-          <span>© 2026 Tutela Security</span>
+        <div className="flex flex-col items-center justify-center gap-4 border-t border-white/[0.07] pt-6 text-xs text-white/35 sm:flex-row sm:gap-10">
           <span className="inline-flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-[#6dce9a]" /> Systems operational
           </span>
+          <span>© 2026 Tutela Security</span>
+          <div className="flex items-center gap-5">
+            <Link href="/terms" className="transition-colors hover:text-white">
+              Terms
+            </Link>
+            <Link href="/privacy" className="transition-colors hover:text-white">
+              Privacy
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

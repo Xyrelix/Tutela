@@ -34,7 +34,7 @@ void main(){
     z += (d = length(cos(p / v) * v + v.zxx / 7.0) / (f = 2.0 + d / exp(p.y * 0.2)));
   }
 
-  o = tanh4(0.45 * o);
+  o = tanh4(0.58 * o);
   o.a = 1.0;
   fragColor = o;
 }`;
@@ -127,9 +127,10 @@ export default function ShaderDemoATC({ className = '' }: ShaderDemoATCProps) {
     };
 
     const start = performance.now();
+    const speed = 1.5;
     let frame = 0;
     const draw = () => {
-      gl.uniform1f(time, (performance.now() - start) / 1000);
+      gl.uniform1f(time, ((performance.now() - start) / 1000) * speed);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       frame = requestAnimationFrame(draw);

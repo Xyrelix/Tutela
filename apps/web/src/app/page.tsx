@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   ShieldWarning,
   Sparkle,
+  TelegramLogo,
   Triangle,
   Wallet,
   X,
@@ -235,17 +236,35 @@ function CryptoObject() {
       </div>
 
       {[
-        { Icon: CurrencyBtc, position: 'top-2 left-[0%]', color: '#ffcb8b' },
-        { Icon: CurrencyEth, position: 'top-14 right-[-2%]', color: '#8b9eff' },
-        { Icon: Hexagon, position: 'top-1/2 left-[-6%] -translate-y-1/2', color: '#f9bd4f' },
-        { Icon: Diamond, position: 'top-1/2 right-[-6%] -translate-y-1/2', color: '#b28dff' },
-        { Icon: Circle, position: 'bottom-14 left-[2%]', color: '#6dce9a' },
-        { Icon: CurrencyCircleDollar, position: 'right-[-4%] bottom-16', color: '#ffb15c' },
-      ].map(({ Icon, position, color }, index) => (
+        { Icon: CurrencyBtc, position: 'top-2 left-[0%]', color: '#ffcb8b', duration: 3.6, delay: 0 },
+        { Icon: CurrencyEth, position: 'top-14 right-[2%]', color: '#8b9eff', duration: 5.2, delay: 0.4 },
+        {
+          Icon: Hexagon,
+          position: 'top-1/2 left-[-6%] -translate-y-1/2',
+          color: '#f9bd4f',
+          duration: 4.1,
+          delay: 1.1,
+        },
+        {
+          Icon: Diamond,
+          position: 'right-[-6%] bottom-[42%]',
+          color: '#b28dff',
+          duration: 6.4,
+          delay: 0.2,
+        },
+        { Icon: Circle, position: 'bottom-14 left-[2%]', color: '#6dce9a', duration: 4.8, delay: 0.9 },
+        {
+          Icon: CurrencyCircleDollar,
+          position: 'bottom-2 right-[0%]',
+          color: '#ffb15c',
+          duration: 5.7,
+          delay: 1.6,
+        },
+      ].map(({ Icon, position, color, duration, delay }) => (
         <div
           key={position}
           className={`absolute ${position} grid h-12 w-12 animate-bounce place-items-center rounded-full border border-white/20 bg-white/[0.08] shadow-[0_0_28px_rgba(36,87,255,0.25)] backdrop-blur-md sm:h-14 sm:w-14`}
-          style={{ animationDuration: `${3.8 + index * 0.6}s`, animationDelay: `${index * 0.3}s` }}
+          style={{ animationDuration: `${duration}s`, animationDelay: `${delay}s` }}
         >
           <Icon className="h-5 w-5 sm:h-6 sm:w-6" style={{ color }} />
         </div>
@@ -473,21 +492,30 @@ export default function Home() {
                     'One-click action ready for your approval',
                     'Protected before funds moved',
                   ],
+                  [
+                    '09:46',
+                    'Alert sent to Telegram',
+                    'Critical signal delivered straight to your linked chat',
+                    'Delivered in real time',
+                  ],
                 ].map(([time, title, detail, status], index) => (
                   <div key={title} className="relative flex gap-6">
                     <div className="relative z-10 mt-1 h-3 w-3 shrink-0 rounded-full border-2 border-[#0c0e12] bg-[#2457ff] ring-4 ring-[#2457ff]/20" />
                     <div className="flex-1 rounded-xl border border-white/[0.08] bg-white/[0.025] p-4">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className="text-[10px] text-white/35">
-                          {time} / {index === 2 ? 'ACTION' : 'MONITORING'}
+                          {time} / {index === 2 ? 'ACTION' : index === 3 ? 'ALERT' : 'MONITORING'}
                         </span>
                         <span
-                          className={
+                          className={`flex items-center gap-1 text-[10px] ${
                             index === 1
-                              ? 'text-[10px] text-[#ffb15c]'
-                              : 'text-[10px] text-[#6dce9a]'
-                          }
+                              ? 'text-[#ffb15c]'
+                              : index === 3
+                                ? 'text-[#8b9eff]'
+                                : 'text-[#6dce9a]'
+                          }`}
                         >
+                          {index === 3 && <TelegramLogo className="h-3 w-3" />}
                           {status}
                         </span>
                       </div>
@@ -498,6 +526,43 @@ export default function Home() {
                 ))}
               </div>
             </div>
+          </div>
+        </section>
+        <section id="security" className="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:px-10">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="mb-5 text-[11px] tracking-[0.22em] text-[#8b9eff] uppercase">
+              Built on your terms
+            </p>
+            <h2 className="font-sans text-5xl leading-none tracking-[-0.04em] text-white sm:text-6xl">
+              Security that starts
+              <br />
+              <span className="text-white/40">with your wallet.</span>
+            </h2>
+            <p className="mt-6 text-sm leading-6 text-white/45">
+              Tutela never asks for a password, an email, or your seed phrase — just a signature.
+            </p>
+          </div>
+          <div className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-3">
+            {[
+              {
+                title: 'No passwords or email',
+                detail: 'Your wallet is the only account you need.',
+              },
+              {
+                title: 'One-time challenge',
+                detail: 'Each sign-in message is consumed after use.',
+              },
+              {
+                title: 'Read-only access',
+                detail: 'Tutela watches activity — it never controls your wallet.',
+              },
+            ].map((item) => (
+              <div key={item.title} className="rounded-2xl border border-white/[0.08] bg-[#101217] p-6">
+                <ShieldCheck className="h-5 w-5 text-[#6dce9a]" />
+                <h3 className="mt-4 text-sm font-medium text-white">{item.title}</h3>
+                <p className="mt-2 text-xs leading-5 text-white/45">{item.detail}</p>
+              </div>
+            ))}
           </div>
         </section>
         <PricingSection />
