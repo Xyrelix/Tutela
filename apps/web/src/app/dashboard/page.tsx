@@ -153,7 +153,7 @@ export default function DashboardPage() {
           <h1 className="font-sans text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
             {greeting()},
             <br />
-            <span className="font-mono text-white/40">
+            <span className="font-mono text-[1.2rem] text-white/40 sm:text-[1.5rem]">
               {me ? shortAddress(me.walletAddress) : '…'}
             </span>
           </h1>

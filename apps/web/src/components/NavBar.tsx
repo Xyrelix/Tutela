@@ -14,7 +14,7 @@ import {
   Wallet as WalletIcon,
 } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
-import { clearToken, getToken } from '@/lib/api-client';
+import { AUTH_CHANGE_EVENT, clearToken, getToken } from '@/lib/api-client';
 
 const LINKS: Array<{ href: string; label: string; Icon: Icon }> = [
   { href: '/dashboard', label: 'Dashboard', Icon: SquaresFour },
@@ -28,8 +28,13 @@ function useAuthed() {
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setAuthed(Boolean(getToken())), 0);
-    return () => window.clearTimeout(timer);
+    const check = () => setAuthed(Boolean(getToken()));
+    const timer = window.setTimeout(check, 0);
+    window.addEventListener(AUTH_CHANGE_EVENT, check);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener(AUTH_CHANGE_EVENT, check);
+    };
   }, []);
 
   return authed;
