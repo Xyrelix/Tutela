@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   Bell,
   Gear,
@@ -136,14 +137,21 @@ export function Sidebar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors ${
-                isActive
-                  ? 'bg-[#2457ff]/15 text-white'
-                  : 'text-white/55 hover:bg-white/5 hover:text-white'
+              className={`relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors ${
+                isActive ? 'text-white' : 'text-white/55 hover:bg-white/5 hover:text-white'
               }`}
             >
-              <link.Icon className="h-4 w-4" />
-              {link.label}
+              {isActive && (
+                <motion.span
+                  layoutId="sidebar-active-pill"
+                  className="absolute inset-0 rounded-lg bg-[#2457ff]/15"
+                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                />
+              )}
+              <span className="relative flex items-center gap-2.5">
+                <link.Icon className="h-4 w-4" />
+                {link.label}
+              </span>
             </Link>
           );
         })}
