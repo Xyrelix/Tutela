@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAxiosError } from 'axios';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Pulse,
   ArrowUpRight,
@@ -316,73 +317,93 @@ export default function WalletsPage() {
           </div>
         </section>
 
-        {notice && (
-          <button
-            type="button"
-            onClick={() => setNotice(null)}
-            className="fixed right-5 bottom-5 z-30 flex items-center gap-3 rounded-xl border border-[#6dce9a]/30 bg-[#111a17] px-4 py-3 text-xs text-[#b8f0d1] shadow-2xl"
-          >
-            <Check className="h-4 w-4" />
-            {notice}
-            <X className="ml-2 h-3.5 w-3.5 opacity-50" />
-          </button>
-        )}
-        {modalOpen && (
-          <div
-            className="fixed inset-0 z-40 grid place-items-center bg-black/70 px-5 backdrop-blur-sm"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="connect-title"
-          >
-            <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#111318] p-6 shadow-2xl">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 id="connect-title" className="text-xl font-medium">
-                    Add a wallet
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-white/45">
-                    Register an address to monitor. No signature required — Tutela only watches
-                    it, it never controls it.
-                  </p>
+        <AnimatePresence>
+          {notice && (
+            <motion.button
+              key="notice"
+              initial={{ opacity: 0, y: 16, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              type="button"
+              onClick={() => setNotice(null)}
+              className="fixed right-5 bottom-5 z-30 flex items-center gap-3 rounded-xl border border-[#6dce9a]/30 bg-[#111a17] px-4 py-3 text-xs text-[#b8f0d1] shadow-2xl"
+            >
+              <Check className="h-4 w-4" />
+              {notice}
+              <X className="ml-2 h-3.5 w-3.5 opacity-50" />
+            </motion.button>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {modalOpen && (
+            <motion.div
+              key="modal-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="fixed inset-0 z-40 grid place-items-center bg-black/70 px-5 backdrop-blur-sm"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="connect-title"
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 8 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className="w-full max-w-md rounded-2xl border border-white/10 bg-[#111318] p-6 shadow-2xl"
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 id="connect-title" className="text-xl font-medium">
+                      Add a wallet
+                    </h2>
+                    <p className="mt-2 text-sm leading-6 text-white/45">
+                      Register an address to monitor. No signature required — Tutela only watches
+                      it, it never controls it.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setModalOpen(false)}
+                    className="text-white/40 hover:text-white"
+                    aria-label="Close dialog"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="text-white/40 hover:text-white"
-                  aria-label="Close dialog"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-              <form onSubmit={handleAdd} className="mt-6 flex flex-col gap-4">
-                <input
-                  required
-                  placeholder="0x…"
-                  value={newAddress}
-                  onChange={(event) => setNewAddress(event.target.value)}
-                  className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 font-mono text-sm text-white outline-none placeholder:text-white/25"
-                />
-                <select
-                  value={newChain}
-                  onChange={(event) => setNewChain(event.target.value)}
-                  className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white outline-none"
-                >
-                  <option value="ethereum">Ethereum</option>
-                  <option value="base">Base</option>
-                </select>
-                {formError && <p className="text-xs text-[#ff6257]">{formError}</p>}
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2457ff] px-4 py-3 text-sm font-medium transition-transform hover:scale-[1.02] disabled:opacity-50"
-                >
-                  <Plus className="h-4 w-4" />
-                  {submitting ? 'Adding…' : 'Add wallet'}
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
+                <form onSubmit={handleAdd} className="mt-6 flex flex-col gap-4">
+                  <input
+                    required
+                    placeholder="0x…"
+                    value={newAddress}
+                    onChange={(event) => setNewAddress(event.target.value)}
+                    className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 font-mono text-sm text-white outline-none placeholder:text-white/25"
+                  />
+                  <select
+                    value={newChain}
+                    onChange={(event) => setNewChain(event.target.value)}
+                    className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white outline-none"
+                  >
+                    <option value="ethereum">Ethereum</option>
+                    <option value="base">Base</option>
+                  </select>
+                  {formError && <p className="text-xs text-[#ff6257]">{formError}</p>}
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2457ff] px-4 py-3 text-sm font-medium transition-transform hover:scale-[1.02] disabled:opacity-50"
+                  >
+                    <Plus className="h-4 w-4" />
+                    {submitting ? 'Adding…' : 'Add wallet'}
+                  </button>
+                </form>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </main>
   );

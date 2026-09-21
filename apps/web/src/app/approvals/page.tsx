@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRight,
   Check,
@@ -279,17 +280,24 @@ export default function ApprovalsPage() {
           )}
         </section>
 
-        {notice && (
-          <button
-            type="button"
-            onClick={() => setNotice(null)}
-            className="fixed right-5 bottom-5 z-30 flex items-center gap-3 rounded-xl border border-[#6dce9a]/30 bg-[#111a17] px-4 py-3 text-xs text-[#b8f0d1] shadow-2xl"
-          >
-            <Check className="h-4 w-4" />
-            {notice}
-            <X className="ml-2 h-3.5 w-3.5 opacity-50" />
-          </button>
-        )}
+        <AnimatePresence>
+          {notice && (
+            <motion.button
+              key="notice"
+              initial={{ opacity: 0, y: 16, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              type="button"
+              onClick={() => setNotice(null)}
+              className="fixed right-5 bottom-5 z-30 flex items-center gap-3 rounded-xl border border-[#6dce9a]/30 bg-[#111a17] px-4 py-3 text-xs text-[#b8f0d1] shadow-2xl"
+            >
+              <Check className="h-4 w-4" />
+              {notice}
+              <X className="ml-2 h-3.5 w-3.5 opacity-50" />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
     </main>
   );
