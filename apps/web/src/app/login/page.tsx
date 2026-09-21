@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle, LockKey, ShieldCheck, Wallet } from '@phosphor-icons/react';
 import { authenticateWallet, setToken } from '@/lib/api-client';
 
@@ -83,14 +84,17 @@ export default function LoginPage() {
                 {error}
               </p>
             )}
-            <button
+            <motion.button
               type="submit"
               disabled={submitting}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#2457ff] text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)] transition-transform hover:scale-[1.01] disabled:cursor-wait disabled:opacity-60"
+              whileHover={submitting ? undefined : { scale: 1.01 }}
+              whileTap={submitting ? undefined : { scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#2457ff] text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)] disabled:cursor-wait disabled:opacity-60"
             >
               <Wallet className="h-4 w-4" />
               {submitting ? 'Waiting for signature…' : 'Verify with wallet'}
-            </button>
+            </motion.button>
             <button
               type="button"
               onClick={() => connectAndVerify('walletConnect')}

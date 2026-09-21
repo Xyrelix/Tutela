@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import {
   ArrowRight,
   Bell,
@@ -175,8 +176,14 @@ export default function DashboardPage() {
         ) : (
           <>
             <div className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
-              {summaryCards.map(({ label, value, detail, Icon, color }) => (
-                <div key={label} className="bg-[#101217] p-6 sm:p-7">
+              {summaryCards.map(({ label, value, detail, Icon, color }, index) => (
+                <motion.div
+                  key={label}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.08 }}
+                  className="bg-[#101217] p-6 sm:p-7"
+                >
                   <div className="flex items-center justify-between text-[11px] text-white/40">
                     <span>{label}</span>
                     <Icon className="h-4 w-4" style={{ color }} />
@@ -187,7 +194,7 @@ export default function DashboardPage() {
                   <p className="mt-2 text-xs" style={{ color }}>
                     {detail}
                   </p>
-                </div>
+                </motion.div>
               ))}
             </div>
 
@@ -237,10 +244,16 @@ export default function DashboardPage() {
                   {recentAlerts.length === 0 ? (
                     <p className="text-xs text-white/35">No alerts yet.</p>
                   ) : (
-                    recentAlerts.map((alert) => {
+                    recentAlerts.map((alert, index) => {
                       const meta = alertMeta(alert.type);
                       return (
-                        <div key={alert.id} className="flex gap-3">
+                        <motion.div
+                          key={alert.id}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.06 }}
+                          className="flex gap-3"
+                        >
                           <span
                             className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
                             style={{ backgroundColor: meta.color }}
@@ -249,7 +262,7 @@ export default function DashboardPage() {
                             <p className="text-[11px] text-white">{alertTitle(alert.type)}</p>
                             <p className="mt-1 text-[10px] text-white/35">{alert.message}</p>
                           </div>
-                        </div>
+                        </motion.div>
                       );
                     })
                   )}

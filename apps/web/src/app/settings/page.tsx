@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import {
   CheckCircle,
   ChatCircle,
@@ -210,14 +211,17 @@ export default function SettingsPage() {
               {!me.telegramLinked && !isFreePlan && (
                 <div className="mt-6 border-t border-white/[0.07] pt-5">
                   {!linkCode ? (
-                    <button
+                    <motion.button
                       type="button"
                       onClick={handleGenerate}
                       disabled={generating}
-                      className="inline-flex items-center gap-2 rounded-lg bg-[#2457ff] px-4 py-2.5 text-xs font-medium transition-transform hover:scale-[1.02] disabled:opacity-50"
+                      whileHover={generating ? undefined : { scale: 1.02 }}
+                      whileTap={generating ? undefined : { scale: 0.97 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                      className="inline-flex items-center gap-2 rounded-lg bg-[#2457ff] px-4 py-2.5 text-xs font-medium disabled:opacity-50"
                     >
                       {generating ? 'Generating…' : 'Generate linking code'}
-                    </button>
+                    </motion.button>
                   ) : (
                     <div className="flex flex-col gap-4">
                       <div className="flex items-center gap-3">

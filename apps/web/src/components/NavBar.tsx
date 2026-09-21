@@ -17,6 +17,8 @@ import {
 import type { Icon } from '@phosphor-icons/react';
 import { AUTH_CHANGE_EVENT, clearToken, getToken } from '@/lib/api-client';
 
+const MotionLink = motion.create(Link);
+
 const LINKS: Array<{ href: string; label: string; Icon: Icon }> = [
   { href: '/dashboard', label: 'Dashboard', Icon: SquaresFour },
   { href: '/wallets', label: 'Wallets', Icon: WalletIcon },
@@ -99,12 +101,15 @@ export function NavBar() {
               <Link href="/login" className="text-white/60 transition-colors hover:text-white">
                 Log in
               </Link>
-              <Link
+              <MotionLink
                 href="/register"
-                className="hidden rounded-full bg-white px-4 py-2 font-medium text-[#090a0d] transition-transform hover:scale-[1.03] sm:block"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                className="hidden rounded-full bg-white px-4 py-2 font-medium text-[#090a0d] sm:block"
               >
                 Get started
-              </Link>
+              </MotionLink>
             </>
           )}
         </div>

@@ -193,12 +193,15 @@ export default function AlertsPage() {
             </div>
           ) : (
           <div className="space-y-3">
-            {visibleAlerts.map((alert) => {
+            {visibleAlerts.map((alert, index) => {
               const meta = alertMeta(alert.type);
               const Icon = meta.icon;
               return (
-                <article
+                <motion.article
                   key={alert.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(index, 8) * 0.04 }}
                   className="rounded-2xl border border-white/[0.08] bg-[#101217] p-5 transition-colors hover:border-white/20 sm:p-6"
                 >
                   <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
@@ -256,7 +259,7 @@ export default function AlertsPage() {
                       </div>
                     </div>
                   </div>
-                </article>
+                </motion.article>
               );
             })}
           </div>

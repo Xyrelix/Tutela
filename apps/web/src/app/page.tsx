@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   ArrowRight,
   Bell,
@@ -31,6 +32,8 @@ import {
 import ShaderDemoATC from '@/components/ui/atc-shader';
 import { HoverFooter } from '@/components/ui/hover-footer';
 import PricingSection from '@/components/ui/pricing-section';
+
+const MotionLink = motion.create(Link);
 
 const navItems = [
   { label: 'Product', href: '#product' },
@@ -317,12 +320,15 @@ export default function Home() {
             >
               Log in
             </Link>
-            <Link
+            <MotionLink
               href="/register"
-              className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-medium text-[#090a0d] transition-transform hover:scale-[1.03]"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-medium text-[#090a0d]"
             >
               Get started <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            </MotionLink>
           </div>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -372,12 +378,15 @@ export default function Home() {
                 you act before a bad approval becomes a bad day.
               </p>
               <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-                <Link
+                <MotionLink
                   href="/register"
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#2457ff] px-6 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.22)] transition-transform hover:scale-[1.03] sm:w-auto"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#2457ff] px-6 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.22)] sm:w-auto"
                 >
                   Protect a wallet <ArrowRight className="h-4 w-4" />
-                </Link>
+                </MotionLink>
                 <a
                   href="#product"
                   className="flex w-full items-center justify-center gap-2 rounded-full border border-white/10 px-6 py-3 text-sm text-white/65 transition-colors hover:border-white/25 hover:text-white sm:w-auto"

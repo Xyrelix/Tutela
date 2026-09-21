@@ -149,20 +149,23 @@ export default function WalletsPage() {
               </p>
             )}
           </div>
-          <button
+          <motion.button
             type="button"
             onClick={() => setModalOpen(true)}
             disabled={atWalletLimit}
+            whileHover={atWalletLimit ? undefined : { scale: 1.02 }}
+            whileTap={atWalletLimit ? undefined : { scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             title={
               atWalletLimit
                 ? `${me?.plan === 'free' ? 'Free' : 'Sentinel'} plan wallet limit reached`
                 : undefined
             }
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2457ff] px-5 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2457ff] px-5 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)] disabled:cursor-not-allowed disabled:opacity-40"
           >
             <WalletIcon className="h-4 w-4" />
             Add a wallet
-          </button>
+          </motion.button>
         </div>
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
@@ -241,8 +244,11 @@ export default function WalletsPage() {
                 const meta = CHAIN_META[wallet.chain] ?? CHAIN_META.ethereum;
                 const isLoginWallet = me?.walletAddress?.toLowerCase() === wallet.address.toLowerCase();
                 return (
-                  <div
+                  <motion.div
                     key={wallet.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: Math.min(index, 8) * 0.04 }}
                     className={`flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 ${index ? 'border-t border-white/[0.07]' : ''}`}
                   >
                     <div className="flex items-center gap-4">
@@ -310,7 +316,7 @@ export default function WalletsPage() {
                         <Trash className="h-3.5 w-3.5" />
                       </button>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })
             )}
@@ -391,14 +397,17 @@ export default function WalletsPage() {
                     <option value="base">Base</option>
                   </select>
                   {formError && <p className="text-xs text-[#ff6257]">{formError}</p>}
-                  <button
+                  <motion.button
                     type="submit"
                     disabled={submitting}
-                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2457ff] px-4 py-3 text-sm font-medium transition-transform hover:scale-[1.02] disabled:opacity-50"
+                    whileHover={submitting ? undefined : { scale: 1.02 }}
+                    whileTap={submitting ? undefined : { scale: 0.97 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2457ff] px-4 py-3 text-sm font-medium disabled:opacity-50"
                   >
                     <Plus className="h-4 w-4" />
                     {submitting ? 'Adding…' : 'Add wallet'}
-                  </button>
+                  </motion.button>
                 </form>
               </motion.div>
             </motion.div>

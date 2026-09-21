@@ -171,12 +171,15 @@ export default function ApprovalsPage() {
             </div>
           ) : (
           <div className="space-y-3">
-            {approvals.map((approval) => {
+            {approvals.map((approval, index) => {
               const active = approval.status === 'active';
               const isPrepared = prepared[approval.id];
               return (
-                <article
+                <motion.article
                   key={approval.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(index, 8) * 0.04 }}
                   className={`rounded-2xl border bg-[#101217] p-5 sm:p-6 ${active ? 'border-white/[0.08]' : 'border-[#6dce9a]/20'}`}
                 >
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
@@ -237,13 +240,16 @@ export default function ApprovalsPage() {
                   {active && (
                     <div className="mt-5 border-t border-white/[0.07] pt-4">
                       {!isPrepared ? (
-                        <button
+                        <motion.button
                           type="button"
                           onClick={() => handlePrepare(approval)}
-                          className="inline-flex items-center gap-2 rounded-lg bg-[#2457ff] px-4 py-2.5 text-xs font-medium transition-transform hover:scale-[1.02]"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.97 }}
+                          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                          className="inline-flex items-center gap-2 rounded-lg bg-[#2457ff] px-4 py-2.5 text-xs font-medium"
                         >
                           Prepare revoke <ArrowRight className="h-3.5 w-3.5" />
-                        </button>
+                        </motion.button>
                       ) : (
                         <div className="flex flex-col justify-between gap-3 rounded-xl border border-[#2457ff]/30 bg-[#2457ff]/[0.07] p-4 sm:flex-row sm:items-center">
                           <div>
@@ -273,7 +279,7 @@ export default function ApprovalsPage() {
                       View revoke transaction <ArrowSquareOut className="h-3 w-3" />
                     </a>
                   )}
-                </article>
+                </motion.article>
               );
             })}
           </div>
