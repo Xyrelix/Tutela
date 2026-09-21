@@ -26,7 +26,9 @@ export const requireAuth: RequestHandler = (req, res, next) => {
   const token = header.slice('Bearer '.length);
 
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET as string) as AuthPayload;
+    req.user = jwt.verify(token, process.env.JWT_SECRET as string, {
+      algorithms: ['HS256'],
+    }) as AuthPayload;
     next();
   } catch {
     res.status(401).json({ error: 'Invalid or expired token' });

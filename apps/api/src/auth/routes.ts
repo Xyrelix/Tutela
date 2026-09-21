@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import { verifyMessage } from 'ethers';
 import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import { prisma } from '../db/client';
 import { asyncHandler } from '../lib/asyncHandler';
@@ -11,6 +12,14 @@ const router = Router();
 const challenges = new Map<string, { walletAddress: string; mode: 'login' | 'register'; issuedAt: number }>();
 const CHALLENGE_TTL_MS = 5 * 60 * 1000;
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many attempts. Please try again later.' },
+});
+
 const walletAuthSchema = z.object({
   walletAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'),
 });
@@ -19,12 +28,13 @@ function signToken(user: { id: string; role: string; permissions: string[] }) {
   return jwt.sign(
     { sub: user.id, role: user.role, permissions: user.permissions },
     process.env.JWT_SECRET as string,
-    { expiresIn: (process.env.JWT_EXPIRES_IN ?? '7d') as jwt.SignOptions['expiresIn'] }
+    { algorithm: 'HS256', expiresIn: (process.env.JWT_EXPIRES_IN ?? '7d') as jwt.SignOptions['expiresIn'] }
   );
 }
 
 router.post(
   '/challenge',
+  authLimiter,
   asyncHandler(async (req, res) => {
     const parsed = walletAuthSchema.extend({ mode: z.enum(['login', 'register']) }).safeParse(req.body);
     if (!parsed.success) {
@@ -52,6 +62,7 @@ router.post(
 
 router.post(
   '/verify',
+  authLimiter,
   asyncHandler(async (req, res) => {
     const parsed = z.object({ message: z.string(), signature: z.string() }).safeParse(req.body);
     if (!parsed.success) {

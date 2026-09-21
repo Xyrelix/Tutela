@@ -14,8 +14,27 @@ dotenv.config();
 
 const app = express();
 
+const defaultOrigins = ['http://localhost:3000', 'https://tutela-guard.vercel.app'];
+const allowedOrigins =
+  process.env.CORS_ORIGIN?.split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean) ?? defaultOrigins;
+
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Requests with no Origin header (server-to-server calls like the
+      // Alchemy webhook, curl, mobile apps) aren't subject to CORS at all —
+      // this only gates browser-based cross-origin requests.
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error('Not allowed by CORS'));
+    },
+  })
+);
 app.use(
   express.json({
     verify: (req, _res, buf) => {
