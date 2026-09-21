@@ -117,14 +117,21 @@ export async function verifyWallet(message: string, signature: string): Promise<
   return data.token;
 }
 
-export async function authenticateWallet(mode: 'login' | 'register'): Promise<string> {
+export async function authenticateWallet(
+  mode: 'login' | 'register',
+  preferredConnectorId?: 'injected' | 'walletConnect'
+): Promise<string> {
   let connection = getConnection(wagmiConfig);
 
-  if (!connection.isConnected) {
+  const needsNewConnection =
+    !connection.isConnected ||
+    (preferredConnectorId !== undefined && connection.connector?.id !== preferredConnectorId);
+
+  if (needsNewConnection) {
     const hasInjectedWallet = typeof window !== 'undefined' && Boolean(window.ethereum);
-    const preferredId = hasInjectedWallet ? 'injected' : 'walletConnect';
+    const connectorId = preferredConnectorId ?? (hasInjectedWallet ? 'injected' : 'walletConnect');
     const connector =
-      wagmiConfig.connectors.find((candidate) => candidate.id === preferredId) ??
+      wagmiConfig.connectors.find((candidate) => candidate.id === connectorId) ??
       wagmiConfig.connectors[0];
 
     if (!connector) {

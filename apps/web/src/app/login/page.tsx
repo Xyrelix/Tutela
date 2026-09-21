@@ -11,22 +11,27 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
+  async function connectAndVerify(connectorId?: 'injected' | 'walletConnect') {
     setError(null);
     setSubmitting(true);
 
     try {
-      const token = await authenticateWallet('login');
+      const token = await authenticateWallet('login', connectorId);
       setToken(token);
       router.push('/dashboard');
-    } catch {
+    } catch (err) {
+      console.error('[Tutela] Wallet sign-in failed:', err);
       setError(
         'Could not verify this wallet. Make sure it has a Tutela account and approve the signature request.'
       );
     } finally {
       setSubmitting(false);
     }
+  }
+
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    void connectAndVerify();
   }
 
   return (
@@ -85,6 +90,14 @@ export default function LoginPage() {
             >
               <Wallet className="h-4 w-4" />
               {submitting ? 'Waiting for signature…' : 'Verify with wallet'}
+            </button>
+            <button
+              type="button"
+              onClick={() => connectAndVerify('walletConnect')}
+              disabled={submitting}
+              className="text-center text-xs text-white/40 transition-colors hover:text-white disabled:cursor-wait"
+            >
+              Use a different wallet with QR code
             </button>
           </form>
           <div className="mt-7 flex items-center justify-between border-t border-white/[0.08] pt-5 text-xs text-white/40">
