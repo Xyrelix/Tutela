@@ -104,7 +104,13 @@ router.post(
         res.status(409).json({ error: 'Wallet address already registered' });
         return;
       }
-      user = await prisma.user.create({ data: { walletAddress: challenge.walletAddress } });
+      user = await prisma.$transaction(async (tx) => {
+        const created = await tx.user.create({ data: { walletAddress: challenge.walletAddress } });
+        await tx.wallet.create({
+          data: { address: challenge.walletAddress, chain: 'ethereum', userId: created.id },
+        });
+        return created;
+      });
     } else if (!user) {
       res.status(401).json({ error: 'Wallet address is not registered' });
       return;

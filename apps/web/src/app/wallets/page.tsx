@@ -94,6 +94,14 @@ export default function WalletsPage() {
   }
 
   async function handleDelete(wallet: Wallet) {
+    const isLoginWallet = me?.walletAddress?.toLowerCase() === wallet.address.toLowerCase();
+    if (isLoginWallet) {
+      const confirmed = window.confirm(
+        'This is the wallet you sign in with. Removing it stops monitoring, but you can still log in with it. Continue?'
+      );
+      if (!confirmed) return;
+    }
+
     await deleteWallet(wallet.id);
     setWallets((current) => current.filter((item) => item.id !== wallet.id));
     setNotice('Wallet removed from monitoring.');
@@ -218,6 +226,7 @@ export default function WalletsPage() {
             ) : (
               filteredWallets.map((wallet, index) => {
                 const meta = CHAIN_META[wallet.chain] ?? CHAIN_META.ethereum;
+                const isLoginWallet = me?.walletAddress?.toLowerCase() === wallet.address.toLowerCase();
                 return (
                   <div
                     key={wallet.id}
@@ -238,6 +247,14 @@ export default function WalletsPage() {
                           <span className="rounded-full bg-[#6dce9a]/10 px-2 py-0.5 text-[9px] tracking-[0.12em] text-[#6dce9a] uppercase">
                             Protected
                           </span>
+                          {isLoginWallet && (
+                            <span
+                              className="rounded-full bg-[#8b9eff]/10 px-2 py-0.5 text-[9px] tracking-[0.12em] text-[#8b9eff] uppercase"
+                              title="You sign in with this wallet — removing it from monitoring won't affect your ability to log in."
+                            >
+                              Login wallet
+                            </span>
+                          )}
                         </div>
                         <p className="mt-1 text-xs text-white/35">
                           {meta.label} · Added{' '}
