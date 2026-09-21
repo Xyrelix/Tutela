@@ -147,10 +147,13 @@ model Alert {
 
 | Plan | Wallets | LLM reasoning on ambiguous cases | Telegram alerts |
 |---|---|---|---|
-| Free | 3 | — | — |
-| Sentinel / Command | Unlimited | ✅ | ✅ |
+| Scout (Free) | 3 | — | — |
+| Sentinel | 25 | ✅ | ✅ |
+| Command | Unlimited | ✅ | ✅ |
 
-Both gates are enforced server-side, not just hidden in the UI.
+All three gates are enforced server-side, not just hidden in the UI — `getWalletLimit()` in
+`lib/plans.ts` caps Scout at 3 and Sentinel at 25, and `isPro()` gates LLM reasoning and Telegram
+alerts to Sentinel/Command.
 
 ---
 

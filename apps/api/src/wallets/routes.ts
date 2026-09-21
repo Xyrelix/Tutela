@@ -4,7 +4,7 @@ import { prisma } from '../db/client';
 import { requireAuth } from '../auth/middleware';
 import { requirePermission } from '../auth/rbac';
 import { asyncHandler } from '../lib/asyncHandler';
-import { FREE_WALLET_LIMIT, isPro } from '../lib/plans';
+import { getWalletLimit } from '../lib/plans';
 
 const router = Router();
 
@@ -43,11 +43,12 @@ router.post(
       return;
     }
 
-    if (!isPro(user.plan)) {
+    const walletLimit = getWalletLimit(user.plan);
+    if (walletLimit !== null) {
       const walletCount = await prisma.wallet.count({ where: { userId: user.id } });
-      if (walletCount >= FREE_WALLET_LIMIT) {
+      if (walletCount >= walletLimit) {
         res.status(403).json({
-          error: `Free plan is limited to ${FREE_WALLET_LIMIT} monitored wallets. Upgrade to Pro for unlimited wallets.`,
+          error: `Your plan is limited to ${walletLimit} monitored wallets. Upgrade for more.`,
         });
         return;
       }

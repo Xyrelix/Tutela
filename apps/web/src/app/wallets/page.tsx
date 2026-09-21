@@ -19,6 +19,13 @@ import {
 import { deleteWallet, getMe, getToken, listWallets, Me, registerWallet, Wallet } from '@/lib/api-client';
 
 const FREE_WALLET_LIMIT = 3;
+const SENTINEL_WALLET_LIMIT = 25;
+
+function getWalletLimit(plan: string): number | null {
+  if (plan === 'free') return FREE_WALLET_LIMIT;
+  if (plan === 'sentinel') return SENTINEL_WALLET_LIMIT;
+  return null;
+}
 
 const CHAIN_META: Record<string, { label: string; color: string; mark: string }> = {
   ethereum: { label: 'Ethereum', color: '#8b9eff', mark: 'Ξ' },
@@ -60,8 +67,8 @@ export default function WalletsPage() {
       .catch(() => {});
   }, [router]);
 
-  const isFreePlan = me?.plan === 'free';
-  const atWalletLimit = isFreePlan && wallets.length >= FREE_WALLET_LIMIT;
+  const walletLimit = me ? getWalletLimit(me.plan) : null;
+  const atWalletLimit = walletLimit !== null && wallets.length >= walletLimit;
 
   const filteredWallets = wallets.filter((wallet) => {
     const matchesChain = chainFilter === 'all' || wallet.chain === chainFilter;
@@ -133,10 +140,11 @@ export default function WalletsPage() {
               Tutela monitors the wallets that matter and turns on-chain noise into decisions you
               can trust.
             </p>
-            {isFreePlan && (
+            {walletLimit !== null && (
               <p className="mt-3 text-xs text-white/35">
-                {wallets.length} of {FREE_WALLET_LIMIT} wallets used on the Free plan
-                {atWalletLimit && ' — upgrade to Pro for unlimited wallets'}.
+                {wallets.length} of {walletLimit} wallets used on the{' '}
+                {me?.plan === 'free' ? 'Free' : 'Sentinel'} plan
+                {atWalletLimit && ' — upgrade for more wallets'}.
               </p>
             )}
           </div>
@@ -144,7 +152,11 @@ export default function WalletsPage() {
             type="button"
             onClick={() => setModalOpen(true)}
             disabled={atWalletLimit}
-            title={atWalletLimit ? 'Free plan wallet limit reached' : undefined}
+            title={
+              atWalletLimit
+                ? `${me?.plan === 'free' ? 'Free' : 'Sentinel'} plan wallet limit reached`
+                : undefined
+            }
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2457ff] px-5 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
           >
             <WalletIcon className="h-4 w-4" />
