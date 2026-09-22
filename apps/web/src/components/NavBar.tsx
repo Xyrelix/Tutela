@@ -128,8 +128,9 @@ export function Sidebar() {
     router.push('/login');
   }
 
-  const isAuthPage = pathname === '/login' || pathname === '/register';
-  if (pathname === '/' || isAuthPage || !authed) {
+  const isPublicOnlyPage =
+    pathname === '/login' || pathname === '/register' || pathname === '/terms' || pathname === '/privacy';
+  if (pathname === '/' || isPublicOnlyPage || !authed) {
     return null;
   }
 
