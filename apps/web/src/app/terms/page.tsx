@@ -25,9 +25,10 @@ export default function TermsPage() {
   return (
     <main className="min-h-screen bg-[#090a0d] px-5 py-10 text-white sm:px-8 lg:px-10">
       <div className="mx-auto flex max-w-5xl gap-12">
-        <aside className="sticky top-10 hidden h-fit w-52 shrink-0 lg:block">
+        <div className="hidden w-52 shrink-0 lg:block" aria-hidden="true" />
+        <aside className="fixed top-[76px] left-[max(2.5rem,calc(50%_-_32rem))] hidden h-[calc(100vh-76px)] w-52 flex-col justify-center lg:flex">
           <p className="text-[11px] tracking-[0.16em] text-white/30 uppercase">On this page</p>
-          <nav className="mt-4 space-y-2.5 text-xs">
+          <nav className="mt-4 space-y-4 text-xs">
             {SECTIONS.map((section) => (
               <a
                 key={section.id}
@@ -53,7 +54,7 @@ export default function TermsPage() {
           </div>
 
           <div className="mt-10 flex flex-col gap-10 text-sm leading-6 text-white/60">
-            <section id="acceptance">
+            <section id="acceptance" className="scroll-mt-24">
               <h2 className="flex items-center gap-2 text-base font-medium text-white">
                 <Bullet />
                 Acceptance of these terms
@@ -64,7 +65,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section id="what-tutela-does">
+            <section id="what-tutela-does" className="scroll-mt-24">
               <h2 className="flex items-center gap-2 text-base font-medium text-white">
                 <Bullet />
                 What Tutela does
@@ -79,7 +80,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section id="access-and-accounts">
+            <section id="access-and-accounts" className="scroll-mt-24">
               <h2 className="flex items-center gap-2 text-base font-medium text-white">
                 <Bullet />
                 Access and accounts
@@ -91,7 +92,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section id="plans-and-limits">
+            <section id="plans-and-limits" className="scroll-mt-24">
               <h2 className="flex items-center gap-2 text-base font-medium text-white">
                 <Bullet />
                 Plans and limits
@@ -104,7 +105,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section id="acceptable-use">
+            <section id="acceptable-use" className="scroll-mt-24">
               <h2 className="flex items-center gap-2 text-base font-medium text-white">
                 <Bullet />
                 Acceptable use
@@ -116,7 +117,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section id="no-guarantee">
+            <section id="no-guarantee" className="scroll-mt-24">
               <h2 className="flex items-center gap-2 text-base font-medium text-white">
                 <Bullet />
                 No financial or security guarantee
@@ -129,7 +130,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section id="third-party-services">
+            <section id="third-party-services" className="scroll-mt-24">
               <h2 className="flex items-center gap-2 text-base font-medium text-white">
                 <Bullet />
                 Third-party services
@@ -142,7 +143,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section id="limitation-of-liability">
+            <section id="limitation-of-liability" className="scroll-mt-24">
               <h2 className="flex items-center gap-2 text-base font-medium text-white">
                 <Bullet />
                 Limitation of liability
@@ -155,7 +156,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section id="changes-to-terms">
+            <section id="changes-to-terms" className="scroll-mt-24">
               <h2 className="flex items-center gap-2 text-base font-medium text-white">
                 <Bullet />
                 Changes to these terms
@@ -166,7 +167,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section id="contact">
+            <section id="contact" className="scroll-mt-24">
               <h2 className="flex items-center gap-2 text-base font-medium text-white">
                 <Bullet />
                 Contact
