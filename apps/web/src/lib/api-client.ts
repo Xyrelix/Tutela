@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { connect, getConnection, signMessage } from 'wagmi/actions';
-import { wagmiConfig } from './wagmi';
+import { isMobileBrowser, wagmiConfig } from './wagmi';
 
 declare global {
   interface Window {
@@ -15,16 +15,16 @@ export const AUTH_CHANGE_EVENT = 'tutela-auth-changed';
 
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return window.localStorage.getItem(TOKEN_KEY);
+  return window.sessionStorage.getItem(TOKEN_KEY);
 }
 
 export function setToken(token: string): void {
-  window.localStorage.setItem(TOKEN_KEY, token);
+  window.sessionStorage.setItem(TOKEN_KEY, token);
   window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
 }
 
 export function clearToken(): void {
-  window.localStorage.removeItem(TOKEN_KEY);
+  window.sessionStorage.removeItem(TOKEN_KEY);
   window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
 }
 
@@ -120,9 +120,15 @@ export async function verifyWallet(message: string, signature: string): Promise<
   return data.token;
 }
 
+interface ConnectorEmitter {
+  on(event: 'message', listener: (payload: { type: string; data?: unknown }) => void): void;
+  off(event: 'message', listener: (payload: { type: string; data?: unknown }) => void): void;
+}
+
 export async function authenticateWallet(
   mode: 'login' | 'register',
-  preferredConnectorId?: 'injected' | 'walletConnect'
+  preferredConnectorId?: 'injected' | 'walletConnect',
+  onWalletConnectUri?: (uri: string) => void
 ): Promise<string> {
   let connection = getConnection(wagmiConfig);
 
@@ -141,7 +147,27 @@ export async function authenticateWallet(
       throw new Error('NO_WALLET');
     }
 
-    await connect(wagmiConfig, { connector });
+    // Only mobile needs our own display_uri handoff — on desktop, WalletConnect's
+    // own QR modal already handles this, so leave it as the sole UI there.
+    const shouldHandleDisplayUri = Boolean(onWalletConnectUri) && isMobileBrowser();
+    const emitter = (connector as unknown as { emitter?: ConnectorEmitter }).emitter;
+    const handleMessage = (payload: { type: string; data?: unknown }) => {
+      if (payload.type === 'display_uri' && typeof payload.data === 'string') {
+        onWalletConnectUri?.(payload.data);
+      }
+    };
+
+    if (emitter && shouldHandleDisplayUri) {
+      emitter.on('message', handleMessage);
+    }
+
+    try {
+      await connect(wagmiConfig, { connector });
+    } finally {
+      if (emitter && shouldHandleDisplayUri) {
+        emitter.off('message', handleMessage);
+      }
+    }
     connection = getConnection(wagmiConfig);
   }
 

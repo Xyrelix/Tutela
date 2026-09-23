@@ -6,18 +6,20 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle, LockKey, ShieldCheck, Wallet } from '@phosphor-icons/react';
 import { authenticateWallet, setToken } from '@/lib/api-client';
+import { WalletConnectPrompt } from '@/components/WalletConnectPrompt';
 
 export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [wcUri, setWcUri] = useState<string | null>(null);
 
   async function connectAndVerify(connectorId?: 'injected' | 'walletConnect') {
     setError(null);
     setSubmitting(true);
 
     try {
-      const token = await authenticateWallet('login', connectorId);
+      const token = await authenticateWallet('login', connectorId, setWcUri);
       setToken(token);
       router.push('/dashboard');
     } catch (err) {
@@ -27,6 +29,7 @@ export default function LoginPage() {
       );
     } finally {
       setSubmitting(false);
+      setWcUri(null);
     }
   }
 
@@ -118,6 +121,7 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+      {wcUri && <WalletConnectPrompt uri={wcUri} onClose={() => setWcUri(null)} />}
     </main>
   );
 }
