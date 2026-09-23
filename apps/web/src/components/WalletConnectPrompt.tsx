@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowSquareOut, Copy, X } from '@phosphor-icons/react';
 
@@ -21,6 +21,7 @@ function toAndroidIntentUrl(uri: string, fallbackUrl: string): string {
 
 export function WalletConnectPrompt({ uri, onClose }: { uri: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const openHref =
     typeof window !== 'undefined' && isAndroid()
@@ -32,6 +33,20 @@ export function WalletConnectPrompt({ uri, onClose }: { uri: string; onClose: ()
       await navigator.clipboard.writeText(uri);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
+      return;
+    } catch {
+      // Clipboard API can be blocked in some mobile browser contexts —
+      // fall back to the older select-and-copy approach below.
+    }
+    try {
+      const textarea = textareaRef.current;
+      if (textarea) {
+        textarea.focus();
+        textarea.select();
+        document.execCommand('copy');
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 2000);
+      }
     } catch {
       setCopied(false);
     }
@@ -87,6 +102,19 @@ export function WalletConnectPrompt({ uri, onClose }: { uri: string; onClose: ()
               <Copy className="h-3.5 w-3.5" />
               {copied ? 'Copied to clipboard' : 'Copy connection link'}
             </button>
+          </div>
+          <div className="mt-4">
+            <p className="text-[10px] tracking-[0.14em] text-white/30 uppercase">
+              Or select the link manually
+            </p>
+            <textarea
+              ref={textareaRef}
+              readOnly
+              value={uri}
+              rows={3}
+              onFocus={(event) => event.currentTarget.select()}
+              className="mt-2 w-full resize-none rounded-lg border border-white/10 bg-black/30 p-2.5 font-mono text-[10px] leading-4 break-all text-white/50"
+            />
           </div>
         </motion.div>
       </motion.div>
