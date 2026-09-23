@@ -4,6 +4,21 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowSquareOut, Copy, X } from '@phosphor-icons/react';
 
+function isAndroid(): boolean {
+  return typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent);
+}
+
+// Android Chrome only reliably invokes its "open with" app chooser (or falls
+// back gracefully) for custom URI schemes wrapped in an explicit intent://
+// link — a plain `wc:` href can silently no-op even when a matching app is
+// installed. See https://developer.chrome.com/docs/multidevice/android/intents
+function toAndroidIntentUrl(uri: string, fallbackUrl: string): string {
+  const separatorIndex = uri.indexOf(':');
+  const scheme = separatorIndex === -1 ? 'wc' : uri.slice(0, separatorIndex);
+  const rest = separatorIndex === -1 ? uri : uri.slice(separatorIndex + 1);
+  return `intent:${rest}#Intent;scheme=${scheme};action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};end`;
+}
+
 export function WalletConnectPrompt({ uri, onClose }: { uri: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
 
@@ -18,7 +33,7 @@ export function WalletConnectPrompt({ uri, onClose }: { uri: string; onClose: ()
   }
 
   function handleOpen() {
-    window.location.href = uri;
+    window.location.href = isAndroid() ? toAndroidIntentUrl(uri, window.location.href) : uri;
   }
 
   return (
