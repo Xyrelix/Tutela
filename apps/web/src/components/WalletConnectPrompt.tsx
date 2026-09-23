@@ -22,6 +22,11 @@ function toAndroidIntentUrl(uri: string, fallbackUrl: string): string {
 export function WalletConnectPrompt({ uri, onClose }: { uri: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
 
+  const openHref =
+    typeof window !== 'undefined' && isAndroid()
+      ? toAndroidIntentUrl(uri, window.location.href)
+      : uri;
+
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(uri);
@@ -30,10 +35,6 @@ export function WalletConnectPrompt({ uri, onClose }: { uri: string; onClose: ()
     } catch {
       setCopied(false);
     }
-  }
-
-  function handleOpen() {
-    window.location.href = isAndroid() ? toAndroidIntentUrl(uri, window.location.href) : uri;
   }
 
   return (
@@ -72,13 +73,13 @@ export function WalletConnectPrompt({ uri, onClose }: { uri: string; onClose: ()
             Tap below to open this connection request in a wallet app installed on your phone.
           </p>
           <div className="mt-6 flex flex-col gap-3">
-            <button
-              onClick={handleOpen}
+            <a
+              href={openHref}
               className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#2457ff] text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)]"
             >
               <ArrowSquareOut className="h-4 w-4" />
               Open wallet app
-            </button>
+            </a>
             <button
               onClick={handleCopy}
               className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-white/10 text-xs text-white/60 transition-colors hover:border-white/25 hover:text-white"
