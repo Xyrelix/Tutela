@@ -119,7 +119,7 @@ export default function ApprovalsPage() {
               <span className="h-1.5 w-1.5 rounded-full bg-[#ffb15c]" />
               Approval control
             </div>
-            <h1 className="font-sans text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
+            <h1 className="font-sans text-4xl leading-none tracking-[-0.04em] break-words sm:text-5xl md:text-6xl">
               Know what can
               <br />
               <span className="text-white/40">move your funds.</span>
@@ -183,15 +183,17 @@ export default function ApprovalsPage() {
                   className={`rounded-2xl border bg-[#101217] p-5 sm:p-6 ${active ? 'border-white/[0.08]' : 'border-[#6dce9a]/20'}`}
                 >
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                    <div className="flex items-start gap-4">
+                    <div className="flex min-w-0 items-start gap-4">
                       <span
                         className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl border ${active ? 'border-[#ffb15c]/25 bg-[#ffb15c]/[0.08] text-[#ffb15c]' : 'border-[#6dce9a]/25 bg-[#6dce9a]/[0.08] text-[#6dce9a]'}`}
                       >
                         <Key className="h-4 w-4" />
                       </span>
-                      <div>
+                      <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                          <p className="text-base font-medium">{approval.tokenAddress}</p>
+                          <p className="break-all text-base font-medium">
+                            {approval.tokenAddress}
+                          </p>
                           <span
                             className={`rounded-full px-2 py-0.5 text-[9px] tracking-[0.12em] uppercase ${active ? 'bg-[#ffb15c]/10 text-[#ffcb8b]' : 'bg-[#6dce9a]/10 text-[#6dce9a]'}`}
                           >
@@ -200,9 +202,11 @@ export default function ApprovalsPage() {
                         </div>
                         <p className="mt-2 text-xs text-white/40">
                           Spender{' '}
-                          <span className="font-mono text-white/60">{approval.spender}</span>
+                          <span className="font-mono break-all text-white/60">
+                            {approval.spender}
+                          </span>
                         </p>
-                        <p className="mt-1 text-xs text-white/35">
+                        <p className="mt-1 text-xs break-all text-white/35">
                           {approval.wallet.address} · {approval.wallet.chain} · Detected{' '}
                           {new Date(approval.detectedAt).toLocaleDateString('en-US', {
                             month: 'short',

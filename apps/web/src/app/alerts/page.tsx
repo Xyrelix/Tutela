@@ -114,7 +114,7 @@ export default function AlertsPage() {
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#ff6257]" />
               Security operations
             </div>
-            <h1 className="font-sans text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
+            <h1 className="font-sans text-4xl leading-none tracking-[-0.04em] break-words sm:text-5xl md:text-6xl">
               Stay ahead of
               <br />
               <span className="text-white/40">the important things.</span>
@@ -236,9 +236,11 @@ export default function AlertsPage() {
                         {alert.message}
                       </p>
                       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.07] pt-4">
-                        <p className="text-xs text-white/35">
-                          <span className="font-mono text-white/55">{alert.wallet.address}</span> ·{' '}
-                          {alert.wallet.chain} · {alert.sent ? 'Delivered' : 'Awaiting review'}
+                        <p className="min-w-0 text-xs text-white/35">
+                          <span className="font-mono break-all text-white/55">
+                            {alert.wallet.address}
+                          </span>{' '}
+                          · {alert.wallet.chain} · {alert.sent ? 'Delivered' : 'Awaiting review'}
                         </p>
                         <div className="flex items-center gap-3">
                           <button

@@ -4,15 +4,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Bell,
   Gear,
   Key,
+  List,
   ShieldWarning,
   SignOut,
   SquaresFour,
   Wallet as WalletIcon,
+  X,
 } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
 import { AUTH_CHANGE_EVENT, clearToken, getToken } from '@/lib/api-client';
@@ -43,9 +45,30 @@ function useAuthed() {
   return authed;
 }
 
+const SIDEBAR_TOGGLE_EVENT = 'tutela-sidebar-toggle';
+let sidebarOpenState = false;
+
+function setSidebarOpen(open: boolean) {
+  sidebarOpenState = open;
+  window.dispatchEvent(new CustomEvent<boolean>(SIDEBAR_TOGGLE_EVENT, { detail: open }));
+}
+
+function useSidebarOpen() {
+  const [open, setOpen] = useState(sidebarOpenState);
+
+  useEffect(() => {
+    const handler = (event: Event) => setOpen((event as CustomEvent<boolean>).detail);
+    window.addEventListener(SIDEBAR_TOGGLE_EVENT, handler);
+    return () => window.removeEventListener(SIDEBAR_TOGGLE_EVENT, handler);
+  }, []);
+
+  return open;
+}
+
 export function NavBar() {
   const pathname = usePathname();
   const authed = useAuthed();
+  const sidebarOpen = useSidebarOpen();
 
   if (pathname === '/') {
     return null;
@@ -55,7 +78,7 @@ export function NavBar() {
 
   if (isAuthPage) {
     return (
-      <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#090a0d]">
+      <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#090a0d]">
         <nav className="mx-auto flex max-w-5xl items-center justify-center px-5 py-5 sm:px-8 lg:px-10">
           <Link href="/" aria-label="Tutela home">
             <Image
@@ -72,21 +95,33 @@ export function NavBar() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#090a0d]">
+    <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#090a0d]">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
-        <Link
-          href="/"
-          aria-label="Tutela home"
-          className="md:absolute md:top-1/2 md:left-[112px] md:-translate-x-1/2 md:-translate-y-1/2"
-        >
-          <Image
-            src="/Tutela_nav.png"
-            alt="Tutela"
-            width={610}
-            height={163}
-            className="h-[31px] w-auto object-contain"
-          />
-        </Link>
+        <div className="flex items-center gap-3">
+          {authed && (
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+              className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/60 transition-colors hover:border-white/25 hover:text-white md:hidden"
+            >
+              {sidebarOpen ? <X className="h-4 w-4" /> : <List className="h-4 w-4" />}
+            </button>
+          )}
+          <Link
+            href="/"
+            aria-label="Tutela home"
+            className="md:absolute md:top-1/2 md:left-[112px] md:-translate-x-1/2 md:-translate-y-1/2"
+          >
+            <Image
+              src="/Tutela_nav.png"
+              alt="Tutela"
+              width={610}
+              height={163}
+              className="h-[31px] w-auto object-contain"
+            />
+          </Link>
+        </div>
         <div className="flex items-center gap-5 text-[13px] md:ml-auto">
           {authed ? (
             <Link
@@ -122,8 +157,10 @@ export function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const authed = useAuthed();
+  const sidebarOpen = useSidebarOpen();
 
   function handleLogout() {
+    setSidebarOpen(false);
     clearToken();
     router.push('/login');
   }
@@ -135,40 +172,59 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="sticky top-[76px] z-20 hidden h-[calc(100vh-76px)] w-56 shrink-0 flex-col overflow-y-auto border-r border-white/[0.08] bg-[#0c0e12] px-4 py-6 md:flex">
-      <nav className="space-y-1 text-[13px]">
-        {LINKS.map((link) => {
-          const isActive = pathname === link.href;
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors ${
-                isActive ? 'text-white' : 'text-white/55 hover:bg-white/5 hover:text-white'
-              }`}
-            >
-              {isActive && (
-                <motion.span
-                  layoutId="sidebar-active-pill"
-                  className="absolute inset-0 rounded-lg bg-[#2457ff]/15"
-                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                />
-              )}
-              <span className="relative flex items-center gap-2.5">
-                <link.Icon className="h-4 w-4" />
-                {link.label}
-              </span>
-            </Link>
-          );
-        })}
-      </nav>
-      <button
-        onClick={handleLogout}
-        className="mt-auto flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[13px] text-white/55 transition-colors hover:bg-white/5 hover:text-white"
+    <>
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 z-30 bg-black/60 md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      <aside
+        className={`fixed top-[76px] left-0 z-[35] flex h-[calc(100vh-76px)] w-64 shrink-0 flex-col overflow-y-auto border-r border-white/[0.08] bg-[#0c0e12] px-4 py-6 transition-transform duration-200 md:sticky md:z-20 md:w-56 md:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       >
-        <SignOut className="h-4 w-4" />
-        Log out
-      </button>
-    </aside>
+        <nav className="space-y-1 text-[13px]">
+          {LINKS.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setSidebarOpen(false)}
+                className={`relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors ${
+                  isActive ? 'text-white' : 'text-white/55 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="sidebar-active-pill"
+                    className="absolute inset-0 rounded-lg bg-[#2457ff]/15"
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <span className="relative flex items-center gap-2.5">
+                  <link.Icon className="h-4 w-4" />
+                  {link.label}
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
+        <button
+          onClick={handleLogout}
+          className="mt-auto flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[13px] text-white/55 transition-colors hover:bg-white/5 hover:text-white"
+        >
+          <SignOut className="h-4 w-4" />
+          Log out
+        </button>
+      </aside>
+    </>
   );
 }

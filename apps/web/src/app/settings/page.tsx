@@ -111,7 +111,7 @@ export default function SettingsPage() {
             <span className="h-1.5 w-1.5 rounded-full bg-[#8b9eff]" />
             Account
           </div>
-          <h1 className="font-sans text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
+          <h1 className="font-sans text-4xl leading-none tracking-[-0.04em] break-words sm:text-5xl md:text-6xl">
             Your account,
             <br />
             <span className="text-white/40">your controls.</span>
@@ -157,7 +157,7 @@ export default function SettingsPage() {
                 Wallet address
               </p>
               <div className="mt-3 flex flex-wrap items-center gap-3">
-                <span className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2 font-mono text-sm text-white/80">
+                <span className="min-w-0 max-w-full break-all rounded-lg border border-white/10 bg-white/[0.04] px-4 py-2 font-mono text-sm text-white/80">
                   {me.walletAddress}
                 </span>
                 <button

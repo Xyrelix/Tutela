@@ -151,7 +151,7 @@ export default function DashboardPage() {
             <span className="h-1.5 w-1.5 rounded-full bg-[#6dce9a]" />
             Overview
           </div>
-          <h1 className="font-sans text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
+          <h1 className="font-sans text-4xl leading-none tracking-[-0.04em] break-words sm:text-5xl md:text-6xl">
             {greeting()},
             <br />
             <span className="font-mono text-[1.2rem] text-white/40 sm:text-[1.5rem]">

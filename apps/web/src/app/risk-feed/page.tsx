@@ -98,7 +98,7 @@ export default function RiskFeedPage() {
               <span className="h-1.5 w-1.5 rounded-full bg-[#ffb15c]" />
               Live risk intelligence
             </div>
-            <h1 className="font-sans text-5xl leading-none tracking-[-0.04em] sm:text-6xl">
+            <h1 className="font-sans text-4xl leading-none tracking-[-0.04em] break-words sm:text-5xl md:text-6xl">
               The signal
               <br />
               <span className="text-white/40">behind every sign.</span>
@@ -189,16 +189,16 @@ export default function RiskFeedPage() {
                   className="rounded-2xl border border-white/[0.08] bg-[#101217] p-5 transition-colors hover:border-white/20 sm:p-6"
                 >
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="flex items-start gap-4">
+                    <div className="flex min-w-0 items-start gap-4">
                       <span
                         className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.04]"
                         style={{ color: meta.color }}
                       >
                         <Icon className="h-4 w-4" />
                       </span>
-                      <div>
+                      <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-mono text-sm">{scan.wallet.address}</p>
+                          <p className="font-mono text-sm break-all">{scan.wallet.address}</p>
                           <span className="text-[10px] text-white/30">{scan.wallet.chain}</span>
                         </div>
                         <p className="mt-2 text-sm text-white/75">{scan.verdict}</p>
