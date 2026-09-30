@@ -3,6 +3,7 @@ import { prisma } from '../db/client';
 import { requireAuth } from '../auth/middleware';
 import { requirePermission } from '../auth/rbac';
 import { asyncHandler } from '../lib/asyncHandler';
+import { getContractLabel } from '../lib/contract-labels';
 
 const router = Router();
 router.use(requireAuth, requirePermission('alert:read'));
@@ -16,7 +17,12 @@ router.get(
       orderBy: { createdAt: 'desc' },
       take: 100,
     });
-    res.json(scans);
+    res.json(
+      scans.map((scan) => ({
+        ...scan,
+        spenderLabel: scan.spender ? getContractLabel(scan.spender) : null,
+      }))
+    );
   })
 );
 
@@ -29,7 +35,12 @@ router.get(
       orderBy: { detectedAt: 'desc' },
       take: 100,
     });
-    res.json(approvals);
+    res.json(
+      approvals.map((approval) => ({
+        ...approval,
+        spenderLabel: getContractLabel(approval.spender),
+      }))
+    );
   })
 );
 
@@ -42,7 +53,12 @@ router.get(
       orderBy: { createdAt: 'desc' },
       take: 100,
     });
-    res.json(alerts);
+    res.json(
+      alerts.map((alert) => ({
+        ...alert,
+        spenderLabel: alert.spender ? getContractLabel(alert.spender) : null,
+      }))
+    );
   })
 );
 

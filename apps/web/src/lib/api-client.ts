@@ -48,10 +48,17 @@ export interface Wallet {
   createdAt: string;
 }
 
+export interface ContractLabel {
+  name: string;
+  domain: string;
+}
+
 export interface Scan {
   id: string;
   walletId: string;
   txHash: string | null;
+  spender: string | null;
+  spenderLabel: ContractLabel | null;
   riskScore: number;
   verdict: string;
   reasoning: string | null;
@@ -63,6 +70,7 @@ export interface Approval {
   id: string;
   walletId: string;
   spender: string;
+  spenderLabel: ContractLabel | null;
   tokenAddress: string;
   amount: string;
   status: string;
@@ -76,6 +84,8 @@ export interface Alert {
   walletId: string;
   type: string;
   message: string;
+  spender: string | null;
+  spenderLabel: ContractLabel | null;
   sent: boolean;
   createdAt: string;
   wallet: { address: string; chain: string };

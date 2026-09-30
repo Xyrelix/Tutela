@@ -199,9 +199,19 @@ export default function ApprovalsPage() {
                           >
                             {active ? 'Needs review' : 'Protected'}
                           </span>
+                          {approval.spenderLabel && (
+                            <span className="rounded-full bg-[#8b9eff]/10 px-2 py-0.5 text-[9px] tracking-[0.12em] text-[#8b9eff] uppercase">
+                              {approval.spenderLabel.name}
+                            </span>
+                          )}
                         </div>
                         <p className="mt-2 text-xs text-white/40">
                           Spender{' '}
+                          {approval.spenderLabel && (
+                            <span className="text-white/60">
+                              {approval.spenderLabel.name} ({approval.spenderLabel.domain}) ·{' '}
+                            </span>
+                          )}
                           <span className="font-mono break-all text-white/60">
                             {approval.spender}
                           </span>

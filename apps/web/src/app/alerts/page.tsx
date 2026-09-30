@@ -221,6 +221,11 @@ export default function AlertsPage() {
                           >
                             {meta.label}
                           </span>
+                          {alert.spenderLabel && (
+                            <span className="rounded-full bg-[#8b9eff]/10 px-2 py-0.5 text-[9px] tracking-[0.12em] text-[#8b9eff] uppercase">
+                              {alert.spenderLabel.name}
+                            </span>
+                          )}
                         </div>
                         <time className="flex items-center gap-1 text-[10px] text-white/30">
                           <Clock className="h-3 w-3" />
@@ -236,11 +241,18 @@ export default function AlertsPage() {
                         {alert.message}
                       </p>
                       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.07] pt-4">
-                        <p className="min-w-0 text-xs text-white/35">
-                          <span className="font-mono break-all text-white/55">
-                            {alert.wallet.address}
-                          </span>{' '}
+                        <p className="min-w-0 break-all text-xs text-white/35">
+                          <span className="font-mono text-white/55">{alert.wallet.address}</span>{' '}
                           · {alert.wallet.chain} · {alert.sent ? 'Delivered' : 'Awaiting review'}
+                          {alert.spender && (
+                            <>
+                              {' '}
+                              · Spender{' '}
+                              <span className="font-mono text-white/55">
+                                {alert.spenderLabel ? alert.spenderLabel.name : alert.spender}
+                              </span>
+                            </>
+                          )}
                         </p>
                         <div className="flex items-center gap-3">
                           <button

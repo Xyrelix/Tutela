@@ -200,11 +200,24 @@ export default function RiskFeedPage() {
                         <div className="flex flex-wrap items-center gap-2">
                           <p className="font-mono text-sm break-all">{scan.wallet.address}</p>
                           <span className="text-[10px] text-white/30">{scan.wallet.chain}</span>
+                          {scan.spenderLabel && (
+                            <span className="rounded-full bg-[#8b9eff]/10 px-2 py-0.5 text-[9px] tracking-[0.12em] text-[#8b9eff] uppercase">
+                              {scan.spenderLabel.name}
+                            </span>
+                          )}
                         </div>
                         <p className="mt-2 text-sm text-white/75">{scan.verdict}</p>
                         <p className="mt-1 max-w-2xl text-xs leading-5 text-white/40">
                           {scan.reasoning}
                         </p>
+                        {scan.spender && (
+                          <p className="mt-1 break-all text-xs text-white/30">
+                            Spender{' '}
+                            <span className="font-mono">
+                              {scan.spenderLabel ? scan.spenderLabel.name : scan.spender}
+                            </span>
+                          </p>
+                        )}
                       </div>
                     </div>
                     <div className="flex items-center justify-between gap-8 border-t border-white/[0.07] pt-4 lg:border-t-0 lg:pt-0">

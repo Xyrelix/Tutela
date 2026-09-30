@@ -113,7 +113,7 @@ router.post(
       }
 
       await prisma.scan.create({
-        data: { walletId: wallet.id, txHash: log.transaction.hash, riskScore, verdict, reasoning },
+        data: { walletId: wallet.id, txHash: log.transaction.hash, spender, riskScore, verdict, reasoning },
       });
 
       if (verdict !== 'safe') {
@@ -126,6 +126,7 @@ router.post(
             walletId: wallet.id,
             type: verdict === 'malicious' ? 'drainer_contract' : 'risky_approval',
             message: reasoning,
+            spender,
           },
         });
 
