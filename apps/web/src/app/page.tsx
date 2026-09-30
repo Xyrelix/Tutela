@@ -88,11 +88,6 @@ function BrowserPreview() {
       <div className="absolute -inset-8 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(36,87,255,0.22),transparent_62%)] blur-2xl" />
       <div className="overflow-hidden rounded-[18px] border border-white/[0.14] bg-[#101217] shadow-[0_30px_100px_rgba(0,0,0,0.48)]">
         <div className="flex h-11 items-center justify-between border-b border-white/[0.08] bg-[#15171d] px-4">
-          <div className="flex gap-1.5">
-            <i className="h-2.5 w-2.5 rounded-full bg-[#ff6257]" />
-            <i className="h-2.5 w-2.5 rounded-full bg-[#f9bd4f]" />
-            <i className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-          </div>
           <div className="hidden items-center gap-2 rounded-md border border-white/[0.08] bg-black/20 px-4 py-1 text-[10px] text-white/30 sm:flex">
             app.tutela.security / wallets
           </div>
