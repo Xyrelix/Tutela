@@ -17,6 +17,9 @@ export default function RegisterPage() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // navigator is unavailable during SSR, so this must run after mount to
+    // avoid a hydration mismatch between server and client markup.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(isMobileBrowser());
   }, []);
 
