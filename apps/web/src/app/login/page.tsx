@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle, LockKey, ShieldCheck, Wallet } from '@phosphor-icons/react';
+import { ArrowRight, CheckCircle, DeviceMobile, LockKey, ShieldCheck, Wallet } from '@phosphor-icons/react';
 import { authenticateWallet, setToken } from '@/lib/api-client';
+import { isMobileBrowser } from '@/lib/wagmi';
 import { WalletConnectPrompt } from '@/components/WalletConnectPrompt';
 
 export default function LoginPage() {
@@ -13,6 +14,11 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [wcUri, setWcUri] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(isMobileBrowser());
+  }, []);
 
   async function connectAndVerify(connectorId?: 'injected' | 'walletConnect') {
     setError(null);
@@ -81,6 +87,13 @@ export default function LoginPage() {
           <p className="mt-3 text-sm leading-6 text-white/45">
             Connect your wallet and approve a signature to access your protection console.
           </p>
+          {isMobile && (
+            <p className="mt-5 flex items-start gap-2 rounded-lg border border-[#2457ff]/20 bg-[#2457ff]/[0.06] px-3 py-3 text-xs leading-5 text-white/55">
+              <DeviceMobile className="mt-0.5 h-4 w-4 shrink-0 text-[#8b9eff]" />
+              On mobile, open this page inside your wallet app&apos;s own browser (e.g. Trust
+              Wallet or MetaMask → Browser tab) for the most reliable connection.
+            </p>
+          )}
           <form onSubmit={handleSubmit} className="mt-7 flex flex-col gap-4">
             {error && (
               <p className="rounded-lg border border-[#ff6257]/30 bg-[#ff6257]/[0.08] px-3 py-3 text-xs leading-5 text-[#ffaaa3]">
