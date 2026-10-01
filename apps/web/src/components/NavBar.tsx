@@ -173,6 +173,8 @@ export function Sidebar() {
 
   return (
     <>
+      <div className="hidden w-56 shrink-0 md:block" aria-hidden="true" />
+
       <AnimatePresence>
         {sidebarOpen && (
           <motion.div
@@ -186,7 +188,7 @@ export function Sidebar() {
       </AnimatePresence>
 
       <aside
-        className={`fixed top-[76px] left-0 z-[35] flex h-[calc(100vh-76px)] w-64 shrink-0 flex-col overflow-y-auto border-r border-white/[0.08] bg-[#0c0e12] px-4 py-6 transition-transform duration-200 md:sticky md:z-20 md:w-56 md:translate-x-0 ${
+        className={`fixed top-[76px] left-0 z-[35] flex h-[calc(100vh-76px)] w-64 shrink-0 flex-col overflow-y-auto border-r border-white/[0.08] bg-[#0c0e12] px-4 py-6 transition-transform duration-200 md:z-20 md:w-56 md:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
