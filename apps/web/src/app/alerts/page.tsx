@@ -18,6 +18,7 @@ import {
 } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
 import { Alert, getToken, listAlerts } from '@/lib/api-client';
+import { shortAddress } from '@/lib/format';
 
 function alertMeta(type: string) {
   if (type.includes('critical')) return { label: 'Critical', color: '#ff6257', icon: ShieldWarning };
@@ -241,15 +242,17 @@ export default function AlertsPage() {
                         {alert.message}
                       </p>
                       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.07] pt-4">
-                        <p className="min-w-0 flex-1 break-all text-xs text-white/35">
-                          <span className="font-mono text-white/55">{alert.wallet.address}</span>{' '}
+                        <p className="min-w-0 flex-1 text-xs text-white/35">
+                          <span className="font-mono text-white/55" title={alert.wallet.address}>
+                            {shortAddress(alert.wallet.address)}
+                          </span>{' '}
                           · {alert.wallet.chain} · {alert.sent ? 'Delivered' : 'Awaiting review'}
                           {alert.spender && (
                             <>
                               {' '}
                               · Spender{' '}
-                              <span className="font-mono text-white/55">
-                                {alert.spenderLabel ? alert.spenderLabel.name : alert.spender}
+                              <span className="font-mono text-white/55" title={alert.spender}>
+                                {alert.spenderLabel ? alert.spenderLabel.name : shortAddress(alert.spender)}
                               </span>
                             </>
                           )}

@@ -23,6 +23,7 @@ import {
   prepareRevoke,
   UnsignedTransaction,
 } from '@/lib/api-client';
+import { shortAddress } from '@/lib/format';
 
 export default function ApprovalsPage() {
   const router = useRouter();
@@ -190,7 +191,9 @@ export default function ApprovalsPage() {
                         <Key className="h-4 w-4" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="break-all text-base font-medium">{approval.tokenAddress}</p>
+                        <p className="font-mono text-base font-medium" title={approval.tokenAddress}>
+                          {shortAddress(approval.tokenAddress)}
+                        </p>
                         <div className="mt-1.5 flex flex-wrap items-center gap-2">
                           <span
                             className={`rounded-full px-2 py-0.5 text-[9px] tracking-[0.12em] uppercase ${active ? 'bg-[#ffb15c]/10 text-[#ffcb8b]' : 'bg-[#6dce9a]/10 text-[#6dce9a]'}`}
@@ -210,12 +213,15 @@ export default function ApprovalsPage() {
                               {approval.spenderLabel.name} ({approval.spenderLabel.domain}) ·{' '}
                             </span>
                           )}
-                          <span className="font-mono break-all text-white/60">
-                            {approval.spender}
+                          <span className="font-mono text-white/60" title={approval.spender}>
+                            {shortAddress(approval.spender)}
                           </span>
                         </p>
-                        <p className="mt-1 text-xs break-all text-white/35">
-                          {approval.wallet.address} · {approval.wallet.chain} · Detected{' '}
+                        <p className="mt-1 text-xs text-white/35">
+                          <span title={approval.wallet.address}>
+                            {shortAddress(approval.wallet.address)}
+                          </span>{' '}
+                          · {approval.wallet.chain} · Detected{' '}
                           {new Date(approval.detectedAt).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',

@@ -15,6 +15,7 @@ import {
 } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
 import { getToken, listScans, Scan } from '@/lib/api-client';
+import { shortAddress } from '@/lib/format';
 
 function riskMeta(score: number) {
   if (score >= 80) return { label: 'Critical', color: '#ff6257', icon: ShieldWarning };
@@ -197,7 +198,9 @@ export default function RiskFeedPage() {
                         <Icon className="h-4 w-4" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="font-mono text-sm break-all">{scan.wallet.address}</p>
+                        <p className="font-mono text-sm" title={scan.wallet.address}>
+                          {shortAddress(scan.wallet.address)}
+                        </p>
                         <div className="mt-1.5 flex flex-wrap items-center gap-2">
                           <span className="text-[10px] text-white/30">{scan.wallet.chain}</span>
                           {scan.spenderLabel && (
@@ -211,10 +214,10 @@ export default function RiskFeedPage() {
                           {scan.reasoning}
                         </p>
                         {scan.spender && (
-                          <p className="mt-1 break-all text-xs text-white/30">
+                          <p className="mt-1 text-xs text-white/30">
                             Spender{' '}
-                            <span className="font-mono">
-                              {scan.spenderLabel ? scan.spenderLabel.name : scan.spender}
+                            <span className="font-mono" title={scan.spender}>
+                              {scan.spenderLabel ? scan.spenderLabel.name : shortAddress(scan.spender)}
                             </span>
                           </p>
                         )}

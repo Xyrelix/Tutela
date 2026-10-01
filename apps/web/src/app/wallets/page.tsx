@@ -18,6 +18,7 @@ import {
   X,
 } from '@phosphor-icons/react';
 import { deleteWallet, getMe, getToken, listWallets, Me, registerWallet, Wallet } from '@/lib/api-client';
+import { shortAddress } from '@/lib/format';
 
 const FREE_WALLET_LIMIT = 3;
 const SENTINEL_WALLET_LIMIT = 25;
@@ -32,11 +33,6 @@ const CHAIN_META: Record<string, { label: string; color: string; mark: string }>
   ethereum: { label: 'Ethereum', color: '#8b9eff', mark: 'Ξ' },
   base: { label: 'Base', color: '#6dce9a', mark: 'B' },
 };
-
-function shortAddress(address: string) {
-  if (address.includes('...')) return address;
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-}
 
 export default function WalletsPage() {
   const router = useRouter();

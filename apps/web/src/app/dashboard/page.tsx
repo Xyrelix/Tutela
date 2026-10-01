@@ -25,10 +25,7 @@ import {
   Scan,
   Wallet,
 } from '@/lib/api-client';
-
-function shortAddress(address: string) {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-}
+import { shortAddress } from '@/lib/format';
 
 function greeting() {
   const hour = new Date().getHours();
