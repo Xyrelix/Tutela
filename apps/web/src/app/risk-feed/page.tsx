@@ -189,14 +189,14 @@ export default function RiskFeedPage() {
                   className="rounded-2xl border border-white/[0.08] bg-[#101217] p-5 transition-colors hover:border-white/20 sm:p-6"
                 >
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="flex min-w-0 items-start gap-4">
+                    <div className="flex min-w-0 flex-1 items-start gap-4">
                       <span
                         className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.04]"
                         style={{ color: meta.color }}
                       >
                         <Icon className="h-4 w-4" />
                       </span>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <p className="font-mono text-sm break-all">{scan.wallet.address}</p>
                           <span className="text-[10px] text-white/30">{scan.wallet.chain}</span>

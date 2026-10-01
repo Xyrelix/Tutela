@@ -183,13 +183,13 @@ export default function ApprovalsPage() {
                   className={`rounded-2xl border bg-[#101217] p-5 sm:p-6 ${active ? 'border-white/[0.08]' : 'border-[#6dce9a]/20'}`}
                 >
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                    <div className="flex min-w-0 items-start gap-4">
+                    <div className="flex min-w-0 flex-1 items-start gap-4">
                       <span
                         className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl border ${active ? 'border-[#ffb15c]/25 bg-[#ffb15c]/[0.08] text-[#ffb15c]' : 'border-[#6dce9a]/25 bg-[#6dce9a]/[0.08] text-[#6dce9a]'}`}
                       >
                         <Key className="h-4 w-4" />
                       </span>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <p className="break-all text-base font-medium">
                             {approval.tokenAddress}
