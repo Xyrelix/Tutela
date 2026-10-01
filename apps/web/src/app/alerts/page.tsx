@@ -241,7 +241,7 @@ export default function AlertsPage() {
                         {alert.message}
                       </p>
                       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.07] pt-4">
-                        <p className="min-w-0 break-all text-xs text-white/35">
+                        <p className="min-w-0 flex-1 break-all text-xs text-white/35">
                           <span className="font-mono text-white/55">{alert.wallet.address}</span>{' '}
                           · {alert.wallet.chain} · {alert.sent ? 'Delivered' : 'Awaiting review'}
                           {alert.spender && (

@@ -190,10 +190,8 @@ export default function ApprovalsPage() {
                         <Key className="h-4 w-4" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="break-all text-base font-medium">
-                            {approval.tokenAddress}
-                          </p>
+                        <p className="break-all text-base font-medium">{approval.tokenAddress}</p>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-2">
                           <span
                             className={`rounded-full px-2 py-0.5 text-[9px] tracking-[0.12em] uppercase ${active ? 'bg-[#ffb15c]/10 text-[#ffcb8b]' : 'bg-[#6dce9a]/10 text-[#6dce9a]'}`}
                           >

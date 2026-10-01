@@ -197,8 +197,8 @@ export default function RiskFeedPage() {
                         <Icon className="h-4 w-4" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-mono text-sm break-all">{scan.wallet.address}</p>
+                        <p className="font-mono text-sm break-all">{scan.wallet.address}</p>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-2">
                           <span className="text-[10px] text-white/30">{scan.wallet.chain}</span>
                           {scan.spenderLabel && (
                             <span className="rounded-full bg-[#8b9eff]/10 px-2 py-0.5 text-[9px] tracking-[0.12em] text-[#8b9eff] uppercase">
