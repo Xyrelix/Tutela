@@ -18,6 +18,30 @@ const KNOWN_CONTRACTS: Record<string, ContractLabel> = {
   '0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad': { name: 'Uniswap Universal Router', domain: 'uniswap.org' },
   '0xef1c6e67703c7bd7107eed8303fbe6ec2554bf6b': { name: 'Uniswap Universal Router 2', domain: 'uniswap.org' },
   '0x66a9893cc07d91d95644aedd05d03f95e1dba8af': { name: 'Uniswap Universal Router (V4)', domain: 'uniswap.org' },
+  '0x000000000022d473030f116ddee9f6b43ac78ba3': { name: 'Uniswap Permit2', domain: 'uniswap.org' },
+
+  // SushiSwap
+  '0xd9e1ce17f2641f24ae83637ab66a2cca9c378b9f': { name: 'SushiSwap Router', domain: 'sushi.com' },
+
+  // Curve
+  '0x16c6521dff6bab339122a0fe25a9116693265353': { name: 'Curve Router', domain: 'curve.fi' },
+
+  // Compound
+  '0xc3d688b66703497daa19211eedff47f25384cdc3': { name: 'Compound V3 (USDC)', domain: 'compound.finance' },
+
+  // Lido
+  '0xae7ab96520de3a18e5e111b5eaab095312d7fe84': { name: 'Lido stETH', domain: 'lido.fi' },
+  '0x889edc2edab5f40e902b864ad4d7ade8e412f9b1': { name: 'Lido Withdrawal Queue', domain: 'lido.fi' },
+
+  // Balancer
+  '0xba12222222228d8ba445958a75a0704d566bf2c8': { name: 'Balancer V2 Vault', domain: 'balancer.fi' },
+
+  // Aerodrome (Base)
+  '0xcf77a3ba9a5ca399b7c97c74d54e5b1beb874e43': { name: 'Aerodrome Router', domain: 'aerodrome.finance' },
+
+  // LooksRare
+  '0x59728544b08ab483533076417fbbb2fd0b17ce3a': { name: 'LooksRare Exchange', domain: 'looksrare.org' },
+  '0x0000000000e655fae4d56241588680f86e3b2377': { name: 'LooksRare Exchange V2', domain: 'looksrare.org' },
 
   // OpenSea
   '0x00000000006c3852cbef3e08e8df289169ede581': { name: 'OpenSea Seaport 1.1', domain: 'opensea.io' },
