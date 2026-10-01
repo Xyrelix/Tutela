@@ -95,61 +95,64 @@ export function NavBar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#090a0d]">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
-        <div className="flex items-center gap-3">
-          {authed && (
-            <button
-              type="button"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
-              className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/60 transition-colors hover:border-white/25 hover:text-white md:hidden"
-            >
-              {sidebarOpen ? <X className="h-4 w-4" /> : <List className="h-4 w-4" />}
-            </button>
-          )}
-          <Link
-            href="/"
-            aria-label="Tutela home"
-            className="md:absolute md:top-1/2 md:left-[112px] md:-translate-x-1/2 md:-translate-y-1/2"
-          >
-            <Image
-              src="/Tutela_nav.png"
-              alt="Tutela"
-              width={610}
-              height={163}
-              className="h-[31px] w-auto object-contain"
-            />
-          </Link>
-        </div>
-        <div className="flex items-center gap-5 text-[13px] md:ml-auto">
-          {authed ? (
-            <Link
-              href="/settings"
-              aria-label="Settings"
-              className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/60 transition-colors hover:border-white/25 hover:text-white"
-            >
-              <Gear className="h-4 w-4" />
-            </Link>
-          ) : (
-            <>
-              <Link href="/login" className="text-white/60 transition-colors hover:text-white">
-                Log in
-              </Link>
-              <MotionLink
-                href="/register"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                className="hidden rounded-full bg-white px-4 py-2 font-medium text-[#090a0d] sm:block"
+    <>
+      <div className="h-[76px]" aria-hidden="true" />
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-white/[0.08] bg-[#090a0d]">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
+          <div className="flex items-center gap-3">
+            {authed && (
+              <button
+                type="button"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/60 transition-colors hover:border-white/25 hover:text-white md:hidden"
               >
-                Get started
-              </MotionLink>
-            </>
-          )}
-        </div>
-      </nav>
-    </header>
+                {sidebarOpen ? <X className="h-4 w-4" /> : <List className="h-4 w-4" />}
+              </button>
+            )}
+            <Link
+              href="/"
+              aria-label="Tutela home"
+              className="md:absolute md:top-1/2 md:left-[112px] md:-translate-x-1/2 md:-translate-y-1/2"
+            >
+              <Image
+                src="/Tutela_nav.png"
+                alt="Tutela"
+                width={610}
+                height={163}
+                className="h-[31px] w-auto object-contain"
+              />
+            </Link>
+          </div>
+          <div className="flex items-center gap-5 text-[13px] md:ml-auto">
+            {authed ? (
+              <Link
+                href="/settings"
+                aria-label="Settings"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-white/60 transition-colors hover:border-white/25 hover:text-white"
+              >
+                <Gear className="h-4 w-4" />
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="text-white/60 transition-colors hover:text-white">
+                  Log in
+                </Link>
+                <MotionLink
+                  href="/register"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  className="hidden rounded-full bg-white px-4 py-2 font-medium text-[#090a0d] sm:block"
+                >
+                  Get started
+                </MotionLink>
+              </>
+            )}
+          </div>
+        </nav>
+      </header>
+    </>
   );
 }
 
