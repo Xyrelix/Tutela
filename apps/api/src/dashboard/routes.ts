@@ -1,9 +1,12 @@
 import { Router } from 'express';
+import { MaxUint256 } from 'ethers';
 import { prisma } from '../db/client';
 import { requireAuth } from '../auth/middleware';
 import { requirePermission } from '../auth/rbac';
 import { asyncHandler } from '../lib/asyncHandler';
 import { getContractLabel } from '../lib/contract-labels';
+
+const MAX_UINT_256 = MaxUint256.toString();
 
 const router = Router();
 router.use(requireAuth, requirePermission('alert:read'));
@@ -38,6 +41,7 @@ router.get(
     res.json(
       approvals.map((approval) => ({
         ...approval,
+        amount: approval.amount === MAX_UINT_256 ? 'Unlimited' : approval.amount,
         spenderLabel: getContractLabel(approval.spender),
       }))
     );

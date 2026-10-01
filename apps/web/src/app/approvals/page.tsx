@@ -23,7 +23,7 @@ import {
   prepareRevoke,
   UnsignedTransaction,
 } from '@/lib/api-client';
-import { shortAddress } from '@/lib/format';
+import { formatAmount, shortAddress } from '@/lib/format';
 
 export default function ApprovalsPage() {
   const router = useRouter();
@@ -236,8 +236,9 @@ export default function ApprovalsPage() {
                         </p>
                         <p
                           className={`mt-1 text-lg font-medium ${approval.amount === 'Unlimited' ? 'text-[#ffb15c]' : 'text-white'}`}
+                          title={approval.amount}
                         >
-                          {approval.amount}
+                          {formatAmount(approval.amount)}
                         </p>
                       </div>
                       <div className="text-right">
