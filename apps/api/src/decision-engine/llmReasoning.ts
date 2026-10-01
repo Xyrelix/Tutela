@@ -1,7 +1,7 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenAI, Type } from '@google/genai';
 import type { RuleResult } from './rules';
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export interface AmbiguousCaseInput {
   spender: string;
@@ -18,29 +18,33 @@ export interface LlmVerdict {
 }
 
 export async function reasonAboutApproval(input: AmbiguousCaseInput): Promise<LlmVerdict> {
-  const message = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 300,
-    system:
-      'You are a wallet security analyst. Given an ERC-20 approval event that deterministic rules ' +
-      'could not classify confidently, respond with ONLY a JSON object: ' +
-      '{"verdict": "safe"|"suspicious"|"malicious", "riskScore": 0-100, "reasoning": "one sentence"}.',
-    messages: [
-      {
-        role: 'user',
-        content: JSON.stringify({
-          spender: input.spender,
-          tokenAddress: input.tokenAddress,
-          amount: input.amount,
-          contractVerified: input.contractVerified,
-          deterministicFindings: input.ruleResult.reasons,
-        }),
+  const response = await gemini.models.generateContent({
+    model: 'gemini-flash-latest',
+    contents: JSON.stringify({
+      spender: input.spender,
+      tokenAddress: input.tokenAddress,
+      amount: input.amount,
+      contractVerified: input.contractVerified,
+      deterministicFindings: input.ruleResult.reasons,
+    }),
+    config: {
+      systemInstruction:
+        'You are a wallet security analyst. Given an ERC-20 approval event that deterministic ' +
+        'rules could not classify confidently, decide whether it is safe, suspicious, or malicious.',
+      responseMimeType: 'application/json',
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          verdict: { type: Type.STRING, enum: ['safe', 'suspicious', 'malicious'] },
+          riskScore: { type: Type.NUMBER },
+          reasoning: { type: Type.STRING },
+        },
+        required: ['verdict', 'riskScore', 'reasoning'],
       },
-    ],
+    },
   });
 
-  const textBlock = message.content.find((block) => block.type === 'text');
-  const raw = textBlock && textBlock.type === 'text' ? textBlock.text : '{}';
+  const raw = response.text ?? '{}';
 
   try {
     const parsed = JSON.parse(raw);

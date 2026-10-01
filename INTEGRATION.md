@@ -35,12 +35,14 @@ mismatching the app's configured chain with the webhook's chain is a common setu
 
 ## 2. LLM Reasoning Layer (required for Sentinel/Command-tier accuracy)
 
-The decision engine's ambiguous-case reasoning uses the Anthropic API.
+The decision engine's ambiguous-case reasoning uses the Gemini API (Google's free-tier model —
+`gemini-flash-latest`).
 
 ### Setup
-1. Get an API key from the Anthropic Console → `ANTHROPIC_API_KEY`.
-2. This only runs when the rules layer flags a case as `ambiguous` — never on every event — so cost
-   stays bounded regardless of monitoring volume (see `decision-engine/rules.ts` and
+1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey) → `GEMINI_API_KEY`.
+   The free tier covers this comfortably since the call only runs on genuinely ambiguous cases.
+2. This only runs when the rules layer flags a case as `ambiguous` — never on every event — so
+   usage stays bounded regardless of monitoring volume (see `decision-engine/rules.ts` and
    `monitoring/webhook.ts`).
 3. On the free plan, ambiguous cases are marked `suspicious` by default instead of invoking the
    LLM (`isPro` check in `monitoring/webhook.ts`) — the LLM reasoning layer is a paid-plan feature.
@@ -115,7 +117,7 @@ JWT_SECRET
 JWT_EXPIRES_IN
 ALCHEMY_API_KEY
 ALCHEMY_WEBHOOK_SIGNING_KEY
-ANTHROPIC_API_KEY
+GEMINI_API_KEY
 TELEGRAM_BOT_TOKEN
 TELEGRAM_BOT_USERNAME
 CORS_ORIGIN          # optional — has safe defaults, see §5
@@ -137,7 +139,7 @@ Don't set all of this up on day one:
 
 1. **Local dev, no external services**: Postgres via Docker Compose is enough to run auth, wallet
    registration, and the dashboard against seeded/manually-created data.
-2. **Live monitoring**: Alchemy (§1) + Anthropic (§2) — this is when the decision engine actually
+2. **Live monitoring**: Alchemy (§1) + Gemini (§2) — this is when the decision engine actually
    evaluates real on-chain events instead of just serving whatever's already in the DB.
 3. **Alerting + wallet connection**: Telegram (§3) + WalletConnect (§4).
 4. **Deploying a live instance**: production infra (§5).

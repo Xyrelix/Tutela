@@ -121,7 +121,7 @@ ALCHEMY_API_KEY=""
 ALCHEMY_WEBHOOK_SIGNING_KEY=""
 
 # LLM reasoning layer (see INTEGRATION.md)
-ANTHROPIC_API_KEY=""
+GEMINI_API_KEY=""
 
 # Telegram alerts (see INTEGRATION.md)
 TELEGRAM_BOT_TOKEN=""
@@ -243,5 +243,5 @@ webhook POSTs or serve the frontend's API calls at all.
 Frontend: deploy `apps/web` directly to Vercel (zero-config native Next.js support — connect the
 repo in the dashboard). Set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` there.
 
-Full external-service setup (Alchemy, Anthropic, Telegram, Reown/WalletConnect) is in
+Full external-service setup (Alchemy, Gemini, Telegram, Reown/WalletConnect) is in
 `INTEGRATION.md`.

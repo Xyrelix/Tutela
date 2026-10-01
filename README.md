@@ -29,7 +29,7 @@ Tutela has no passwords, no email addresses, and no accounts to leak. You connec
 | Backend | Node.js + Express + TypeScript | REST API, no framework magic |
 | ORM / DB | Prisma + PostgreSQL | `User`, `Wallet`, `Scan`, `Approval`, `Alert` |
 | Chain data | Alchemy Custom Webhooks (GraphQL) | Signature-verified (HMAC-SHA256) `Approval` event delivery |
-| Decision engine | Deterministic rules + Claude (Anthropic API) | Rules catch known drainers/unlimited approvals instantly; the LLM only runs on genuinely ambiguous cases, gated to paid plans |
+| Decision engine | Deterministic rules + Gemini (free-tier API) | Rules catch known drainers/unlimited approvals instantly; the LLM only runs on genuinely ambiguous cases, gated to paid plans |
 | Alerts | Telegraf (Telegram bot) | One-time link code flow from Settings, gated to paid plans |
 | Auth | Wallet signature (SIWE-style challenge) + JWT + permission-based RBAC | No passwords, no email, no bcrypt |
 | Frontend | Next.js (App Router) + TypeScript + Tailwind v4 | Dashboard, wallets, risk feed, approvals, alerts, settings |
