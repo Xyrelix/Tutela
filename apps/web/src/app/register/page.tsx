@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle, DeviceMobile, LockKey, ShieldCheck, Wallet } from '@phosphor-icons/react';
-import { authenticateWallet, setToken } from '@/lib/api-client';
+import { authenticateWallet } from '@/lib/api-client';
 import { isMobileBrowser } from '@/lib/wagmi';
 import { WalletConnectPrompt } from '@/components/WalletConnectPrompt';
 
@@ -28,8 +28,7 @@ export default function RegisterPage() {
     setSubmitting(true);
 
     try {
-      const token = await authenticateWallet('register', connectorId, setWcUri);
-      setToken(token);
+      await authenticateWallet('register', connectorId, setWcUri);
       router.push('/dashboard');
     } catch (err) {
       console.error('[Tutela] Wallet sign-up failed:', err);

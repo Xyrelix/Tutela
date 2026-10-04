@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { isAxiosError } from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -17,7 +16,7 @@ import {
   Wallet as WalletIcon,
   X,
 } from '@phosphor-icons/react';
-import { deleteWallet, getMe, getToken, listWallets, Me, registerWallet, Wallet } from '@/lib/api-client';
+import { deleteWallet, getMe, listWallets, Me, registerWallet, Wallet } from '@/lib/api-client';
 import { shortAddress } from '@/lib/format';
 
 const FREE_WALLET_LIMIT = 3;
@@ -35,7 +34,6 @@ const CHAIN_META: Record<string, { label: string; color: string; mark: string }>
 };
 
 export default function WalletsPage() {
-  const router = useRouter();
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,10 +49,6 @@ export default function WalletsPage() {
   const [me, setMe] = useState<Me | null>(null);
 
   useEffect(() => {
-    if (!getToken()) {
-      router.push('/login');
-      return;
-    }
     listWallets()
       .then(setWallets)
       .catch(() => setError('Could not load wallets.'))
@@ -62,7 +56,7 @@ export default function WalletsPage() {
     getMe()
       .then(setMe)
       .catch(() => {});
-  }, [router]);
+  }, []);
 
   const walletLimit = me ? getWalletLimit(me.plan) : null;
   const atWalletLimit = walletLimit !== null && wallets.length >= walletLimit;

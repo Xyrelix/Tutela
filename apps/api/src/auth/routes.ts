@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { prisma } from '../db/client';
 import { asyncHandler } from '../lib/asyncHandler';
 import { requireAuth } from './middleware';
+import { SESSION_COOKIE, sessionCookieOptions } from './session';
 
 const router = Router();
 const challenges = new Map<string, { walletAddress: string; mode: 'login' | 'register'; issuedAt: number }>();
@@ -116,9 +117,23 @@ router.post(
       return;
     }
 
-    res.json({ token: signToken({ id: user.id, role: user.role, permissions: user.permissions }) });
+    res.cookie(
+      SESSION_COOKIE,
+      signToken({ id: user.id, role: user.role, permissions: user.permissions }),
+      sessionCookieOptions()
+    );
+    res.json({ ok: true });
   })
 );
+
+router.post('/logout', (req, res) => {
+  if (!req.headers['x-requested-with']) {
+    res.status(403).json({ error: 'Missing X-Requested-With header' });
+    return;
+  }
+  res.clearCookie(SESSION_COOKIE, sessionCookieOptions());
+  res.json({ ok: true });
+});
 
 router.get(
   '/me',

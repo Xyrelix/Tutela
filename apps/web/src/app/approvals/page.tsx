@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRight,
@@ -18,7 +17,6 @@ import type { Icon } from '@phosphor-icons/react';
 import {
   Approval,
   confirmRevoke,
-  getToken,
   listApprovals,
   prepareRevoke,
   UnsignedTransaction,
@@ -26,7 +24,6 @@ import {
 import { formatAmount, shortAddress } from '@/lib/format';
 
 export default function ApprovalsPage() {
-  const router = useRouter();
   const [approvals, setApprovals] = useState<Approval[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,15 +32,11 @@ export default function ApprovalsPage() {
   const activeCount = approvals.filter((approval) => approval.status === 'active').length;
 
   useEffect(() => {
-    if (!getToken()) {
-      router.push('/login');
-      return;
-    }
     listApprovals()
       .then(setApprovals)
       .catch(() => setError('Could not load approvals.'))
       .finally(() => setLoading(false));
-  }, [router]);
+  }, []);
   const summaryCards: Array<{
     label: string;
     value: number;

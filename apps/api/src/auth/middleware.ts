@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
+import { readSessionToken } from './session';
 
 export interface AuthPayload {
   sub: string;
@@ -16,14 +17,21 @@ declare global {
   }
 }
 
+const SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS'];
+
+// Cross-site HTML forms can't set custom headers without a CORS preflight, so
+// requiring one on state-changing requests stops cookie-riding CSRF.
 export const requireAuth: RequestHandler = (req, res, next) => {
-  const header = req.headers.authorization;
-  if (!header?.startsWith('Bearer ')) {
-    res.status(401).json({ error: 'Missing bearer token' });
+  if (!SAFE_METHODS.includes(req.method) && !req.headers['x-requested-with']) {
+    res.status(403).json({ error: 'Missing X-Requested-With header' });
     return;
   }
 
-  const token = header.slice('Bearer '.length);
+  const token = readSessionToken(req);
+  if (!token) {
+    res.status(401).json({ error: 'Not signed in' });
+    return;
+  }
 
   try {
     req.user = jwt.verify(token, process.env.JWT_SECRET as string, {

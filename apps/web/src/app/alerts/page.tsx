@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Warning,
@@ -17,7 +16,7 @@ import {
   X,
 } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
-import { Alert, getToken, listAlerts } from '@/lib/api-client';
+import { Alert, listAlerts } from '@/lib/api-client';
 import { shortAddress } from '@/lib/format';
 
 function alertMeta(type: string) {
@@ -32,7 +31,6 @@ function alertTitle(type: string) {
 }
 
 export default function AlertsPage() {
-  const router = useRouter();
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,15 +39,11 @@ export default function AlertsPage() {
   const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!getToken()) {
-      router.push('/login');
-      return;
-    }
     listAlerts()
       .then(setAlerts)
       .catch(() => setError('Could not load alerts.'))
       .finally(() => setLoading(false));
-  }, [router]);
+  }, []);
 
   const visibleAlerts = useMemo(
     () =>

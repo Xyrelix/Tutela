@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   CheckCircle,
@@ -11,7 +10,7 @@ import {
   ShieldCheck,
   Wallet as WalletIcon,
 } from '@phosphor-icons/react';
-import { getMe, getToken, getTelegramLinkCode, Me, TelegramLinkCode } from '@/lib/api-client';
+import { getMe, getTelegramLinkCode, Me, TelegramLinkCode } from '@/lib/api-client';
 
 function secondsUntil(iso: string) {
   return Math.max(0, Math.round((new Date(iso).getTime() - Date.now()) / 1000));
@@ -22,7 +21,6 @@ function shortWallet(address: string) {
 }
 
 export default function SettingsPage() {
-  const router = useRouter();
   const [me, setMe] = useState<Me | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,15 +32,11 @@ export default function SettingsPage() {
   const pollRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!getToken()) {
-      router.push('/login');
-      return;
-    }
     getMe()
       .then(setMe)
       .catch(() => setError('Could not load your account.'))
       .finally(() => setLoading(false));
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (!linkCode) return;

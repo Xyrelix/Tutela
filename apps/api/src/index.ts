@@ -23,6 +23,7 @@ const allowedOrigins =
 app.use(helmet());
 app.use(
   cors({
+    credentials: true,
     origin(origin, callback) {
       // Requests with no Origin header (server-to-server calls like the
       // Alchemy webhook, curl, mobile apps) aren't subject to CORS at all —

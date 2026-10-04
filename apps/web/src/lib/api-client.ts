@@ -10,35 +10,40 @@ declare global {
   }
 }
 
-const TOKEN_KEY = 'tutela_token';
 export const AUTH_CHANGE_EVENT = 'tutela-auth-changed';
 
-export function getToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return window.sessionStorage.getItem(TOKEN_KEY);
-}
-
-export function setToken(token: string): void {
-  window.sessionStorage.setItem(TOKEN_KEY, token);
-  window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
-}
-
-export function clearToken(): void {
-  window.sessionStorage.removeItem(TOKEN_KEY);
-  window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
-}
-
+// The session lives in an httpOnly cookie set by the API, so JavaScript never
+// touches the token. The X-Requested-With header is what the API checks on
+// state-changing requests to block cross-site form CSRF.
 export const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000',
+  withCredentials: true,
+  headers: { 'X-Requested-With': 'XMLHttpRequest' },
 });
 
-apiClient.interceptors.request.use((config) => {
-  const token = getToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+apiClient.interceptors.response.use(undefined, (error) => {
+  const url: string = error.config?.url ?? '';
+  const onAuthPage = window.location.pathname === '/login' || window.location.pathname === '/register';
+  if (error.response?.status === 401 && !url.startsWith('/api/auth/') && !onAuthPage) {
+    window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
+    window.location.replace('/login');
   }
-  return config;
+  return Promise.reject(error);
 });
+
+export async function hasSession(): Promise<boolean> {
+  try {
+    await apiClient.get('/api/auth/me');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function logout(): Promise<void> {
+  await apiClient.post('/api/auth/logout');
+  window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
+}
 
 export interface Wallet {
   id: string;
@@ -122,12 +127,9 @@ export async function getWalletChallenge(
   return data.message;
 }
 
-export async function verifyWallet(message: string, signature: string): Promise<string> {
-  const { data } = await apiClient.post<{ token: string }>('/api/auth/verify', {
-    message,
-    signature,
-  });
-  return data.token;
+export async function verifyWallet(message: string, signature: string): Promise<void> {
+  await apiClient.post('/api/auth/verify', { message, signature });
+  window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
 }
 
 interface ConnectorEmitter {
@@ -139,7 +141,7 @@ export async function authenticateWallet(
   mode: 'login' | 'register',
   preferredConnectorId?: 'injected' | 'walletConnect',
   onWalletConnectUri?: (uri: string) => void
-): Promise<string> {
+): Promise<void> {
   let connection = getConnection(wagmiConfig);
 
   const needsNewConnection =
@@ -189,7 +191,7 @@ export async function authenticateWallet(
   const message = await getWalletChallenge(walletAddress, mode);
   const signature = await signMessage(wagmiConfig, { account: walletAddress, message });
 
-  return verifyWallet(message, signature);
+  await verifyWallet(message, signature);
 }
 
 export async function listWallets(): Promise<Wallet[]> {

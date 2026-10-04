@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Warning,
@@ -14,7 +13,7 @@ import {
   ShieldCheck,
 } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
-import { getToken, listScans, Scan } from '@/lib/api-client';
+import { listScans, Scan } from '@/lib/api-client';
 import { shortAddress } from '@/lib/format';
 
 function riskMeta(score: number) {
@@ -24,7 +23,6 @@ function riskMeta(score: number) {
 }
 
 export default function RiskFeedPage() {
-  const router = useRouter();
   const [scans, setScans] = useState<Scan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,15 +30,11 @@ export default function RiskFeedPage() {
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
-    if (!getToken()) {
-      router.push('/login');
-      return;
-    }
     listScans()
       .then(setScans)
       .catch(() => setError('Could not load scans.'))
       .finally(() => setLoading(false));
-  }, [router]);
+  }, []);
 
   const visibleScans = useMemo(
     () =>

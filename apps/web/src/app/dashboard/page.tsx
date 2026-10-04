@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -16,7 +15,6 @@ import {
   Alert,
   Approval,
   getMe,
-  getToken,
   listAlerts,
   listApprovals,
   listScans,
@@ -68,7 +66,6 @@ function dailySafety(scans: Scan[]) {
 }
 
 export default function DashboardPage() {
-  const router = useRouter();
   const [me, setMe] = useState<Me | null>(null);
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [scans, setScans] = useState<Scan[]>([]);
@@ -78,10 +75,6 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!getToken()) {
-      router.push('/login');
-      return;
-    }
     Promise.all([
       getMe(),
       listWallets(),
@@ -98,7 +91,7 @@ export default function DashboardPage() {
       })
       .catch(() => setError('Could not load your dashboard.'))
       .finally(() => setLoading(false));
-  }, [router]);
+  }, []);
 
   const activeApprovals = approvals.filter((approval) => approval.status === 'active').length;
   const resolvedApprovals = approvals.length - activeApprovals;

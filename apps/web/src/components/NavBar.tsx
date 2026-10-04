@@ -17,7 +17,7 @@ import {
   X,
 } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
-import { AUTH_CHANGE_EVENT, clearToken, getToken } from '@/lib/api-client';
+import { AUTH_CHANGE_EVENT, hasSession, logout } from '@/lib/api-client';
 
 const MotionLink = motion.create(Link);
 
@@ -33,7 +33,9 @@ function useAuthed() {
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    const check = () => setAuthed(Boolean(getToken()));
+    const check = () => {
+      void hasSession().then(setAuthed);
+    };
     const timer = window.setTimeout(check, 0);
     window.addEventListener(AUTH_CHANGE_EVENT, check);
     return () => {
@@ -164,8 +166,7 @@ export function Sidebar() {
 
   function handleLogout() {
     setSidebarOpen(false);
-    clearToken();
-    router.push('/login');
+    void logout().finally(() => router.push('/login'));
   }
 
   const isPublicOnlyPage =
