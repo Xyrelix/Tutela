@@ -80,7 +80,8 @@ export async function reasonAboutApproval(input: AmbiguousCaseInput): Promise<Ll
       riskScore,
       reasoning: result.reasoning,
     };
-  } catch {
+  } catch (err) {
+    console.error('[llmReasoning] Gemini reasoning failed; using fallback verdict', err);
     return fallback;
   }
 }
