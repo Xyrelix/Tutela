@@ -14,17 +14,19 @@ export function buildRevokeTransaction(tokenAddress: string, spender: string): U
   return { to: tokenAddress, data, value: '0x0' };
 }
 
-// ponytail: Sepolia-only RPC; make it chain-aware when mainnet monitoring lands
-function revokeProvider(): JsonRpcProvider {
-  return new JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`);
-}
+const RPC_HOST_BY_CHAIN: Record<string, string> = {
+  ethereum: 'eth-sepolia.g.alchemy.com',
+  'robinhood-testnet': 'robinhood-testnet.g.alchemy.com',
+};
 
 // Returns a reason the transaction doesn't prove a successful revoke, or null if it does.
 export async function verifyRevokeTransaction(
   txHash: string,
-  approval: { tokenAddress: string; spender: string; wallet: { address: string } }
+  approval: { tokenAddress: string; spender: string; wallet: { address: string; chain: string } }
 ): Promise<string | null> {
-  const provider = revokeProvider();
+  const host = RPC_HOST_BY_CHAIN[approval.wallet.chain];
+  if (!host) return `Revoke verification is not configured for ${approval.wallet.chain}`;
+  const provider = new JsonRpcProvider(`https://${host}/v2/${process.env.ALCHEMY_API_KEY}`);
   const [tx, receipt] = await Promise.all([provider.getTransaction(txHash), provider.getTransactionReceipt(txHash)]);
   if (!tx || !receipt) return 'Transaction is not confirmed yet';
   if (receipt.status !== 1) return 'Transaction failed on-chain';

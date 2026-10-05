@@ -31,6 +31,7 @@ function getWalletLimit(plan: string): number | null {
 const CHAIN_META: Record<string, { label: string; color: string; mark: string }> = {
   ethereum: { label: 'Ethereum', color: '#8b9eff', mark: 'Ξ' },
   base: { label: 'Base', color: '#6dce9a', mark: 'B' },
+  'robinhood-testnet': { label: 'Robinhood Testnet', color: '#ffb15c', mark: 'R' },
 };
 
 export default function WalletsPage() {
@@ -208,6 +209,7 @@ export default function WalletsPage() {
                 <option value="all">All networks</option>
                 <option value="ethereum">Ethereum</option>
                 <option value="base">Base</option>
+                <option value="robinhood-testnet">Robinhood Testnet</option>
               </select>
             </div>
           </div>
@@ -385,6 +387,7 @@ export default function WalletsPage() {
                   >
                     <option value="ethereum">Ethereum</option>
                     <option value="base">Base</option>
+                    <option value="robinhood-testnet">Robinhood Testnet</option>
                   </select>
                   {formError && <p className="text-xs text-[#ff6257]">{formError}</p>}
                   <motion.button

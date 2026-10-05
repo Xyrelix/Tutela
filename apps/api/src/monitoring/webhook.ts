@@ -38,18 +38,24 @@ interface AlchemyGraphqlWebhookPayload {
   };
 }
 
+// Alchemy issues a separate signing key per webhook, so ALCHEMY_WEBHOOK_SIGNING_KEY
+// can hold several comma-separated keys (one per network's webhook).
 function verifySignature(req: Request): boolean {
   const signature = req.header('x-alchemy-signature');
-  const signingKey = process.env.ALCHEMY_WEBHOOK_SIGNING_KEY;
-  if (!signature || !signingKey || !req.rawBody) {
+  const signingKeys = (process.env.ALCHEMY_WEBHOOK_SIGNING_KEY ?? '')
+    .split(',')
+    .map((key) => key.trim())
+    .filter(Boolean);
+  const body = req.rawBody;
+  if (!signature || signingKeys.length === 0 || !body) {
     return false;
   }
 
-  const expected = crypto.createHmac('sha256', signingKey).update(req.rawBody, 'utf8').digest('hex');
-  const expectedBuf = Buffer.from(expected);
   const signatureBuf = Buffer.from(signature);
-
-  return expectedBuf.length === signatureBuf.length && crypto.timingSafeEqual(expectedBuf, signatureBuf);
+  return signingKeys.some((signingKey) => {
+    const expectedBuf = Buffer.from(crypto.createHmac('sha256', signingKey).update(body, 'utf8').digest('hex'));
+    return expectedBuf.length === signatureBuf.length && crypto.timingSafeEqual(expectedBuf, signatureBuf);
+  });
 }
 
 router.post(
