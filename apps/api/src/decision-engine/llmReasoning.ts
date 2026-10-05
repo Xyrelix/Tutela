@@ -32,7 +32,7 @@ export async function reasonAboutApproval(input: AmbiguousCaseInput): Promise<Ll
 
   try {
     const response = await getGeminiClient().models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-flash-lite-latest',
       contents: JSON.stringify({
         spender: input.spender,
         tokenAddress: input.tokenAddress,

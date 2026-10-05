@@ -45,7 +45,7 @@ Tutela has no passwords, no email addresses, and no accounts to leak. You connec
 │               Frontend (Next.js App Router)               │
 │  Dashboard · Wallets · Risk feed · Approvals · Alerts      │
 └───────────────────────────┬───────────────────────────────┘
-                             │ REST (JWT bearer)
+                             │ REST (httpOnly session cookie)
 ┌───────────────────────────▼───────────────────────────────┐
 │                    Platform Layer (Express)                │
 │   Wallet-signature auth · Permission-based RBAC ·           │

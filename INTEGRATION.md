@@ -36,7 +36,7 @@ mismatching the app's configured chain with the webhook's chain is a common setu
 ## 2. LLM Reasoning Layer (required for Sentinel/Command-tier accuracy)
 
 The decision engine's ambiguous-case reasoning uses the Gemini API (Google's free-tier model —
-`gemini-flash-latest`).
+`gemini-flash-lite-latest`).
 
 ### Setup
 1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey) → `GEMINI_API_KEY`.
