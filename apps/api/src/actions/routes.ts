@@ -5,7 +5,7 @@ import { requireAuth } from '../auth/middleware';
 import { requirePermission } from '../auth/rbac';
 import { asyncHandler } from '../lib/asyncHandler';
 import { isPro } from '../lib/plans';
-import { buildRevokeTransaction } from './revoke';
+import { buildRevokeTransaction, verifyRevokeTransaction } from './revoke';
 import { generateTelegramLinkCode } from './telegramBot';
 
 const router = Router();
@@ -66,6 +66,12 @@ router.post(
     const parsed = confirmSchema.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: parsed.error.flatten() });
+      return;
+    }
+
+    const problem = await verifyRevokeTransaction(parsed.data.txHash, approval);
+    if (problem) {
+      res.status(400).json({ error: problem });
       return;
     }
 

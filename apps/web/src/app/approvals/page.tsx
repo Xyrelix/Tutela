@@ -86,10 +86,34 @@ export default function ApprovalsPage() {
 
     try {
       const accounts = (await window.ethereum.request({ method: 'eth_requestAccounts' })) as string[];
+      const owner = approval.wallet.address.toLowerCase();
+      if (!accounts.some((account) => account.toLowerCase() === owner)) {
+        setNotice(`Switch your wallet to ${approval.wallet.address} to revoke this approval.`);
+        return;
+      }
+
       const txHash = (await window.ethereum.request({
         method: 'eth_sendTransaction',
-        params: [{ from: accounts[0], to: tx.to, data: tx.data, value: tx.value }],
+        params: [{ from: approval.wallet.address, to: tx.to, data: tx.data, value: tx.value }],
       })) as string;
+
+      setNotice('Waiting for the revoke transaction to confirm…');
+      let receipt: { status: string } | null = null;
+      for (let attempt = 0; attempt < 60 && !receipt; attempt++) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        receipt = (await window.ethereum.request({
+          method: 'eth_getTransactionReceipt',
+          params: [txHash],
+        })) as { status: string } | null;
+      }
+      if (!receipt) {
+        setNotice('Revoke is still pending. Check back shortly.');
+        return;
+      }
+      if (receipt.status !== '0x1') {
+        setNotice('Revoke transaction failed on-chain.');
+        return;
+      }
 
       const updated = await confirmRevoke(approval.id, txHash);
       setApprovals((current) => current.map((item) => (item.id === approval.id ? updated : item)));
