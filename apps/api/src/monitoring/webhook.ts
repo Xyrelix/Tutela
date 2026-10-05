@@ -63,7 +63,15 @@ router.post(
     const payload = req.body as AlchemyGraphqlWebhookPayload;
     const logs = payload.event?.data?.block?.logs ?? [];
 
-    for (const log of logs) {
+    // Acknowledge first: Alchemy pauses webhooks after repeated slow or failed
+    // responses, and the LLM call plus cold starts can exceed its timeout.
+    res.status(200).json({ received: true });
+    processLogs(logs).catch((err) => console.error('[webhook] failed to process logs', err));
+  })
+);
+
+async function processLogs(logs: AlchemyGraphqlLog[]): Promise<void> {
+  for (const log of logs) {
       const topics = log.topics ?? [];
       if (topics.length < 3) {
         continue;
@@ -132,10 +140,7 @@ router.post(
 
         await dispatchAlert(alert.id);
       }
-    }
-
-    res.status(200).json({ received: true });
-  })
-);
+  }
+}
 
 export default router;
