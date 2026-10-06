@@ -38,6 +38,9 @@ app.use(
 );
 app.use(
   express.json({
+    // Alchemy batches of logs routinely exceed Express's 100kb default; a rejected
+    // body is a failed delivery and eventually pauses the webhook.
+    limit: '1mb',
     verify: (req, _res, buf) => {
       (req as Request).rawBody = buf.toString('utf8');
     },
