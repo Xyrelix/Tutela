@@ -362,11 +362,9 @@ export default function Home() {
                 finally automated{' '}
                 <CaretDown className="h-3.5 w-3.5 rotate-[-90deg] text-white/35" />
               </div>
-              <h1 className="font-sans text-[clamp(3rem,6vw,6rem)] leading-[0.92] tracking-[-0.055em] text-white">
-                <span className="block lg:whitespace-nowrap">The security layer</span>
-                <span className="block text-white/45 lg:whitespace-nowrap">
-                  your wallet deserves.
-                </span>
+              <h1 className="font-sans text-[clamp(3rem,5.2vw,5.25rem)] leading-[0.95] tracking-[-0.05em] text-white">
+                <span className="block">The security layer</span>
+                <span className="block text-white/45">your wallet deserves.</span>
               </h1>
               <p className="mx-auto mt-7 max-w-xl text-[15px] leading-7 text-white/50 sm:text-base lg:mx-0">
                 Tutela watches your wallets around the clock, explains what looks risky, and helps
