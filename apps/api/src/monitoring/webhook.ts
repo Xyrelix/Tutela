@@ -83,26 +83,43 @@ router.post(
     // Acknowledge first: Alchemy pauses webhooks after repeated slow or failed
     // responses, and the LLM call plus cold starts can exceed its timeout.
     res.status(200).json({ received: true });
-    processLogs(logs, chainParam).catch((err) => console.error('[webhook] failed to process logs', err));
+    processingQueue = processingQueue
+      .then(() => processLogs(logs, chainParam))
+      .catch((err) => console.error('[webhook] failed to process logs', err));
   })
 );
 
+// Batches run one at a time. Concurrent deliveries from a busy network exhausted
+// the 9-connection Prisma pool, and queued queries timed out before they ran.
+let processingQueue: Promise<void> = Promise.resolve();
+
 async function processLogs(logs: AlchemyGraphqlLog[], chain: string): Promise<void> {
-  for (const log of logs) {
+  const candidates = logs.filter((log) => (log.topics ?? []).length >= 3 && log.transaction?.from?.address);
+  if (candidates.length === 0) {
+    return;
+  }
+
+  // One query per batch instead of one per log. Logs from senders we don't monitor
+  // never touch the database again.
+  const senders = [...new Set(candidates.map((log) => log.transaction.from.address.toLowerCase()))];
+  const wallets = await prisma.wallet.findMany({
+    where: {
+      chain,
+      OR: senders.map((address) => ({ address: { equals: address, mode: 'insensitive' } })),
+    },
+    include: { user: true },
+  });
+  const walletByAddress = new Map<string, (typeof wallets)[number]>();
+  for (const wallet of wallets) {
+    const key = wallet.address.toLowerCase();
+    if (!walletByAddress.has(key)) {
+      walletByAddress.set(key, wallet);
+    }
+  }
+
+  for (const log of candidates) {
       const topics = log.topics ?? [];
-      if (topics.length < 3) {
-        continue;
-      }
-
-      const walletAddress = log.transaction?.from?.address;
-      if (!walletAddress) {
-        continue;
-      }
-
-      const wallet = await prisma.wallet.findFirst({
-        where: { address: { equals: walletAddress, mode: 'insensitive' }, chain },
-        include: { user: true },
-      });
+      const wallet = walletByAddress.get(log.transaction.from.address.toLowerCase());
       if (!wallet) {
         continue;
       }
