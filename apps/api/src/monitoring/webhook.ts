@@ -58,11 +58,22 @@ function verifySignature(req: Request): boolean {
   });
 }
 
+// Each Alchemy webhook covers one network. The network is set on the webhook URL
+// as ?chain=<name>, so events can be matched to the right wallet record.
+// Without it, events are treated as Ethereum (the original Sepolia webhook).
+const SUPPORTED_CHAINS = ['ethereum', 'robinhood-testnet'];
+
 router.post(
   '/alchemy',
   asyncHandler(async (req: Request, res: Response) => {
     if (!verifySignature(req)) {
       res.status(401).json({ error: 'Invalid webhook signature' });
+      return;
+    }
+
+    const chainParam = typeof req.query.chain === 'string' ? req.query.chain : 'ethereum';
+    if (!SUPPORTED_CHAINS.includes(chainParam)) {
+      res.status(400).json({ error: `Unsupported chain: ${chainParam}` });
       return;
     }
 
@@ -72,11 +83,11 @@ router.post(
     // Acknowledge first: Alchemy pauses webhooks after repeated slow or failed
     // responses, and the LLM call plus cold starts can exceed its timeout.
     res.status(200).json({ received: true });
-    processLogs(logs).catch((err) => console.error('[webhook] failed to process logs', err));
+    processLogs(logs, chainParam).catch((err) => console.error('[webhook] failed to process logs', err));
   })
 );
 
-async function processLogs(logs: AlchemyGraphqlLog[]): Promise<void> {
+async function processLogs(logs: AlchemyGraphqlLog[], chain: string): Promise<void> {
   for (const log of logs) {
       const topics = log.topics ?? [];
       if (topics.length < 3) {
@@ -89,7 +100,7 @@ async function processLogs(logs: AlchemyGraphqlLog[]): Promise<void> {
       }
 
       const wallet = await prisma.wallet.findFirst({
-        where: { address: { equals: walletAddress, mode: 'insensitive' } },
+        where: { address: { equals: walletAddress, mode: 'insensitive' }, chain },
         include: { user: true },
       });
       if (!wallet) {
