@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import NumberFlow from '@number-flow/react';
 import {
   ArrowRight,
   Bell,
@@ -112,21 +113,21 @@ export default function DashboardPage() {
   const summaryCards = [
     {
       label: 'Wallets protected',
-      value: wallets.length.toString().padStart(2, '0'),
+      value: wallets.length,
       detail: 'All systems monitored',
       Icon: WalletIcon,
       color: '#6dce9a',
     },
     {
       label: 'Threats resolved',
-      value: resolvedApprovals.toString().padStart(2, '0'),
+      value: resolvedApprovals,
       detail: `${resolvedRate}% resolved`,
       Icon: ShieldCheck,
       color: '#6dce9a',
     },
     {
       label: 'Needs attention',
-      value: activeApprovals.toString().padStart(2, '0'),
+      value: activeApprovals,
       detail: 'Review activity',
       Icon: ShieldWarning,
       color: '#ffb15c',
@@ -172,14 +173,14 @@ export default function DashboardPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.08 }}
-                  className="bg-[#101217] p-6 sm:p-7"
+                  className="bg-[#101217] p-6 transition-colors duration-300 hover:bg-[#14171e] sm:p-7"
                 >
                   <div className="flex items-center justify-between text-[11px] text-white/40">
                     <span>{label}</span>
                     <Icon className="h-4 w-4" style={{ color }} />
                   </div>
                   <p className="mt-5 text-3xl font-medium tracking-[-0.05em] text-white">
-                    {value}
+                    <NumberFlow value={value} format={{ minimumIntegerDigits: 2 }} />
                   </p>
                   <p className="mt-2 text-xs" style={{ color }}>
                     {detail}
@@ -201,8 +202,11 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-6 flex h-24 items-end gap-1.5">
                   {safetyBuckets.map((bucket, index) => (
-                    <div
+                    <motion.div
                       key={index}
+                      initial={{ height: 0 }}
+                      animate={{ height: `${bucket.height}%` }}
+                      transition={{ duration: 0.6, delay: index * 0.04, ease: 'easeOut' }}
                       className={`flex-1 rounded-t ${
                         bucket.safety === null
                           ? 'bg-white/10'
@@ -212,10 +216,7 @@ export default function DashboardPage() {
                               ? 'bg-[#ffb15c]'
                               : 'bg-[#ff6257]'
                       }`}
-                      style={{
-                        height: `${bucket.height}%`,
-                        opacity: bucket.safety === null ? 0.3 : 0.55 + index / 30,
-                      }}
+                      style={{ opacity: bucket.safety === null ? 0.3 : 0.55 + index / 30 }}
                     />
                   ))}
                 </div>
