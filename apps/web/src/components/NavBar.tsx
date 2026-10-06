@@ -99,7 +99,7 @@ export function NavBar() {
   return (
     <>
       <div className="h-[76px]" aria-hidden="true" />
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-white/[0.08] bg-[#090a0d]">
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-white/[0.08] bg-[#090a0d]/85 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
           <div className="flex items-center gap-3">
             {authed && (
@@ -145,7 +145,7 @@ export function NavBar() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                  className="hidden rounded-full bg-white px-4 py-2 font-medium text-[#090a0d] sm:block"
+                  className="hidden rounded-full bg-white px-4 py-2 font-medium text-[#090a0d] shadow-[0_0_0_1px_rgba(255,255,255,0.1),0_8px_24px_-8px_rgba(36,87,255,0.45)] sm:block"
                 >
                   Get started
                 </MotionLink>
