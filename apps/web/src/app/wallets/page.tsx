@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { isAxiosError } from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
+import NumberFlow from '@number-flow/react';
 import {
   Pulse,
   ArrowUpRight,
@@ -17,6 +18,7 @@ import {
   X,
 } from '@phosphor-icons/react';
 import { deleteWallet, getMe, listWallets, Me, registerWallet, Wallet } from '@/lib/api-client';
+import { CHAIN_META, explorerAddressUrl } from '@/lib/chains';
 import { shortAddress } from '@/lib/format';
 
 const FREE_WALLET_LIMIT = 3;
@@ -27,12 +29,6 @@ function getWalletLimit(plan: string): number | null {
   if (plan === 'sentinel') return SENTINEL_WALLET_LIMIT;
   return null;
 }
-
-const CHAIN_META: Record<string, { label: string; color: string; mark: string }> = {
-  ethereum: { label: 'Ethereum', color: '#8b9eff', mark: 'Ξ' },
-  base: { label: 'Base', color: '#6dce9a', mark: 'B' },
-  'robinhood-testnet': { label: 'Robinhood Testnet', color: '#ffb15c', mark: 'R' },
-};
 
 export default function WalletsPage() {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -112,7 +108,11 @@ export default function WalletsPage() {
     window.setTimeout(() => setCopied(null), 1600);
   }
 
-  const chains = new Set(wallets.map((wallet) => wallet.chain)).size;
+  const activeChains = [...new Set(wallets.map((wallet) => wallet.chain))];
+  const networksDetail =
+    activeChains.length === 0
+      ? 'No wallets yet'
+      : activeChains.map((chain) => CHAIN_META[chain]?.label ?? chain).join(' + ');
 
   return (
     <main className="min-h-screen bg-[#090a0d] px-5 py-10 text-white sm:px-8 lg:px-10">
@@ -161,25 +161,26 @@ export default function WalletsPage() {
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
           {[
-            [
-              'Wallets protected',
-              wallets.length.toString().padStart(2, '0'),
-              'All systems monitored',
-              ShieldCheck,
-            ],
-            ['Networks active', chains.toString().padStart(2, '0'), 'Ethereum + Base', Pulse],
-            ['Protection status', 'Good', 'No urgent action needed', Sparkle],
-          ].map(([label, value, detail, Icon]) => (
-            <div key={label as string} className="bg-[#101217] p-6 sm:p-7">
+            { label: 'Wallets protected', value: wallets.length, detail: 'All systems monitored', Icon: ShieldCheck },
+            { label: 'Networks active', value: activeChains.length, detail: networksDetail, Icon: Pulse },
+            { label: 'Protection status', value: null, detail: 'No urgent action needed', Icon: Sparkle },
+          ].map(({ label, value, detail, Icon }, index) => (
+            <motion.div
+              key={label}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.08 }}
+              className="bg-[#101217] p-6 transition-colors duration-300 hover:bg-[#14171e] sm:p-7"
+            >
               <div className="flex items-center justify-between text-[11px] text-white/40">
-                <span>{label as string}</span>
+                <span>{label}</span>
                 <Icon className="h-4 w-4 text-[#6dce9a]" />
               </div>
               <p className="mt-5 text-3xl font-medium tracking-[-0.05em] text-white">
-                {value as string}
+                {value === null ? 'Good' : <NumberFlow value={value} format={{ minimumIntegerDigits: 2 }} />}
               </p>
-              <p className="mt-2 text-xs text-[#6dce9a]/80">{detail as string}</p>
-            </div>
+              <p className="mt-2 text-xs text-[#6dce9a]/80">{detail}</p>
+            </motion.div>
           ))}
         </div>
 
@@ -241,7 +242,7 @@ export default function WalletsPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: Math.min(index, 8) * 0.04 }}
-                    className={`flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 ${index ? 'border-t border-white/[0.07]' : ''}`}
+                    className={`flex flex-col gap-4 px-5 py-5 transition-colors duration-200 hover:bg-white/[0.02] sm:flex-row sm:items-center sm:justify-between sm:px-6 ${index ? 'border-t border-white/[0.07]' : ''}`}
                   >
                     <div className="flex items-center gap-4">
                       <span
@@ -291,7 +292,7 @@ export default function WalletsPage() {
                         {copied === wallet.address ? 'Copied' : 'Copy'}
                       </button>
                       <a
-                        href={`https://etherscan.io/address/${wallet.address}`}
+                        href={explorerAddressUrl(wallet.chain, wallet.address)}
                         target="_blank"
                         rel="noreferrer"
                         className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 text-white/45 hover:border-white/25 hover:text-white"

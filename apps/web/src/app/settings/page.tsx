@@ -132,8 +132,14 @@ export default function SettingsPage() {
                   me.telegramLinked ? 'Alerts are active' : 'Connect to get alerts',
                   ChatCircle,
                 ],
-              ].map(([label, value, detail, Icon]) => (
-                <div key={label as string} className="bg-[#101217] p-6 sm:p-7">
+              ].map(([label, value, detail, Icon], index) => (
+                <motion.div
+                  key={label as string}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.08 }}
+                  className="bg-[#101217] p-6 transition-colors duration-300 hover:bg-[#14171e] sm:p-7"
+                >
                   <div className="flex items-center justify-between text-[11px] text-white/40">
                     <span>{label as string}</span>
                     <Icon className="h-4 w-4 text-[#6dce9a]" />
@@ -142,7 +148,7 @@ export default function SettingsPage() {
                     {value as string}
                   </p>
                   <p className="mt-2 text-xs text-[#6dce9a]/80">{detail as string}</p>
-                </div>
+                </motion.div>
               ))}
             </div>
 

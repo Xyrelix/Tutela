@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import NumberFlow from '@number-flow/react';
 import {
   Warning,
   ArrowUpRight,
@@ -14,6 +15,7 @@ import {
 } from '@phosphor-icons/react';
 import type { Icon } from '@phosphor-icons/react';
 import { listScans, Scan } from '@/lib/api-client';
+import { explorerTxUrl } from '@/lib/chains';
 import { shortAddress } from '@/lib/format';
 
 function riskMeta(score: number) {
@@ -110,17 +112,25 @@ export default function RiskFeedPage() {
         </div>
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
-          {summaryCards.map(({ label, value, detail, Icon, color }) => (
-            <div key={label as string} className="bg-[#101217] p-6 sm:p-7">
+          {summaryCards.map(({ label, value, detail, Icon, color }, index) => (
+            <motion.div
+              key={label as string}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.08 }}
+              className="bg-[#101217] p-6 transition-colors duration-300 hover:bg-[#14171e] sm:p-7"
+            >
               <div className="flex items-center justify-between text-[11px] text-white/40">
                 <span>{label}</span>
                 <Icon className="h-4 w-4" style={{ color }} />
               </div>
-              <p className="mt-5 text-3xl font-medium tracking-[-0.05em]">{value}</p>
+              <p className="mt-5 text-3xl font-medium tracking-[-0.05em]">
+                <NumberFlow value={value} format={{ minimumIntegerDigits: 2 }} />
+              </p>
               <p className="mt-2 text-xs" style={{ color: `${color}cc` }}>
                 {detail}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -237,14 +247,16 @@ export default function RiskFeedPage() {
                             minute: '2-digit',
                           })}
                         </p>
-                        <a
-                          href={`https://etherscan.io/tx/${scan.txHash}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="mt-2 inline-flex items-center gap-1 text-xs text-white/45 hover:text-white"
-                        >
-                          View transaction <ArrowUpRight className="h-3 w-3" />
-                        </a>
+                        {scan.txHash && (
+                          <a
+                            href={explorerTxUrl(scan.wallet.chain, scan.txHash)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-2 inline-flex items-center gap-1 text-xs text-white/45 hover:text-white"
+                          >
+                            View transaction <ArrowUpRight className="h-3 w-3" />
+                          </a>
+                        )}
                       </div>
                     </div>
                   </div>
