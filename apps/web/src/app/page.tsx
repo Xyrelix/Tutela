@@ -55,18 +55,21 @@ const features = [
     eyebrow: '01 / Watch',
     title: 'Always-on wallet intelligence',
     text: 'Tutela monitors every connected wallet and turns noisy on-chain activity into a short, useful signal.',
+    color: '#2457ff',
   },
   {
     icon: ShieldCheck,
     eyebrow: '02 / Decide',
     title: 'Explain the risk before you sign',
     text: 'See the contract, the behavior, and the reason behind each score before an approval becomes a problem.',
+    color: '#6dce9a',
   },
   {
     icon: Lightning,
     eyebrow: '03 / Respond',
     title: 'Move from alert to action',
     text: 'Prepare revocations and route urgent alerts to the people who can protect the wallet fastest.',
+    color: '#ffb15c',
   },
 ];
 
@@ -430,20 +433,30 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
-            {features.map((feature) => (
-              <article
+            {features.map((feature, index) => (
+              <motion.article
                 key={feature.eyebrow}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ delay: index * 0.12, duration: 0.5, ease: 'easeOut' }}
+                whileHover={{ y: -4 }}
                 className="bg-[#0c0e12] p-7 transition-colors hover:bg-[#11151d] sm:p-9"
               >
-                <feature.icon className="h-5 w-5 text-[#2457ff]" />
-                <p className="mt-12 text-[10px] tracking-[0.18em] text-white/30 uppercase">
+                <span
+                  className="grid h-11 w-11 place-items-center rounded-full border"
+                  style={{ color: feature.color, borderColor: `${feature.color}40`, backgroundColor: `${feature.color}1a` }}
+                >
+                  <feature.icon className="h-5 w-5" />
+                </span>
+                <p className="mt-10 text-[10px] tracking-[0.18em] text-white/30 uppercase">
                   {feature.eyebrow}
                 </p>
                 <h3 className="mt-4 text-xl font-medium tracking-[-0.03em] text-white">
                   {feature.title}
                 </h3>
                 <p className="mt-4 text-sm leading-6 text-white/45">{feature.text}</p>
-              </article>
+              </motion.article>
             ))}
           </div>
         </section>
@@ -473,7 +486,14 @@ export default function Home() {
               </Link>
             </div>
             <div className="relative rounded-2xl border border-white/[0.09] bg-[#101217] p-5 sm:p-8">
-              <div className="absolute top-12 left-10 h-[calc(100%-96px)] w-px bg-gradient-to-b from-[#2457ff] via-[#2457ff]/40 to-transparent" />
+              <motion.div
+                initial={{ scaleY: 0 }}
+                whileInView={{ scaleY: 1 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.9, ease: 'easeOut' }}
+                style={{ transformOrigin: 'top' }}
+                className="absolute top-12 left-10 h-[calc(100%-96px)] w-px bg-gradient-to-b from-[#2457ff] via-[#2457ff]/40 to-transparent"
+              />
               <div className="space-y-8">
                 {[
                   [
@@ -501,8 +521,19 @@ export default function Home() {
                     'Delivered in real time',
                   ],
                 ].map(([time, title, detail, status], index) => (
-                  <div key={title} className="relative flex gap-6">
-                    <div className="relative z-10 mt-1 h-3 w-3 shrink-0 rounded-full border-2 border-[#0c0e12] bg-[#2457ff] ring-4 ring-[#2457ff]/20" />
+                  <motion.div
+                    key={title}
+                    initial={{ opacity: 0, x: -12 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: '-80px' }}
+                    transition={{ delay: index * 0.15, duration: 0.5, ease: 'easeOut' }}
+                    className="relative flex gap-6"
+                  >
+                    <div className="relative z-10 mt-1 h-3 w-3 shrink-0 rounded-full border-2 border-[#0c0e12] bg-[#2457ff] ring-4 ring-[#2457ff]/20">
+                      {index === 3 && (
+                        <span className="absolute inset-0 animate-ping rounded-full bg-[#2457ff]/60" />
+                      )}
+                    </div>
                     <div className="flex-1 rounded-xl border border-white/[0.08] bg-white/[0.025] p-4">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className="text-[10px] text-white/35">
@@ -524,7 +555,7 @@ export default function Home() {
                       <p className="mt-3 text-sm text-white">{title}</p>
                       <p className="mt-1 text-xs text-white/40">{detail}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>

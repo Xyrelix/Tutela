@@ -64,14 +64,16 @@ export default function PricingSection() {
         <div className="relative mx-auto mb-12 max-w-3xl text-center">
           <motion.p
             initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
             className="text-[11px] tracking-[0.22em] text-[#6dce9a] uppercase"
           >
             Simple by design
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
             transition={{ delay: 0.1 }}
             className="mt-5 font-sans text-5xl leading-none tracking-[-0.05em] sm:text-7xl"
           >
@@ -81,7 +83,8 @@ export default function PricingSection() {
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
             transition={{ delay: 0.2 }}
             className="mx-auto mt-6 max-w-xl text-sm leading-6 text-white/45"
           >
@@ -90,7 +93,7 @@ export default function PricingSection() {
         </div>
 
         <div className="relative mb-8 flex justify-center">
-          <div className="flex rounded-full border border-white/10 bg-white/[0.04] p-1">
+          <div className="relative flex rounded-full border border-white/10 bg-white/[0.04] p-1">
             {[
               ['monthly', 'Monthly'],
               ['yearly', 'Yearly · save 20%'],
@@ -99,9 +102,16 @@ export default function PricingSection() {
                 key={value}
                 type="button"
                 onClick={() => setIsYearly(value === 'yearly')}
-                className={`rounded-full px-4 py-2 text-xs transition-colors sm:px-5 ${isYearly === (value === 'yearly') ? 'bg-white text-black' : 'text-white/45 hover:text-white'}`}
+                className={`relative rounded-full px-4 py-2 text-xs transition-colors sm:px-5 ${isYearly === (value === 'yearly') ? 'text-black' : 'text-white/45 hover:text-white'}`}
               >
-                {label}
+                {isYearly === (value === 'yearly') && (
+                  <motion.span
+                    layoutId="pricing-toggle-pill"
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    className="absolute inset-0 rounded-full bg-white"
+                  />
+                )}
+                <span className="relative">{label}</span>
               </button>
             ))}
           </div>
@@ -114,12 +124,15 @@ export default function PricingSection() {
               <motion.article
                 key={plan.name}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.25 + index * 0.1 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ delay: index * 0.1, duration: 0.5, ease: 'easeOut' }}
+                whileHover={{ y: -6 }}
                 className={`relative rounded-2xl border p-7 ${plan.featured ? 'border-[#2457ff]/60 bg-[#111725] shadow-[0_20px_80px_rgba(36,87,255,0.12)]' : 'border-white/[0.09] bg-[#101217]'}`}
               >
                 {plan.featured && (
-                  <span className="absolute top-6 right-6 rounded-full bg-[#2457ff] px-2.5 py-1 text-[10px] font-medium">
+                  <span className="absolute top-6 right-6 flex items-center gap-1.5 rounded-full bg-[#2457ff] px-2.5 py-1 text-[10px] font-medium">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
                     Most popular
                   </span>
                 )}
