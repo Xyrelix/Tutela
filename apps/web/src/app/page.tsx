@@ -178,10 +178,13 @@ function BrowserPreview() {
                 </div>
                 <div className="mt-5 flex h-24 items-end gap-1.5">
                   {[32, 48, 40, 68, 55, 82, 74, 92, 84, 96].map((height, index) => (
-                    <div
+                    <motion.div
                       key={height}
+                      initial={{ height: 0 }}
+                      animate={{ height: `${height}%` }}
+                      transition={{ delay: 0.6 + index * 0.05, duration: 0.5, ease: 'easeOut' }}
                       className={`flex-1 rounded-t ${index > 6 ? 'bg-[#6dce9a]' : 'bg-[#2457ff]'}`}
-                      style={{ height: `${height}%`, opacity: 0.45 + index / 20 }}
+                      style={{ opacity: 0.45 + index / 20 }}
                     />
                   ))}
                 </div>
@@ -589,33 +592,52 @@ export default function Home() {
                 title: 'Read-only access',
                 detail: 'Tutela watches activity — it never controls your wallet.',
               },
-            ].map((item) => (
-              <div key={item.title} className="rounded-2xl border border-white/[0.08] bg-[#101217] p-6">
+            ].map((item, index) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ delay: index * 0.1, duration: 0.5, ease: 'easeOut' }}
+                whileHover={{ y: -4 }}
+                className="rounded-2xl border border-white/[0.08] bg-[#101217] p-6 transition-colors hover:bg-[#13161c]"
+              >
                 <ShieldCheck className="h-5 w-5 text-[#6dce9a]" />
                 <h3 className="mt-4 text-sm font-medium text-white">{item.title}</h3>
                 <p className="mt-2 text-xs leading-5 text-white/45">{item.detail}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
         <PricingSection />
         <section className="px-5 pt-8 pb-24 sm:px-8 lg:px-10">
-          <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 rounded-2xl border border-white/[0.1] bg-[#111725] p-8 sm:p-12 lg:flex-row lg:items-center">
-            <div>
-              <p className="text-[11px] tracking-[0.22em] text-[#6dce9a] uppercase">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 overflow-hidden rounded-2xl border border-white/[0.1] bg-[#111725] p-8 sm:p-12 lg:flex-row lg:items-center"
+          >
+            <div className="pointer-events-none absolute top-0 left-0 h-full w-full bg-[radial-gradient(ellipse_at_top_left,rgba(36,87,255,0.16),transparent_60%)]" />
+            <div className="relative">
+              <p className="flex items-center gap-2 text-[11px] tracking-[0.22em] text-[#6dce9a] uppercase">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#6dce9a]" />
                 Your next approval is already on its way
               </p>
               <h2 className="mt-4 max-w-xl font-sans text-4xl leading-none tracking-[-0.04em] text-white sm:text-5xl">
                 Make sure it is one you trust.
               </h2>
             </div>
-            <Link
+            <MotionLink
               href="/register"
-              className="flex shrink-0 items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-black"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              className="relative flex shrink-0 items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-black"
             >
               Protect your wallet <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+            </MotionLink>
+          </motion.div>
         </section>
       </main>
       <HoverFooter />
