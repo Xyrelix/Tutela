@@ -25,6 +25,7 @@ import {
   Wallet,
 } from '@/lib/api-client';
 import { shortAddress } from '@/lib/format';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function greeting() {
   const hour = new Date().getHours();
@@ -161,7 +162,21 @@ export default function DashboardPage() {
         </div>
 
         {loading ? (
-          <p className="mt-8 text-sm text-white/40">Loading…</p>
+          <div className="mt-8 space-y-4">
+            <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="space-y-4 bg-[#101217] p-6 sm:p-7">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="h-3 w-32" />
+                </div>
+              ))}
+            </div>
+            <div className="grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
+              <Skeleton className="h-56 rounded-2xl" />
+              <Skeleton className="h-56 rounded-2xl" />
+            </div>
+          </div>
         ) : error ? (
           <p className="mt-8 text-sm text-[#ff6257]">{error}</p>
         ) : (

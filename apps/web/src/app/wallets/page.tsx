@@ -20,6 +20,7 @@ import {
 import { deleteWallet, getMe, listWallets, Me, registerWallet, Wallet } from '@/lib/api-client';
 import { CHAIN_META, explorerAddressUrl } from '@/lib/chains';
 import { shortAddress } from '@/lib/format';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const FREE_WALLET_LIMIT = 3;
 const SENTINEL_WALLET_LIMIT = 25;
@@ -216,8 +217,19 @@ export default function WalletsPage() {
           </div>
           <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#101217]">
             {loading ? (
-              <div className="px-6 py-16 text-center text-sm text-white/40">
-                Loading wallets…
+              <div>
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-4 px-5 py-5 sm:px-6 ${i ? 'border-t border-white/[0.07]' : ''}`}
+                  >
+                    <Skeleton className="h-10 w-10 shrink-0 rounded-xl" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-3.5 w-36" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : error ? (
               <div className="px-6 py-16 text-center text-sm text-[#ff6257]">{error}</div>

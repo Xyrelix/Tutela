@@ -11,6 +11,7 @@ import {
   Wallet as WalletIcon,
 } from '@phosphor-icons/react';
 import { getMe, getTelegramLinkCode, Me, TelegramLinkCode } from '@/lib/api-client';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function secondsUntil(iso: string) {
   return Math.max(0, Math.round((new Date(iso).getTime() - Date.now()) / 1000));
@@ -117,7 +118,19 @@ export default function SettingsPage() {
         </div>
 
         {loading ? (
-          <p className="mt-8 text-sm text-white/40">Loading…</p>
+          <div className="mt-8 space-y-6">
+            <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="space-y-4 bg-[#101217] p-6 sm:p-7">
+                  <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-8 w-20" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+              ))}
+            </div>
+            <Skeleton className="h-20 rounded-2xl" />
+            <Skeleton className="h-32 rounded-2xl" />
+          </div>
         ) : error && !me ? (
           <p className="mt-8 text-sm text-[#ff6257]">{error}</p>
         ) : me ? (

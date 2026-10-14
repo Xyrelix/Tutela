@@ -24,6 +24,7 @@ import {
 } from '@/lib/api-client';
 import { explorerTxUrl } from '@/lib/chains';
 import { formatAmount, shortAddress } from '@/lib/format';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ApprovalsPage() {
   const [approvals, setApprovals] = useState<Approval[]>([]);
@@ -186,8 +187,20 @@ export default function ApprovalsPage() {
             </p>
           </div>
           {loading ? (
-            <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-white/40">
-              Loading approvals…
+            <div className="space-y-3">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-4 rounded-2xl border border-white/[0.08] bg-[#101217] p-5 sm:p-6"
+                >
+                  <Skeleton className="h-10 w-10 shrink-0 rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-3.5 w-32" />
+                    <Skeleton className="h-3 w-56" />
+                  </div>
+                  <Skeleton className="h-8 w-20 shrink-0" />
+                </div>
+              ))}
             </div>
           ) : error ? (
             <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-[#ff6257]">

@@ -19,6 +19,7 @@ import {
 import type { Icon } from '@phosphor-icons/react';
 import { Alert, listAlerts } from '@/lib/api-client';
 import { shortAddress } from '@/lib/format';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function alertMeta(type: string) {
   if (type.includes('critical')) return { label: 'Critical', color: '#ff6257', icon: ShieldWarning };
@@ -188,8 +189,20 @@ export default function AlertsPage() {
             </div>
           </div>
           {loading ? (
-            <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-white/40">
-              Loading alerts…
+            <div className="space-y-3">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-4 rounded-2xl border border-white/[0.08] bg-[#101217] p-5 sm:p-6"
+                >
+                  <Skeleton className="h-10 w-10 shrink-0 rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-3.5 w-40" />
+                    <Skeleton className="h-3 w-full max-w-md" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : error ? (
             <div className="rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center text-sm text-[#ff6257]">
