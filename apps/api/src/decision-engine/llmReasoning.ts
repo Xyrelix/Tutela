@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import type { RuleResult } from './rules';
+import type { SpenderInfo } from './spenderInfo';
 
 function getGeminiClient(): GoogleGenAI {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
@@ -13,7 +14,7 @@ export interface AmbiguousCaseInput {
   spender: string;
   tokenAddress: string;
   amount: string;
-  contractVerified: boolean | null;
+  spenderInfo: SpenderInfo | null;
   ruleResult: RuleResult;
 }
 
@@ -41,19 +42,27 @@ export async function reasonAboutApproval(input: AmbiguousCaseInput): Promise<Ll
           spender: input.spender,
           tokenAddress: input.tokenAddress,
           amount: input.amount,
-          contractVerified: input.contractVerified,
+          spenderInfo: input.spenderInfo,
           deterministicFindings: input.ruleResult.reasons,
         }),
         config: {
           systemInstruction:
             'You are a wallet security analyst. Given an ERC-20 approval event that deterministic ' +
-            'rules could not classify confidently, decide whether it is safe, suspicious, or malicious.',
+            'rules could not classify confidently, decide whether it is safe, suspicious, or malicious. ' +
+            'spenderInfo holds on-chain facts from Etherscan (null if the lookup failed): whether the spender ' +
+            'is a contract or a plain wallet, whether its source is verified, its name, and its age in days. ' +
+            'Unlimited approvals to plain wallets, or to new unverified contracts, are classic drainer patterns.',
           responseMimeType: 'application/json',
           responseSchema: {
             type: Type.OBJECT,
             properties: {
               verdict: { type: Type.STRING, enum: ['safe', 'suspicious', 'malicious'] },
-              riskScore: { type: Type.NUMBER },
+              riskScore: {
+                type: Type.INTEGER,
+                minimum: 0,
+                maximum: 100,
+                description: 'Whole number from 0 (no risk) to 100 (certain drainer)',
+              },
               reasoning: { type: Type.STRING },
             },
             required: ['verdict', 'riskScore', 'reasoning'],
@@ -67,7 +76,8 @@ export async function reasonAboutApproval(input: AmbiguousCaseInput): Promise<Ll
       }
 
       const result = parsed as Record<string, unknown>;
-      const riskScore = Number(result.riskScore);
+      // Scan.riskScore is an Int column; a fractional score would fail the insert.
+      const riskScore = Math.round(Number(result.riskScore));
       if (
         !['safe', 'suspicious', 'malicious'].includes(String(result.verdict)) ||
         !Number.isFinite(riskScore) ||

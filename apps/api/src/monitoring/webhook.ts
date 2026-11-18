@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { prisma } from '../db/client';
 import { evaluateApproval, Verdict } from '../decision-engine/rules';
 import { reasonAboutApproval } from '../decision-engine/llmReasoning';
+import { getSpenderInfo } from '../decision-engine/spenderInfo';
 import { dispatchAlert } from '../actions/alerts';
 import { asyncHandler } from '../lib/asyncHandler';
 import { isPro } from '../lib/plans';
@@ -142,7 +143,7 @@ async function processLogs(logs: AlchemyGraphqlLog[], chain: string): Promise<vo
             spender,
             tokenAddress,
             amount,
-            contractVerified: null,
+            spenderInfo: await getSpenderInfo(spender, chain),
             ruleResult,
           });
           verdict = llmVerdict.verdict;
