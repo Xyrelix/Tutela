@@ -13,6 +13,8 @@ import { startTelegramBot } from './actions/telegramBot';
 dotenv.config();
 
 const app = express();
+// Render sits behind one proxy; without this the rate limiter sees every user as the proxy's IP.
+app.set('trust proxy', 1);
 
 const defaultOrigins = ['http://localhost:3000', 'https://tutela-guard.vercel.app'];
 const allowedOrigins =
