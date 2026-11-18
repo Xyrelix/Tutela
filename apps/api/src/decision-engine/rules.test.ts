@@ -70,4 +70,15 @@ describe('evaluateApproval', () => {
 
     expect(result.verdict).toBe('safe');
   });
+
+  it('treats an unlimited approval to a known protocol contract as safe', () => {
+    const result = evaluateApproval({
+      spender: '0x000000000022D473030F116dDEE9F6B43aC78BA3', // Uniswap Permit2, checksummed
+      tokenAddress: SAFE_TOKEN,
+      amount: MaxUint256.toString(),
+    });
+
+    expect(result.verdict).toBe('safe');
+    expect(result.reasons[0]).toContain('Uniswap Permit2');
+  });
 });

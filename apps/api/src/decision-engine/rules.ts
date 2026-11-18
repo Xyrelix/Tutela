@@ -1,5 +1,6 @@
 import { MaxUint256 } from 'ethers';
 import knownDrainers from './known-drainers.json';
+import { getContractLabel } from '../lib/contract-labels';
 
 export type Verdict = 'safe' | 'suspicious' | 'malicious' | 'ambiguous';
 
@@ -25,6 +26,17 @@ export function evaluateApproval(input: RuleInput): RuleResult {
       verdict: 'malicious',
       riskScore: 100,
       reasons: ['Spender matches known drainer contract list'],
+    };
+  }
+
+  // Known protocol spenders (Uniswap, OpenSea, ...) routinely get unlimited approvals;
+  // clearing them here keeps normal activity out of the alert feed and the LLM quota.
+  const label = getContractLabel(spender);
+  if (label) {
+    return {
+      verdict: 'safe',
+      riskScore: 0,
+      reasons: [`Spender is ${label.name} (${label.domain}), a known protocol contract`],
     };
   }
 

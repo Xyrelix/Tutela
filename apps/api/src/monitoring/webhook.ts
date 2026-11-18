@@ -67,12 +67,14 @@ router.post(
   '/alchemy',
   asyncHandler(async (req: Request, res: Response) => {
     if (!verifySignature(req)) {
+      console.warn('[webhook] rejected delivery: invalid or missing signature');
       res.status(401).json({ error: 'Invalid webhook signature' });
       return;
     }
 
     const chainParam = typeof req.query.chain === 'string' ? req.query.chain : 'ethereum';
     if (!SUPPORTED_CHAINS.includes(chainParam)) {
+      console.warn(`[webhook] rejected delivery: unsupported chain ${chainParam}`);
       res.status(400).json({ error: `Unsupported chain: ${chainParam}` });
       return;
     }
@@ -157,6 +159,10 @@ async function processLogs(logs: AlchemyGraphqlLog[], chain: string): Promise<vo
       await prisma.scan.create({
         data: { walletId: wallet.id, txHash: log.transaction.hash, spender, riskScore, verdict, reasoning },
       });
+      // Only monitored wallets get here, so this stays quiet on busy chains.
+      console.log(
+        `[webhook] ${chain} scan saved: ${verdict} (${riskScore}) wallet ${wallet.address} tx ${log.transaction.hash}`
+      );
 
       if (verdict !== 'safe') {
         await prisma.approval.create({
