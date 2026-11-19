@@ -1,4 +1,5 @@
 import { Interface, JsonRpcProvider } from 'ethers';
+import { PUBLIC_RPC_BY_CHAIN } from '../lib/rpc';
 
 const ERC20_APPROVE_ABI = ['function approve(address spender, uint256 amount) returns (bool)'];
 const erc20Interface = new Interface(ERC20_APPROVE_ABI);
@@ -25,8 +26,9 @@ export async function verifyRevokeTransaction(
   approval: { tokenAddress: string; spender: string; wallet: { address: string; chain: string } }
 ): Promise<string | null> {
   const host = RPC_HOST_BY_CHAIN[approval.wallet.chain];
-  if (!host) return `Revoke verification is not configured for ${approval.wallet.chain}`;
-  const provider = new JsonRpcProvider(`https://${host}/v2/${process.env.ALCHEMY_API_KEY}`);
+  const rpcUrl = host ? `https://${host}/v2/${process.env.ALCHEMY_API_KEY}` : PUBLIC_RPC_BY_CHAIN[approval.wallet.chain];
+  if (!rpcUrl) return `Revoke verification is not configured for ${approval.wallet.chain}`;
+  const provider = new JsonRpcProvider(rpcUrl);
   const [tx, receipt] = await Promise.all([provider.getTransaction(txHash), provider.getTransactionReceipt(txHash)]);
   if (!tx || !receipt) return 'Transaction is not confirmed yet';
   if (receipt.status !== 1) return 'Transaction failed on-chain';

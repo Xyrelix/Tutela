@@ -62,7 +62,7 @@ function verifySignature(req: Request): boolean {
 // Each Alchemy webhook covers one network. The network is set on the webhook URL
 // as ?chain=<name>, so events can be matched to the right wallet record.
 // Without it, events are treated as Ethereum (the original Sepolia webhook).
-const SUPPORTED_CHAINS = ['ethereum', 'robinhood-testnet'];
+const SUPPORTED_CHAINS = ['ethereum', 'robinhood-testnet', 'arc-testnet', 'arc-mainnet'];
 
 router.post(
   '/alchemy',

@@ -212,6 +212,8 @@ export default function WalletsPage() {
                 <option value="ethereum">Ethereum</option>
                 <option value="base">Base</option>
                 <option value="robinhood-testnet">Robinhood Testnet</option>
+                <option value="arc-testnet">Arc Testnet</option>
+                <option value="arc-mainnet">Arc</option>
               </select>
             </div>
           </div>
@@ -401,6 +403,8 @@ export default function WalletsPage() {
                     <option value="ethereum">Ethereum</option>
                     <option value="base">Base</option>
                     <option value="robinhood-testnet">Robinhood Testnet</option>
+                    <option value="arc-testnet">Arc Testnet</option>
+                    <option value="arc-mainnet">Arc</option>
                   </select>
                   {formError && <p className="text-xs text-[#ff6257]">{formError}</p>}
                   <motion.button

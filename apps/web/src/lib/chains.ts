@@ -1,4 +1,22 @@
-export const CHAIN_META: Record<string, { label: string; color: string; mark: string; explorer: string }> = {
+interface ChainMeta {
+  label: string;
+  color: string;
+  mark: string;
+  explorer: string;
+  // For switching the wallet before a revoke; `add` is offered to wallets that
+  // don't know the chain yet. Only Arc sets this, so other chains revoke as before.
+  network?: {
+    chainId: number;
+    add?: {
+      chainName: string;
+      nativeCurrency: { name: string; symbol: string; decimals: number };
+      rpcUrls: string[];
+      blockExplorerUrls: string[];
+    };
+  };
+}
+
+export const CHAIN_META: Record<string, ChainMeta> = {
   ethereum: { label: 'Ethereum', color: '#8b9eff', mark: 'Ξ', explorer: 'https://etherscan.io' },
   base: { label: 'Base', color: '#6dce9a', mark: 'B', explorer: 'https://basescan.org' },
   'robinhood-testnet': {
@@ -6,6 +24,37 @@ export const CHAIN_META: Record<string, { label: string; color: string; mark: st
     color: '#ffb15c',
     mark: 'R',
     explorer: 'https://explorer.testnet.chain.robinhood.com',
+  },
+  'arc-testnet': {
+    label: 'Arc Testnet',
+    color: '#7fd8e8',
+    mark: 'A',
+    explorer: 'https://explorer.testnet.arc.io',
+    network: {
+      chainId: 5042002,
+      add: {
+        chainName: 'Arc Testnet',
+        // Arc's native gas token is USDC, with 18 decimals at the native level.
+        nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+        rpcUrls: ['https://rpc.testnet.arc.io'],
+        blockExplorerUrls: ['https://explorer.testnet.arc.io'],
+      },
+    },
+  },
+  'arc-mainnet': {
+    label: 'Arc',
+    color: '#3ec5e0',
+    mark: 'A',
+    explorer: 'https://explorer.arc.io',
+    network: {
+      chainId: 5042,
+      add: {
+        chainName: 'Arc',
+        nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+        rpcUrls: ['https://rpc.mainnet.arc.io'],
+        blockExplorerUrls: ['https://explorer.arc.io'],
+      },
+    },
   },
 };
 
@@ -17,4 +66,18 @@ export function explorerAddressUrl(chain: string, address: string): string {
 
 export function explorerTxUrl(chain: string, txHash: string): string {
   return `${CHAIN_META[chain]?.explorer ?? DEFAULT_EXPLORER}/tx/${txHash}`;
+}
+
+// Moves the browser wallet onto the wallet record's chain, adding it first if the
+// wallet doesn't know it (EIP-3085 error 4902). Chains without `network` are left as-is.
+export async function switchWalletToChain(chain: string): Promise<void> {
+  const network = CHAIN_META[chain]?.network;
+  if (!network || !window.ethereum) return;
+  const chainId = `0x${network.chainId.toString(16)}`;
+  try {
+    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId }] });
+  } catch (err) {
+    if ((err as { code?: number }).code !== 4902 || !network.add) throw err;
+    await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [{ chainId, ...network.add }] });
+  }
 }

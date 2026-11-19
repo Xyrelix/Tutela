@@ -22,7 +22,7 @@ import {
   prepareRevoke,
   UnsignedTransaction,
 } from '@/lib/api-client';
-import { explorerTxUrl } from '@/lib/chains';
+import { explorerTxUrl, switchWalletToChain } from '@/lib/chains';
 import { formatAmount, shortAddress } from '@/lib/format';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -94,6 +94,9 @@ export default function ApprovalsPage() {
         setNotice(`Switch your wallet to ${approval.wallet.address} to revoke this approval.`);
         return;
       }
+
+      // Arc revokes must land on Arc; no-op for chains without network details.
+      await switchWalletToChain(approval.wallet.chain);
 
       const txHash = (await window.ethereum.request({
         method: 'eth_sendTransaction',

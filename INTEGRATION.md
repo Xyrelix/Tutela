@@ -20,6 +20,10 @@ Tutela uses **Alchemy Custom Webhooks (GraphQL)** to receive `Approval` events o
    webhook receiver verifies every incoming payload with an HMAC-SHA256 signature
    (`monitoring/webhook.ts`'s `verifySignature`) and rejects anything that doesn't match, so a
    missing or wrong key means requests get rejected, not silently trusted.
+   Each network needs its own webhook, with the chain on the URL:
+   `/api/webhooks/alchemy?chain=<name>` where `<name>` is `ethereum` (Sepolia, the default),
+   `robinhood-testnet`, `arc-testnet` or `arc-mainnet`. Every webhook has its own signing key;
+   put them all in `ALCHEMY_WEBHOOK_SIGNING_KEY`, comma-separated.
 5. The receiver needs a public HTTPS endpoint — Alchemy can't reach `localhost`. Use a tunnel
    (ngrok, cloudflared) for local testing.
 
