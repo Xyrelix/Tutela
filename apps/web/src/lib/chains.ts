@@ -4,7 +4,7 @@ interface ChainMeta {
   mark: string;
   explorer: string;
   // For switching the wallet before a revoke; `add` is offered to wallets that
-  // don't know the chain yet. Only Arc sets this, so other chains revoke as before.
+  // don't know the chain yet. Only Arc and Base set this; other chains revoke as before.
   network?: {
     chainId: number;
     add?: {
@@ -17,8 +17,23 @@ interface ChainMeta {
 }
 
 export const CHAIN_META: Record<string, ChainMeta> = {
-  ethereum: { label: 'Ethereum', color: '#8b9eff', mark: 'Ξ', explorer: 'https://etherscan.io' },
-  base: { label: 'Base', color: '#6dce9a', mark: 'B', explorer: 'https://basescan.org' },
+  ethereum: { label: 'Ethereum', color: '#8b9eff', mark: 'Ξ', explorer: 'https://sepolia.etherscan.io' },
+  // Monitored on Base Sepolia, like 'ethereum' is on Sepolia.
+  base: {
+    label: 'Base',
+    color: '#6dce9a',
+    mark: 'B',
+    explorer: 'https://sepolia.basescan.org',
+    network: {
+      chainId: 84532,
+      add: {
+        chainName: 'Base Sepolia',
+        nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+        rpcUrls: ['https://sepolia.base.org'],
+        blockExplorerUrls: ['https://sepolia.basescan.org'],
+      },
+    },
+  },
   'robinhood-testnet': {
     label: 'Robinhood Testnet',
     color: '#ffb15c',

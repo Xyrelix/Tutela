@@ -17,6 +17,7 @@ export function buildRevokeTransaction(tokenAddress: string, spender: string): U
 
 const RPC_HOST_BY_CHAIN: Record<string, string> = {
   ethereum: 'eth-sepolia.g.alchemy.com',
+  base: 'base-sepolia.g.alchemy.com',
   'robinhood-testnet': 'robinhood-testnet.g.alchemy.com',
 };
 
