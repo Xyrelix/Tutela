@@ -96,7 +96,7 @@ router.post(
 // the 9-connection Prisma pool, and queued queries timed out before they ran.
 let processingQueue: Promise<void> = Promise.resolve();
 
-async function processLogs(logs: AlchemyGraphqlLog[], chain: string): Promise<void> {
+export async function processLogs(logs: AlchemyGraphqlLog[], chain: string): Promise<void> {
   const candidates = logs.filter((log) => (log.topics ?? []).length >= 3 && log.transaction?.from?.address);
   if (candidates.length === 0) {
     return;
