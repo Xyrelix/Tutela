@@ -60,12 +60,36 @@ describe('evaluateApproval', () => {
     });
   });
 
-  it('treats an amount one wei short of MaxUint256 as bounded, not unlimited', () => {
+  it('flags an amount one wei short of MaxUint256 as effectively unlimited', () => {
     const almostMax = (MaxUint256 - 1n).toString();
     const result = evaluateApproval({
       spender: SAFE_SPENDER,
       tokenAddress: SAFE_TOKEN,
       amount: almostMax,
+    });
+
+    expect(result.verdict).toBe('ambiguous');
+    expect(result.riskScore).toBe(40);
+    expect(result.reasons[0]).toContain('Effectively unlimited');
+  });
+
+  it('flags amounts from 2^128 up as effectively unlimited, and keeps just below it bounded', () => {
+    const at = evaluateApproval({ spender: SAFE_SPENDER, tokenAddress: SAFE_TOKEN, amount: (2n ** 128n).toString() });
+    const below = evaluateApproval({
+      spender: SAFE_SPENDER,
+      tokenAddress: SAFE_TOKEN,
+      amount: (2n ** 128n - 1n).toString(),
+    });
+
+    expect(at.verdict).toBe('ambiguous');
+    expect(below.verdict).toBe('safe');
+  });
+
+  it('keeps a large but realistic approval (1 billion tokens at 18 decimals) bounded', () => {
+    const result = evaluateApproval({
+      spender: SAFE_SPENDER,
+      tokenAddress: SAFE_TOKEN,
+      amount: (10n ** 27n).toString(),
     });
 
     expect(result.verdict).toBe('safe');
