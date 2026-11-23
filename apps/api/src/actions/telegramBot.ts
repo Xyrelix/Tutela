@@ -59,7 +59,19 @@ export function startTelegramBot(): void {
     await ctx.reply('Your Telegram is linked to Tutela. You will receive risk alerts here.');
   });
 
-  telegramBot.launch();
+  // A failing /start handler must not take the API down with it.
+  telegramBot.catch((err) => console.error('[telegram] update handler failed', err));
+
+  launchWithRetry(telegramBot);
   process.once('SIGINT', () => telegramBot.stop('SIGINT'));
   process.once('SIGTERM', () => telegramBot.stop('SIGTERM'));
+}
+
+// launch() rejects when Telegram refuses polling, e.g. 409 Conflict while the previous
+// deploy is still polling the same bot. Unhandled, that rejection crashed the whole API.
+export function launchWithRetry(bot: Telegraf, delayMs = 30_000): void {
+  bot.launch().catch((err) => {
+    console.error(`[telegram] bot launch failed; retrying in ${delayMs / 1000}s`, err);
+    setTimeout(() => launchWithRetry(bot, delayMs), delayMs);
+  });
 }
