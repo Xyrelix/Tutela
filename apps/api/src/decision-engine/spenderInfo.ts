@@ -13,7 +13,7 @@ export interface SpenderInfo {
 // Per webhook chain: an Etherscan-compatible explorer API, and optionally a JSON-RPC
 // endpoint for eth_getCode where the explorer's proxy module isn't available
 // (Etherscan's free tier covers only getsourcecode on Arc Mainnet, so contract age
-// stays null there). 'ethereum' and 'base' are the Sepolia webhooks. Chains absent here get no lookup.
+// stays null there). Chains absent here get no lookup.
 interface ExplorerConfig {
   api: string;
   keyed: boolean; // Etherscan needs ETHERSCAN_API_KEY; Blockscout is open
@@ -21,8 +21,8 @@ interface ExplorerConfig {
 }
 
 const EXPLORERS: Record<string, ExplorerConfig> = {
-  ethereum: { api: 'https://api.etherscan.io/v2/api?chainid=11155111', keyed: true },
-  base: { api: 'https://api.etherscan.io/v2/api?chainid=84532', keyed: true }, // Base Sepolia
+  sepolia: { api: 'https://api.etherscan.io/v2/api?chainid=11155111', keyed: true },
+  'base-sepolia': { api: 'https://api.etherscan.io/v2/api?chainid=84532', keyed: true },
   'arc-testnet': { api: 'https://explorer.testnet.arc.io/api', keyed: false, rpc: PUBLIC_RPC_BY_CHAIN['arc-testnet'] },
   'arc-mainnet': {
     api: 'https://api.etherscan.io/v2/api?chainid=5042',

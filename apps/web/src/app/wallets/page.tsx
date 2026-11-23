@@ -41,7 +41,7 @@ export default function WalletsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [newAddress, setNewAddress] = useState('');
-  const [newChain, setNewChain] = useState('ethereum');
+  const [newChain, setNewChain] = useState('sepolia');
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [me, setMe] = useState<Me | null>(null);
@@ -209,8 +209,8 @@ export default function WalletsPage() {
                 className="h-9 rounded-lg border border-white/10 bg-[#101217] px-3 text-xs text-white/60 outline-none"
               >
                 <option value="all">All networks</option>
-                <option value="ethereum">Ethereum</option>
-                <option value="base">Base</option>
+                <option value="sepolia">Sepolia</option>
+                <option value="base-sepolia">Base Sepolia</option>
                 <option value="robinhood-testnet">Robinhood Testnet</option>
                 <option value="arc-testnet">Arc Testnet</option>
                 <option value="arc-mainnet">Arc</option>
@@ -248,7 +248,7 @@ export default function WalletsPage() {
               </div>
             ) : (
               filteredWallets.map((wallet, index) => {
-                const meta = CHAIN_META[wallet.chain] ?? CHAIN_META.ethereum;
+                const meta = CHAIN_META[wallet.chain] ?? CHAIN_META.sepolia;
                 const isLoginWallet = me?.walletAddress?.toLowerCase() === wallet.address.toLowerCase();
                 return (
                   <motion.div
@@ -400,8 +400,8 @@ export default function WalletsPage() {
                     onChange={(event) => setNewChain(event.target.value)}
                     className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white outline-none"
                   >
-                    <option value="ethereum">Ethereum</option>
-                    <option value="base">Base</option>
+                    <option value="sepolia">Sepolia</option>
+                    <option value="base-sepolia">Base Sepolia</option>
                     <option value="robinhood-testnet">Robinhood Testnet</option>
                     <option value="arc-testnet">Arc Testnet</option>
                     <option value="arc-mainnet">Arc</option>

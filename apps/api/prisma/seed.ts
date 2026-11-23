@@ -24,18 +24,18 @@ async function main() {
 
   const personalWallet = await prisma.wallet.upsert({
     where: {
-      address_chain_userId: { address: PERSONAL_WALLET, chain: 'ethereum', userId: user.id },
+      address_chain_userId: { address: PERSONAL_WALLET, chain: 'sepolia', userId: user.id },
     },
     update: {},
-    create: { address: PERSONAL_WALLET, chain: 'ethereum', userId: user.id },
+    create: { address: PERSONAL_WALLET, chain: 'sepolia', userId: user.id },
   });
 
   const treasuryWallet = await prisma.wallet.upsert({
     where: {
-      address_chain_userId: { address: TREASURY_WALLET, chain: 'base', userId: user.id },
+      address_chain_userId: { address: TREASURY_WALLET, chain: 'base-sepolia', userId: user.id },
     },
     update: {},
-    create: { address: TREASURY_WALLET, chain: 'base', userId: user.id },
+    create: { address: TREASURY_WALLET, chain: 'base-sepolia', userId: user.id },
   });
 
   const demoWalletIds = [personalWallet.id, treasuryWallet.id];

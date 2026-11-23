@@ -45,7 +45,7 @@ function approvalLog(owner: string, amount: string, sender = owner) {
 }
 
 function monitoredWallet(plan: string, address = WALLET) {
-  return { id: 'wallet1', address, chain: 'ethereum', user: { plan } };
+  return { id: 'wallet1', address, chain: 'sepolia', user: { plan } };
 }
 
 beforeEach(() => {
@@ -102,32 +102,40 @@ describe('POST /alchemy', () => {
     );
   });
 
-  it('defaults to ethereum when no chain is given', async () => {
+  it('defaults to sepolia when no chain is given', async () => {
     await post('/alchemy', 'key-sepolia');
     await flushQueue();
     expect(db.wallet.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({ where: expect.objectContaining({ chain: 'ethereum' }) })
+      expect.objectContaining({ where: expect.objectContaining({ chain: 'sepolia' }) })
+    );
+  });
+
+  it('still treats the legacy ?chain=ethereum as sepolia', async () => {
+    await post('/alchemy?chain=ethereum', 'key-sepolia');
+    await flushQueue();
+    expect(db.wallet.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: expect.objectContaining({ chain: 'sepolia' }) })
     );
   });
 });
 
 describe('processLogs', () => {
   it('skips logs that are not shaped like an Approval without touching the database', async () => {
-    await processLogs([{ ...approvalLog(WALLET, '0x1'), topics: [APPROVAL_TOPIC] }], 'ethereum');
+    await processLogs([{ ...approvalLog(WALLET, '0x1'), topics: [APPROVAL_TOPIC] }], 'sepolia');
     expect(db.wallet.findMany).not.toHaveBeenCalled();
   });
 
   it('skips ERC-721 approvals (4 topics, empty data) instead of crashing the batch', async () => {
     db.wallet.findMany.mockResolvedValue([monitoredWallet('free')]);
     const nftApproval = { ...approvalLog(WALLET, '0x'), topics: [...approvalLog(WALLET, '0x').topics, topicFor(TOKEN)] };
-    await processLogs([nftApproval, approvalLog(WALLET, '0x1')], 'ethereum');
+    await processLogs([nftApproval, approvalLog(WALLET, '0x1')], 'sepolia');
     expect(db.scan.create).toHaveBeenCalledTimes(1);
   });
 
   it("catches a relayed permit: the drainer sends the transaction, the wallet's tokens are approved", async () => {
     const drainer = '0x4444444444444444444444444444444444444444';
     db.wallet.findMany.mockResolvedValue([monitoredWallet('free')]);
-    await processLogs([approvalLog(WALLET, UNLIMITED, drainer)], 'ethereum');
+    await processLogs([approvalLog(WALLET, UNLIMITED, drainer)], 'sepolia');
 
     expect(db.wallet.findMany).toHaveBeenCalledWith(
       expect.objectContaining({ where: expect.objectContaining({ OR: [{ address: { equals: WALLET, mode: 'insensitive' } }] }) })
@@ -138,7 +146,7 @@ describe('processLogs', () => {
   it("does not file a contract's own approval under the wallet that sent the transaction", async () => {
     const aggregator = '0x5555555555555555555555555555555555555555';
     db.wallet.findMany.mockResolvedValue([]);
-    await processLogs([approvalLog(aggregator, UNLIMITED, WALLET)], 'ethereum');
+    await processLogs([approvalLog(aggregator, UNLIMITED, WALLET)], 'sepolia');
 
     expect(db.wallet.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -149,13 +157,13 @@ describe('processLogs', () => {
   });
 
   it('ignores approvals from wallets nobody monitors', async () => {
-    await processLogs([approvalLog(WALLET, UNLIMITED)], 'ethereum');
+    await processLogs([approvalLog(WALLET, UNLIMITED)], 'sepolia');
     expect(db.scan.create).not.toHaveBeenCalled();
   });
 
   it('records a bounded approval as safe with no alert', async () => {
     db.wallet.findMany.mockResolvedValue([monitoredWallet('free')]);
-    await processLogs([approvalLog(WALLET, '0x3e8')], 'ethereum');
+    await processLogs([approvalLog(WALLET, '0x3e8')], 'sepolia');
 
     expect(db.scan.create).toHaveBeenCalledWith({
       data: expect.objectContaining({ walletId: 'wallet1', spender: SPENDER, verdict: 'safe', txHash: '0xabc' }),
@@ -166,13 +174,13 @@ describe('processLogs', () => {
 
   it('matches a monitored wallet regardless of address casing', async () => {
     db.wallet.findMany.mockResolvedValue([monitoredWallet('free', '0xAbCdEf0000000000000000000000000000000001')]);
-    await processLogs([approvalLog('0xabcdef0000000000000000000000000000000001', '0x1')], 'ethereum');
+    await processLogs([approvalLog('0xabcdef0000000000000000000000000000000001', '0x1')], 'sepolia');
     expect(db.scan.create).toHaveBeenCalledTimes(1);
   });
 
   it('flags an unlimited approval as suspicious for free plans without calling the AI', async () => {
     db.wallet.findMany.mockResolvedValue([monitoredWallet('free')]);
-    await processLogs([approvalLog(WALLET, UNLIMITED)], 'ethereum');
+    await processLogs([approvalLog(WALLET, UNLIMITED)], 'sepolia');
 
     expect(reasonAboutApproval).not.toHaveBeenCalled();
     expect(db.scan.create).toHaveBeenCalledWith({ data: expect.objectContaining({ verdict: 'suspicious', riskScore: 60 }) });
@@ -189,9 +197,9 @@ describe('processLogs', () => {
     (getSpenderInfo as jest.Mock).mockResolvedValue(spenderInfo);
     (reasonAboutApproval as jest.Mock).mockResolvedValue({ verdict: 'malicious', riskScore: 95, reasoning: 'EOA drainer' });
 
-    await processLogs([approvalLog(WALLET, UNLIMITED)], 'base');
+    await processLogs([approvalLog(WALLET, UNLIMITED)], 'base-sepolia');
 
-    expect(getSpenderInfo).toHaveBeenCalledWith(SPENDER, 'base');
+    expect(getSpenderInfo).toHaveBeenCalledWith(SPENDER, 'base-sepolia');
     expect(reasonAboutApproval).toHaveBeenCalledWith(expect.objectContaining({ spender: SPENDER, spenderInfo }));
     expect(db.scan.create).toHaveBeenCalledWith({
       data: expect.objectContaining({ verdict: 'malicious', riskScore: 95, reasoning: 'EOA drainer' }),

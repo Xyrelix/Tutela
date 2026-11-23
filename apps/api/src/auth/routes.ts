@@ -108,7 +108,7 @@ router.post(
       user = await prisma.$transaction(async (tx) => {
         const created = await tx.user.create({ data: { walletAddress: challenge.walletAddress } });
         await tx.wallet.create({
-          data: { address: challenge.walletAddress, chain: 'ethereum', userId: created.id },
+          data: { address: challenge.walletAddress, chain: 'sepolia', userId: created.id },
         });
         return created;
       });

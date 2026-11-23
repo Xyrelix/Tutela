@@ -17,10 +17,9 @@ interface ChainMeta {
 }
 
 export const CHAIN_META: Record<string, ChainMeta> = {
-  ethereum: { label: 'Ethereum', color: '#8b9eff', mark: 'Ξ', explorer: 'https://sepolia.etherscan.io' },
-  // Monitored on Base Sepolia, like 'ethereum' is on Sepolia.
-  base: {
-    label: 'Base',
+  sepolia: { label: 'Sepolia', color: '#8b9eff', mark: 'Ξ', explorer: 'https://sepolia.etherscan.io' },
+  'base-sepolia': {
+    label: 'Base Sepolia',
     color: '#6dce9a',
     mark: 'B',
     explorer: 'https://sepolia.basescan.org',
@@ -73,7 +72,7 @@ export const CHAIN_META: Record<string, ChainMeta> = {
   },
 };
 
-const DEFAULT_EXPLORER = CHAIN_META.ethereum.explorer;
+const DEFAULT_EXPLORER = CHAIN_META.sepolia.explorer;
 
 export function explorerAddressUrl(chain: string, address: string): string {
   return `${CHAIN_META[chain]?.explorer ?? DEFAULT_EXPLORER}/address/${address}`;

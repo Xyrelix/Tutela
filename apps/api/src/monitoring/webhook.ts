@@ -61,8 +61,11 @@ function verifySignature(req: Request): boolean {
 
 // Each Alchemy webhook covers one network. The network is set on the webhook URL
 // as ?chain=<name>, so events can be matched to the right wallet record.
-// Without it, events are treated as Ethereum (the original Sepolia webhook).
-const SUPPORTED_CHAINS = ['ethereum', 'base', 'robinhood-testnet', 'arc-testnet', 'arc-mainnet'];
+// Without it, events are treated as Sepolia (the original webhook).
+const SUPPORTED_CHAINS = ['sepolia', 'base-sepolia', 'robinhood-testnet', 'arc-testnet', 'arc-mainnet'];
+// 'ethereum' used to mean Sepolia. Kept as an alias until the Sepolia webhook URL says
+// ?chain=sepolia; remove it before 'ethereum' (mainnet) is added above.
+const LEGACY_CHAIN_ALIASES: Record<string, string> = { ethereum: 'sepolia' };
 
 router.post(
   '/alchemy',
@@ -73,7 +76,8 @@ router.post(
       return;
     }
 
-    const chainParam = typeof req.query.chain === 'string' ? req.query.chain : 'ethereum';
+    const rawChain = typeof req.query.chain === 'string' ? req.query.chain : 'sepolia';
+    const chainParam = LEGACY_CHAIN_ALIASES[rawChain] ?? rawChain;
     if (!SUPPORTED_CHAINS.includes(chainParam)) {
       console.warn(`[webhook] rejected delivery: unsupported chain ${chainParam}`);
       res.status(400).json({ error: `Unsupported chain: ${chainParam}` });
