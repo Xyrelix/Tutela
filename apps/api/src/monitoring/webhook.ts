@@ -97,18 +97,23 @@ router.post(
 let processingQueue: Promise<void> = Promise.resolve();
 
 export async function processLogs(logs: AlchemyGraphqlLog[], chain: string): Promise<void> {
-  const candidates = logs.filter((log) => (log.topics ?? []).length >= 3 && log.transaction?.from?.address);
+  // ERC-20 Approval has exactly 3 topics (signature, owner, spender). ERC-721 shares the
+  // signature but adds an indexed tokenId and empty data, which BigInt('0x') would throw on.
+  const candidates = logs.filter((log) => (log.topics ?? []).length === 3 && log.transaction?.hash);
   if (candidates.length === 0) {
     return;
   }
 
-  // One query per batch instead of one per log. Logs from senders we don't monitor
-  // never touch the database again.
-  const senders = [...new Set(candidates.map((log) => log.transaction.from.address.toLowerCase()))];
+  // Match on the approval's owner (topics[1]), not the transaction sender: a relayed
+  // permit() is sent by the drainer, and a contract approving its own tokens inside the
+  // user's transaction isn't the user's approval. One query per batch; logs for owners
+  // we don't monitor never touch the database again.
+  const ownerOf = (log: AlchemyGraphqlLog) => `0x${log.topics[1].slice(-40)}`.toLowerCase();
+  const owners = [...new Set(candidates.map(ownerOf))];
   const wallets = await prisma.wallet.findMany({
     where: {
       chain,
-      OR: senders.map((address) => ({ address: { equals: address, mode: 'insensitive' } })),
+      OR: owners.map((address) => ({ address: { equals: address, mode: 'insensitive' } })),
     },
     include: { user: true },
   });
@@ -122,7 +127,7 @@ export async function processLogs(logs: AlchemyGraphqlLog[], chain: string): Pro
 
   for (const log of candidates) {
       const topics = log.topics ?? [];
-      const wallet = walletByAddress.get(log.transaction.from.address.toLowerCase());
+      const wallet = walletByAddress.get(ownerOf(log));
       if (!wallet) {
         continue;
       }

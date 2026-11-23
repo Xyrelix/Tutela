@@ -35,12 +35,12 @@ const UNLIMITED = `0x${MaxUint256.toString(16)}`;
 
 const topicFor = (address: string) => `0x${'0'.repeat(24)}${address.slice(2).toLowerCase()}`;
 
-function approvalLog(from: string, amount: string, spender = SPENDER) {
+function approvalLog(owner: string, amount: string, sender = owner) {
   return {
-    topics: [APPROVAL_TOPIC, topicFor(from), topicFor(spender)],
+    topics: [APPROVAL_TOPIC, topicFor(owner), topicFor(SPENDER)],
     data: amount,
     account: { address: TOKEN },
-    transaction: { hash: '0xabc', from: { address: from } },
+    transaction: { hash: '0xabc', from: { address: sender } },
   };
 }
 
@@ -115,6 +115,37 @@ describe('processLogs', () => {
   it('skips logs that are not shaped like an Approval without touching the database', async () => {
     await processLogs([{ ...approvalLog(WALLET, '0x1'), topics: [APPROVAL_TOPIC] }], 'ethereum');
     expect(db.wallet.findMany).not.toHaveBeenCalled();
+  });
+
+  it('skips ERC-721 approvals (4 topics, empty data) instead of crashing the batch', async () => {
+    db.wallet.findMany.mockResolvedValue([monitoredWallet('free')]);
+    const nftApproval = { ...approvalLog(WALLET, '0x'), topics: [...approvalLog(WALLET, '0x').topics, topicFor(TOKEN)] };
+    await processLogs([nftApproval, approvalLog(WALLET, '0x1')], 'ethereum');
+    expect(db.scan.create).toHaveBeenCalledTimes(1);
+  });
+
+  it("catches a relayed permit: the drainer sends the transaction, the wallet's tokens are approved", async () => {
+    const drainer = '0x4444444444444444444444444444444444444444';
+    db.wallet.findMany.mockResolvedValue([monitoredWallet('free')]);
+    await processLogs([approvalLog(WALLET, UNLIMITED, drainer)], 'ethereum');
+
+    expect(db.wallet.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: expect.objectContaining({ OR: [{ address: { equals: WALLET, mode: 'insensitive' } }] }) })
+    );
+    expect(db.scan.create).toHaveBeenCalledWith({ data: expect.objectContaining({ walletId: 'wallet1' }) });
+  });
+
+  it("does not file a contract's own approval under the wallet that sent the transaction", async () => {
+    const aggregator = '0x5555555555555555555555555555555555555555';
+    db.wallet.findMany.mockResolvedValue([]);
+    await processLogs([approvalLog(aggregator, UNLIMITED, WALLET)], 'ethereum');
+
+    expect(db.wallet.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ OR: [{ address: { equals: aggregator, mode: 'insensitive' } }] }),
+      })
+    );
+    expect(db.scan.create).not.toHaveBeenCalled();
   });
 
   it('ignores approvals from wallets nobody monitors', async () => {
