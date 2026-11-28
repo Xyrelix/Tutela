@@ -118,7 +118,7 @@ export interface TelegramLinkCode {
 
 export async function getWalletChallenge(
   walletAddress: string,
-  mode: 'login' | 'register'
+  mode: 'login' | 'register' | 'continue'
 ): Promise<string> {
   const { data } = await apiClient.post<{ message: string }>('/api/auth/challenge', {
     walletAddress,
@@ -138,7 +138,7 @@ interface ConnectorEmitter {
 }
 
 export async function authenticateWallet(
-  mode: 'login' | 'register',
+  mode: 'login' | 'register' | 'continue',
   preferredConnectorId?: 'injected' | 'walletConnect',
   onWalletConnectUri?: (uri: string) => void
 ): Promise<void> {

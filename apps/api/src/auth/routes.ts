@@ -10,7 +10,9 @@ import { requireAuth } from './middleware';
 import { SESSION_COOKIE, sessionCookieOptions } from './session';
 
 const router = Router();
-const challenges = new Map<string, { walletAddress: string; mode: 'login' | 'register'; issuedAt: number }>();
+const challenges = new Map<string, { walletAddress: string; mode: AuthMode; issuedAt: number }>();
+// 'continue' signs in, or creates the account if this wallet is new (the single sign-in page).
+type AuthMode = 'login' | 'register' | 'continue';
 const CHALLENGE_TTL_MS = 5 * 60 * 1000;
 
 const authLimiter = rateLimit({
@@ -37,7 +39,7 @@ router.post(
   '/challenge',
   authLimiter,
   asyncHandler(async (req, res) => {
-    const parsed = walletAuthSchema.extend({ mode: z.enum(['login', 'register']) }).safeParse(req.body);
+    const parsed = walletAuthSchema.extend({ mode: z.enum(['login', 'register', 'continue']) }).safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: parsed.error.flatten() });
       return;
@@ -100,11 +102,15 @@ router.post(
     }
 
     let user = await prisma.user.findUnique({ where: { walletAddress: challenge.walletAddress } });
-    if (challenge.mode === 'register') {
-      if (user) {
-        res.status(409).json({ error: 'Wallet address already registered' });
-        return;
-      }
+    if (user && challenge.mode === 'register') {
+      res.status(409).json({ error: 'Wallet address already registered' });
+      return;
+    }
+    if (!user && challenge.mode === 'login') {
+      res.status(401).json({ error: 'Wallet address is not registered' });
+      return;
+    }
+    if (!user) {
       user = await prisma.$transaction(async (tx) => {
         const created = await tx.user.create({ data: { walletAddress: challenge.walletAddress } });
         await tx.wallet.create({
@@ -112,9 +118,6 @@ router.post(
         });
         return created;
       });
-    } else if (!user) {
-      res.status(401).json({ error: 'Wallet address is not registered' });
-      return;
     }
 
     res.cookie(
