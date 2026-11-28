@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  ArrowLeft,
   Bell,
   Gear,
   Key,
@@ -81,15 +82,12 @@ export function NavBar() {
   if (isAuthPage) {
     return (
       <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#090a0d]">
-        <nav className="mx-auto flex max-w-5xl items-center justify-center px-5 py-5 sm:px-8 lg:px-10">
-          <Link href="/" aria-label="Tutela home">
-            <Image
-              src="/Tutela_nav.png"
-              alt="Tutela"
-              width={610}
-              height={163}
-              className="h-[31px] w-auto object-contain"
-            />
+        <nav className="mx-auto flex max-w-5xl items-center px-5 py-5 sm:px-8 lg:px-10">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-[13px] text-white/60 transition-colors hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" /> Return to homepage
           </Link>
         </nav>
       </header>

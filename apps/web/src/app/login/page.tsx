@@ -5,58 +5,39 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { DeviceMobile, QrCode, Wallet } from '@phosphor-icons/react';
+import { DeviceMobile, Wallet } from '@phosphor-icons/react';
 import { authenticateWallet } from '@/lib/api-client';
 import { isMobileBrowser } from '@/lib/wagmi';
-import { WalletConnectPrompt } from '@/components/WalletConnectPrompt';
-
-type ConnectorId = 'injected' | 'walletConnect';
-const LAST_USED_KEY = 'tutela:last-connector';
-
-const OPTIONS: { id: ConnectorId; label: string; Icon: typeof Wallet }[] = [
-  { id: 'injected', label: 'Continue with browser wallet', Icon: Wallet },
-  { id: 'walletConnect', label: 'Continue with WalletConnect', Icon: QrCode },
-];
 
 // One page for sign in and sign up: the API signs in a known wallet or creates the account.
+// WalletConnect is left out until it works reliably; mobile users use their wallet's browser.
 export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [pending, setPending] = useState<ConnectorId | null>(null);
-  const [wcUri, setWcUri] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [lastUsed, setLastUsed] = useState<ConnectorId | null>(null);
 
   useEffect(() => {
-    // navigator and localStorage are unavailable during SSR, so read them after mount
-    // to avoid a hydration mismatch.
+    // navigator is unavailable during SSR, so read it after mount to avoid a hydration mismatch.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(isMobileBrowser());
-    try {
-      const saved = localStorage.getItem(LAST_USED_KEY);
-      if (saved === 'injected' || saved === 'walletConnect') setLastUsed(saved);
-    } catch {
-      // storage blocked (private mode); the badge is only a convenience
-    }
   }, []);
 
-  async function connect(connectorId: ConnectorId) {
+  async function connect() {
     setError(null);
-    setPending(connectorId);
+    setPending(true);
     try {
-      await authenticateWallet('continue', connectorId, setWcUri);
-      try {
-        localStorage.setItem(LAST_USED_KEY, connectorId);
-      } catch {
-        // ignore
-      }
+      await authenticateWallet('continue', 'injected');
       router.push('/dashboard');
     } catch (err) {
       console.error('[Tutela] Wallet sign-in failed:', err);
-      setError('Could not verify this wallet. Approve the signature request in your wallet and try again.');
+      setError(
+        typeof window !== 'undefined' && !window.ethereum
+          ? 'No browser wallet found. Install Rabby or MetaMask, or open this page in your wallet app.'
+          : 'Could not verify this wallet. Approve the signature request in your wallet and try again.'
+      );
     } finally {
-      setPending(null);
-      setWcUri(null);
+      setPending(false);
     }
   }
 
@@ -75,14 +56,14 @@ export default function LoginPage() {
           width={832}
           height={256}
           priority
-          className="mx-auto h-14 w-auto object-contain"
+          className="mx-auto h-28 w-auto object-contain sm:h-32"
         />
         <p className="mt-3 text-center text-sm text-white/45">Approval protection for your wallets.</p>
 
         {isMobile && (
           <p className="mt-6 flex items-start gap-2 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-3 text-xs leading-5 text-white/55">
             <DeviceMobile className="mt-0.5 h-4 w-4 shrink-0 text-[#8b9eff]" />
-            On mobile, open this page in your wallet app&apos;s browser for the most reliable connection.
+            On mobile, open this page in your wallet app&apos;s browser (e.g. Rabby or MetaMask → Browser).
           </p>
         )}
 
@@ -92,27 +73,17 @@ export default function LoginPage() {
           </p>
         )}
 
-        <div className="mt-8 flex flex-col gap-3">
-          {OPTIONS.map(({ id, label, Icon }) => (
-            <motion.button
-              key={id}
-              type="button"
-              onClick={() => connect(id)}
-              disabled={pending !== null}
-              whileTap={pending ? undefined : { scale: 0.98 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-              className="relative inline-flex h-12 items-center justify-center gap-2 rounded-full bg-white text-sm font-medium text-[#06070a] transition-colors hover:bg-white/90 disabled:cursor-wait disabled:opacity-60"
-            >
-              <Icon className="h-4 w-4" weight="bold" />
-              {pending === id ? 'Waiting for signature…' : label}
-              {lastUsed === id && pending !== id && (
-                <span className="absolute -top-2 right-4 rounded-full border border-white/10 bg-[#1b1e26] px-2 py-0.5 text-[10px] font-normal text-white/70">
-                  Last used
-                </span>
-              )}
-            </motion.button>
-          ))}
-        </div>
+        <motion.button
+          type="button"
+          onClick={connect}
+          disabled={pending}
+          whileTap={pending ? undefined : { scale: 0.98 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+          className="mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white text-sm font-medium text-[#06070a] transition-colors hover:bg-white/90 disabled:cursor-wait disabled:opacity-60"
+        >
+          <Wallet className="h-4 w-4" weight="bold" />
+          {pending ? 'Waiting for signature…' : 'Continue with wallet'}
+        </motion.button>
 
         <p className="mt-5 text-center text-xs text-white/35">
           You&apos;ll sign a message. No transaction, no gas.
@@ -129,7 +100,6 @@ export default function LoginPage() {
           .
         </p>
       </div>
-      {wcUri && <WalletConnectPrompt uri={wcUri} onClose={() => setWcUri(null)} />}
     </main>
   );
 }
