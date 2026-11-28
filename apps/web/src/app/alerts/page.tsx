@@ -4,28 +4,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import NumberFlow from '@number-flow/react';
 import {
-  Warning,
-  ArrowUpRight,
-  Bell,
-  Check,
-  CheckCircle,
-  Clock,
-  Funnel,
   MagnifyingGlass,
-  ShieldWarning,
-  ShieldCheck,
   X,
 } from '@phosphor-icons/react';
-import type { Icon } from '@phosphor-icons/react';
 import { Alert, listAlerts } from '@/lib/api-client';
 import { shortAddress } from '@/lib/format';
 import { Skeleton } from '@/components/ui/skeleton';
 
 function alertMeta(type: string) {
-  if (type.includes('critical')) return { label: 'Critical', color: '#ff6257', icon: ShieldWarning };
-  if (type.includes('risk')) return { label: 'Review', color: '#ffb15c', icon: Warning };
-  if (type.includes('secured')) return { label: 'Protected', color: '#6dce9a', icon: ShieldCheck };
-  return { label: 'Activity', color: '#8b9eff', icon: Bell };
+  if (type.includes('critical')) return { label: 'Critical', color: '#ff6257' };
+  if (type.includes('risk')) return { label: 'Review', color: '#ffb15c' };
+  if (type.includes('secured')) return { label: 'Protected', color: '#6dce9a' };
+  return { label: 'Activity', color: '#8b9eff' };
 }
 
 function alertTitle(type: string) {
@@ -71,28 +61,24 @@ export default function AlertsPage() {
     label: string;
     value: number;
     detail: string;
-    Icon: Icon;
     color: string;
   }> = [
     {
       label: 'Urgent alerts',
       value: urgentCount,
       detail: 'Action recommended',
-      Icon: ShieldWarning,
       color: '#ff6257',
     },
     {
       label: 'Unreviewed',
       value: unreadCount,
       detail: 'Awaiting your attention',
-      Icon: Bell,
       color: '#ffb15c',
     },
     {
       label: 'Wallets secured',
       value: protectedCount,
       detail: 'Recent protective actions',
-      Icon: ShieldCheck,
       color: '#6dce9a',
     },
   ];
@@ -128,7 +114,7 @@ export default function AlertsPage() {
         </div>
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
-          {summaryCards.map(({ label, value, detail, Icon, color }, index) => (
+          {summaryCards.map(({ label, value, detail, color }, index) => (
             <motion.div
               key={label as string}
               initial={{ opacity: 0, y: 10 }}
@@ -138,7 +124,6 @@ export default function AlertsPage() {
             >
               <div className="flex items-center justify-between text-[11px] text-white/40">
                 <span>{label}</span>
-                <Icon className="h-4 w-4" style={{ color }} />
               </div>
               <p className="mt-5 text-3xl font-medium tracking-[-0.05em]">
                 <NumberFlow value={value} format={{ minimumIntegerDigits: 2 }} />
@@ -169,7 +154,6 @@ export default function AlertsPage() {
                 />
               </label>
               <div className="flex h-9 items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] p-1">
-                <Funnel className="mx-2 h-3.5 w-3.5 text-white/30" />
                 {[
                   ['all', 'All'],
                   ['urgent', 'Urgent'],
@@ -212,7 +196,6 @@ export default function AlertsPage() {
           <div className="space-y-3">
             {visibleAlerts.map((alert, index) => {
               const meta = alertMeta(alert.type);
-              const Icon = meta.icon;
               return (
                 <motion.article
                   key={alert.id}
@@ -222,12 +205,6 @@ export default function AlertsPage() {
                   className="rounded-2xl border border-white/[0.08] bg-[#101217] p-5 transition-colors hover:border-white/20 sm:p-6"
                 >
                   <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-                    <span
-                      className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.04]"
-                      style={{ color: meta.color }}
-                    >
-                      <Icon className="h-4 w-4" />
-                    </span>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div className="flex flex-wrap items-center gap-2">
@@ -245,7 +222,6 @@ export default function AlertsPage() {
                           )}
                         </div>
                         <time className="flex items-center gap-1 text-[10px] text-white/30">
-                          <Clock className="h-3 w-3" />
                           {new Date(alert.createdAt).toLocaleString('en-US', {
                             month: 'short',
                             day: 'numeric',
@@ -279,14 +255,13 @@ export default function AlertsPage() {
                             onClick={() => resolveAlert(alert.id)}
                             className="inline-flex items-center gap-1.5 text-xs text-white/40 transition-colors hover:text-[#6dce9a]"
                           >
-                            <CheckCircle className="h-3.5 w-3.5" />
                             Clear alert
                           </button>
                           <a
                             href="/risk-feed"
                             className="inline-flex items-center gap-1 text-xs text-white/40 hover:text-white"
                           >
-                            View signal <ArrowUpRight className="h-3 w-3" />
+                            View signal
                           </a>
                         </div>
                       </div>
@@ -316,7 +291,6 @@ export default function AlertsPage() {
               onClick={() => setNotice(null)}
               className="fixed right-5 bottom-5 z-30 flex items-center gap-3 rounded-xl border border-[#6dce9a]/30 bg-[#111a17] px-4 py-3 text-xs text-[#b8f0d1] shadow-2xl"
             >
-              <Check className="h-4 w-4" />
               {notice}
               <X className="ml-2 h-3.5 w-3.5 opacity-50" />
             </motion.button>

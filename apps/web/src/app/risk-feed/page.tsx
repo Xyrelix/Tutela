@@ -4,25 +4,17 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import NumberFlow from '@number-flow/react';
 import {
-  Warning,
-  ArrowUpRight,
-  CheckCircle,
-  Clock,
-  Funnel,
   MagnifyingGlass,
-  ShieldWarning,
-  ShieldCheck,
 } from '@phosphor-icons/react';
-import type { Icon } from '@phosphor-icons/react';
 import { listScans, Scan } from '@/lib/api-client';
 import { explorerTxUrl } from '@/lib/chains';
 import { shortAddress } from '@/lib/format';
 import { Skeleton } from '@/components/ui/skeleton';
 
 function riskMeta(score: number) {
-  if (score >= 80) return { label: 'Critical', color: '#ff6257', icon: ShieldWarning };
-  if (score >= 50) return { label: 'Review', color: '#ffb15c', icon: Warning };
-  return { label: 'Clear', color: '#6dce9a', icon: CheckCircle };
+  if (score >= 80) return { label: 'Critical', color: '#ff6257' };
+  if (score >= 50) return { label: 'Review', color: '#ffb15c' };
+  return { label: 'Clear', color: '#6dce9a' };
 }
 
 export default function RiskFeedPage() {
@@ -61,28 +53,24 @@ export default function RiskFeedPage() {
     label: string;
     value: number;
     detail: string;
-    Icon: Icon;
     color: string;
   }> = [
     {
       label: 'Critical signals',
       value: critical,
       detail: 'Needs attention now',
-      Icon: ShieldWarning,
       color: '#ff6257',
     },
     {
       label: 'Review signals',
       value: review,
       detail: 'Worth a closer look',
-      Icon: Warning,
       color: '#ffb15c',
     },
     {
       label: 'Clear signals',
       value: clear,
       detail: 'No action needed',
-      Icon: ShieldCheck,
       color: '#6dce9a',
     },
   ];
@@ -113,7 +101,7 @@ export default function RiskFeedPage() {
         </div>
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
-          {summaryCards.map(({ label, value, detail, Icon, color }, index) => (
+          {summaryCards.map(({ label, value, detail, color }, index) => (
             <motion.div
               key={label as string}
               initial={{ opacity: 0, y: 10 }}
@@ -123,7 +111,6 @@ export default function RiskFeedPage() {
             >
               <div className="flex items-center justify-between text-[11px] text-white/40">
                 <span>{label}</span>
-                <Icon className="h-4 w-4" style={{ color }} />
               </div>
               <p className="mt-5 text-3xl font-medium tracking-[-0.05em]">
                 <NumberFlow value={value} format={{ minimumIntegerDigits: 2 }} />
@@ -154,7 +141,6 @@ export default function RiskFeedPage() {
                 />
               </label>
               <div className="flex h-9 items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] p-1">
-                <Funnel className="mx-2 h-3.5 w-3.5 text-white/30" />
                 {[
                   ['all', 'All'],
                   ['critical', 'Critical'],
@@ -197,7 +183,6 @@ export default function RiskFeedPage() {
           <div className="space-y-3">
             {visibleScans.map((scan, index) => {
               const meta = riskMeta(scan.riskScore);
-              const Icon = meta.icon;
               return (
                 <motion.article
                   key={scan.id}
@@ -208,12 +193,6 @@ export default function RiskFeedPage() {
                 >
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex min-w-0 flex-1 items-start gap-4">
-                      <span
-                        className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.04]"
-                        style={{ color: meta.color }}
-                      >
-                        <Icon className="h-4 w-4" />
-                      </span>
                       <div className="min-w-0 flex-1">
                         <p className="font-mono text-sm" title={scan.wallet.address}>
                           {shortAddress(scan.wallet.address)}
@@ -252,7 +231,6 @@ export default function RiskFeedPage() {
                       </div>
                       <div className="text-right">
                         <p className="flex items-center justify-end gap-1 text-[10px] text-white/30">
-                          <Clock className="h-3 w-3" />
                           {new Date(scan.createdAt).toLocaleString('en-US', {
                             month: 'short',
                             day: 'numeric',
@@ -267,7 +245,7 @@ export default function RiskFeedPage() {
                             rel="noreferrer"
                             className="mt-2 inline-flex items-center gap-1 text-xs text-white/45 hover:text-white"
                           >
-                            View transaction <ArrowUpRight className="h-3 w-3" />
+                            View transaction
                           </a>
                         )}
                       </div>

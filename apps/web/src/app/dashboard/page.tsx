@@ -5,14 +5,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import NumberFlow from '@number-flow/react';
 import {
-  ArrowRight,
-  Bell,
-  ShieldCheck,
-  ShieldWarning,
-  Wallet as WalletIcon,
-  Warning,
-} from '@phosphor-icons/react';
-import {
   Alert,
   Approval,
   getMe,
@@ -35,10 +27,10 @@ function greeting() {
 }
 
 function alertMeta(type: string) {
-  if (type.includes('critical')) return { label: 'Critical', color: '#ff6257', Icon: ShieldWarning };
-  if (type.includes('risk')) return { label: 'Review', color: '#ffb15c', Icon: Warning };
-  if (type.includes('secured')) return { label: 'Protected', color: '#6dce9a', Icon: ShieldCheck };
-  return { label: 'Activity', color: '#8b9eff', Icon: Bell };
+  if (type.includes('critical')) return { label: 'Critical', color: '#ff6257' };
+  if (type.includes('risk')) return { label: 'Review', color: '#ffb15c' };
+  if (type.includes('secured')) return { label: 'Protected', color: '#6dce9a' };
+  return { label: 'Activity', color: '#8b9eff' };
 }
 
 function alertTitle(type: string) {
@@ -116,21 +108,18 @@ export default function DashboardPage() {
       label: 'Wallets protected',
       value: wallets.length,
       detail: 'All systems monitored',
-      Icon: WalletIcon,
       color: '#6dce9a',
     },
     {
       label: 'Threats resolved',
       value: resolvedApprovals,
       detail: `${resolvedRate}% resolved`,
-      Icon: ShieldCheck,
       color: '#6dce9a',
     },
     {
       label: 'Needs attention',
       value: activeApprovals,
       detail: 'Review activity',
-      Icon: ShieldWarning,
       color: '#ffb15c',
     },
   ];
@@ -182,7 +171,7 @@ export default function DashboardPage() {
         ) : (
           <>
             <div className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
-              {summaryCards.map(({ label, value, detail, Icon, color }, index) => (
+              {summaryCards.map(({ label, value, detail, color }, index) => (
                 <motion.div
                   key={label}
                   initial={{ opacity: 0, y: 10 }}
@@ -192,7 +181,6 @@ export default function DashboardPage() {
                 >
                   <div className="flex items-center justify-between text-[11px] text-white/40">
                     <span>{label}</span>
-                    <Icon className="h-4 w-4" style={{ color }} />
                   </div>
                   <p className="mt-5 text-3xl font-medium tracking-[-0.05em] text-white">
                     <NumberFlow value={value} format={{ minimumIntegerDigits: 2 }} />
@@ -243,7 +231,7 @@ export default function DashboardPage() {
                     href="/alerts"
                     className="inline-flex items-center gap-1 text-[11px] text-white/45 transition-colors hover:text-white"
                   >
-                    View all <ArrowRight className="h-3 w-3" />
+                    View all
                   </Link>
                 </div>
                 <div className="mt-4 space-y-4">

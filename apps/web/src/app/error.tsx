@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowClockwise, Warning } from '@phosphor-icons/react';
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
@@ -12,9 +11,6 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
   return (
     <main className="flex min-h-[calc(100vh-76px)] items-center justify-center bg-[#090a0d] px-5 py-20 text-center text-white">
       <div>
-        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-[#ff6257]/25 bg-[#ff6257]/10 text-[#ff6257]">
-          <Warning className="h-6 w-6" />
-        </span>
         <p className="mt-6 text-[11px] tracking-[0.22em] text-white/35 uppercase">
           Something went wrong
         </p>
@@ -31,7 +27,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
             onClick={reset}
             className="inline-flex items-center gap-2 rounded-full bg-[#2457ff] px-5 py-3 text-sm font-medium text-white shadow-[0_0_30px_rgba(36,87,255,0.22)]"
           >
-            <ArrowClockwise className="h-4 w-4" /> Try again
+            Try again
           </button>
           <Link
             href="/"

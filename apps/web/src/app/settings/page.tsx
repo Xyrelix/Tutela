@@ -5,10 +5,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
   CheckCircle,
-  ChatCircle,
+  TelegramLogo,
   Copy,
-  ShieldCheck,
-  Wallet as WalletIcon,
 } from '@phosphor-icons/react';
 import { getMe, getTelegramLinkCode, Me, TelegramLinkCode } from '@/lib/api-client';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -137,15 +135,14 @@ export default function SettingsPage() {
           <div className="mt-8 flex flex-col gap-6">
             <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
               {[
-                ['Plan', me.plan, me.plan === 'free' ? 'Upgrade anytime' : 'Full access', ShieldCheck],
-                ['Wallet', shortWallet(me.walletAddress), 'Signed in with', WalletIcon],
+                ['Plan', me.plan, me.plan === 'free' ? 'Upgrade anytime' : 'Full access'],
+                ['Wallet', shortWallet(me.walletAddress), 'Signed in with'],
                 [
                   'Telegram',
                   me.telegramLinked ? 'Linked' : 'Not linked',
                   me.telegramLinked ? 'Alerts are active' : 'Connect to get alerts',
-                  ChatCircle,
                 ],
-              ].map(([label, value, detail, Icon], index) => (
+              ].map(([label, value, detail], index) => (
                 <motion.div
                   key={label as string}
                   initial={{ opacity: 0, y: 10 }}
@@ -155,7 +152,6 @@ export default function SettingsPage() {
                 >
                   <div className="flex items-center justify-between text-[11px] text-white/40">
                     <span>{label as string}</span>
-                    <Icon className="h-4 w-4 text-[#6dce9a]" />
                   </div>
                   <p className="mt-5 text-3xl font-medium tracking-[-0.05em] text-white capitalize">
                     {value as string}
@@ -192,7 +188,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-[#8b9eff]">
-                    <ChatCircle className="h-4 w-4" />
+                    <TelegramLogo className="h-4 w-4" />
                   </span>
                   <div>
                     <h2 className="text-base font-medium">Telegram alerts</h2>
@@ -203,7 +199,6 @@ export default function SettingsPage() {
                 </div>
                 {me.telegramLinked && (
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-[#6dce9a]/10 px-3 py-1 text-[11px] text-[#6dce9a]">
-                    <ShieldCheck className="h-3.5 w-3.5" />
                     Connected
                   </span>
                 )}

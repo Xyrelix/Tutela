@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import NumberFlow from '@number-flow/react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Checks, Database, ShieldCheck, Lightning } from '@phosphor-icons/react';
 import { useState } from 'react';
 
 const plans = [
@@ -48,8 +47,6 @@ const plans = [
     ],
   },
 ];
-
-const featureIcons = [ShieldCheck, Database, Lightning];
 
 export default function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);
@@ -119,7 +116,6 @@ export default function PricingSection() {
 
         <div className="relative grid gap-4 lg:grid-cols-3">
           {plans.map((plan, index) => {
-            const Icon = featureIcons[index];
             return (
               <motion.article
                 key={plan.name}
@@ -136,10 +132,7 @@ export default function PricingSection() {
                     Most popular
                   </span>
                 )}
-                <Icon
-                  className={`h-5 w-5 ${plan.featured ? 'text-[#6dce9a]' : 'text-[#8b9eff]'}`}
-                />
-                <h2 className="mt-7 text-xl font-medium tracking-[-0.03em]">{plan.name}</h2>
+                <h2 className="text-xl font-medium tracking-[-0.03em]">{plan.name}</h2>
                 <p className="mt-3 min-h-12 text-sm leading-5 text-white/40">{plan.description}</p>
                 <div className="mt-6 flex items-baseline gap-1">
                   <span className="text-4xl font-medium tracking-[-0.05em]">
@@ -152,12 +145,11 @@ export default function PricingSection() {
                   href="/register"
                   className={`mt-7 flex items-center justify-center gap-2 rounded-full py-3 text-sm font-medium ${plan.featured ? 'bg-[#2457ff] text-white' : 'border border-white/10 text-white/70 hover:border-white/25 hover:text-white'}`}
                 >
-                  Get started <ArrowRight className="h-3.5 w-3.5" />
+                  Get started
                 </Link>
                 <ul className="mt-8 space-y-3 border-t border-white/[0.08] pt-6">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-center gap-2 text-xs text-white/55">
-                      <Checks className="h-3.5 w-3.5 text-[#6dce9a]" />
                       {feature}
                     </li>
                   ))}

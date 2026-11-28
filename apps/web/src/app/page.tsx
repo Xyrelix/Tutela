@@ -5,30 +5,18 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  ArrowRight,
-  Bell,
-  CaretDown,
   Circle,
-  Clock,
   CurrencyBtc,
   CurrencyCircleDollar,
   CurrencyEth,
   Diamond,
   Gear,
   Hexagon,
-  Key,
   List,
-  Play,
-  Polygon,
-  ShieldCheck,
-  ShieldWarning,
-  Sparkle,
   TelegramLogo,
-  Triangle,
-  Wallet,
   X,
-  Lightning,
 } from '@phosphor-icons/react';
+import { ArbitrumLogo, BaseLogo, OptimismLogo, PolygonLogo } from '@/components/ui/chain-logos';
 import ShaderDemoATC from '@/components/ui/atc-shader';
 import { HoverFooter } from '@/components/ui/hover-footer';
 import PricingSection from '@/components/ui/pricing-section';
@@ -43,29 +31,26 @@ const navItems = [
 
 const chainLogos = [
   { label: 'ethereum', Icon: CurrencyEth },
-  { label: 'base', Icon: Circle },
-  { label: 'polygon', Icon: Polygon },
-  { label: 'arbitrum', Icon: Triangle },
-  { label: 'optimism', Icon: Circle },
+  { label: 'base', Icon: BaseLogo },
+  { label: 'polygon', Icon: PolygonLogo },
+  { label: 'arbitrum', Icon: ArbitrumLogo },
+  { label: 'optimism', Icon: OptimismLogo },
 ];
 
 const features = [
   {
-    icon: Clock,
     eyebrow: '01 / Watch',
     title: 'Always-on wallet intelligence',
     text: 'Tutela monitors every connected wallet and turns noisy on-chain activity into a short, useful signal.',
     color: '#2457ff',
   },
   {
-    icon: ShieldCheck,
     eyebrow: '02 / Decide',
     title: 'Explain the risk before you sign',
     text: 'See the contract, the behavior, and the reason behind each score before an approval becomes a problem.',
     color: '#6dce9a',
   },
   {
-    icon: Lightning,
     eyebrow: '03 / Respond',
     title: 'Move from alert to action',
     text: 'Prepare revocations and route urgent alerts to the people who can protect the wallet fastest.',
@@ -109,16 +94,16 @@ function BrowserPreview() {
             </div>
             <div className="space-y-2 text-[11px] text-white/40">
               <div className="flex items-center gap-2 rounded-md bg-[#2457ff]/15 px-3 py-2 text-white">
-                <Wallet className="h-3.5 w-3.5" /> Wallets
+                Wallets
               </div>
               <div className="flex items-center gap-2 px-3 py-2">
-                <ShieldWarning className="h-3.5 w-3.5" /> Risk feed
+                Risk feed
               </div>
               <div className="flex items-center gap-2 px-3 py-2">
-                <Key className="h-3.5 w-3.5" /> Approvals
+                Approvals
               </div>
               <div className="flex items-center gap-2 px-3 py-2">
-                <Bell className="h-3.5 w-3.5" /> Alerts
+                Alerts
               </div>
             </div>
             <div className="mt-24 rounded-lg border border-white/[0.08] p-3">
@@ -143,7 +128,6 @@ function BrowserPreview() {
               <div className="rounded-xl border border-white/[0.08] bg-white/[0.025] p-4">
                 <div className="flex items-center justify-between text-[10px] text-white/40">
                   <span>Wallets protected</span>
-                  <Wallet className="h-3.5 w-3.5" />
                 </div>
                 <p className="mt-3 text-2xl font-medium text-white">12</p>
                 <p className="mt-1 text-[10px] text-[#6dce9a]">+2 this month</p>
@@ -151,7 +135,6 @@ function BrowserPreview() {
               <div className="rounded-xl border border-white/[0.08] bg-white/[0.025] p-4">
                 <div className="flex items-center justify-between text-[10px] text-white/40">
                   <span>Threats blocked</span>
-                  <ShieldCheck className="h-3.5 w-3.5" />
                 </div>
                 <p className="mt-3 text-2xl font-medium text-white">48</p>
                 <p className="mt-1 text-[10px] text-[#6dce9a]">98.4% detection rate</p>
@@ -328,7 +311,7 @@ export default function Home() {
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
               className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-medium text-[#090a0d]"
             >
-              Get started <ArrowRight className="h-3.5 w-3.5" />
+              Get started
             </MotionLink>
           </div>
           <button
@@ -364,9 +347,8 @@ export default function Home() {
           <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2 lg:gap-16">
             <div>
               <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-xs text-white/60">
-                <Sparkle className="h-3.5 w-3.5 text-[#6dce9a]" /> Persistent wallet security,
+                Persistent wallet security,
                 finally automated{' '}
-                <CaretDown className="h-3.5 w-3.5 rotate-[-90deg] text-white/35" />
               </div>
               <h1 className="font-sans text-[clamp(3rem,5.2vw,5.25rem)] leading-[0.95] tracking-[-0.05em] text-white">
                 <span className="block">The security layer</span>
@@ -384,13 +366,13 @@ export default function Home() {
                   transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-[#2457ff] px-6 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.22)] sm:w-auto"
                 >
-                  Protect a wallet <ArrowRight className="h-4 w-4" />
+                  Protect a wallet
                 </MotionLink>
                 <a
                   href="#product"
                   className="flex w-full items-center justify-center gap-2 rounded-full border border-white/10 px-6 py-3 text-sm text-white/65 transition-colors hover:border-white/25 hover:text-white sm:w-auto"
                 >
-                  <Play className="h-3.5 w-3.5 fill-current" /> See how it works
+                  See how it works
                 </a>
               </div>
             </div>
@@ -446,13 +428,7 @@ export default function Home() {
                 whileHover={{ y: -4 }}
                 className="bg-[#0c0e12] p-7 transition-colors hover:bg-[#11151d] sm:p-9"
               >
-                <span
-                  className="grid h-11 w-11 place-items-center rounded-full border"
-                  style={{ color: feature.color, borderColor: `${feature.color}40`, backgroundColor: `${feature.color}1a` }}
-                >
-                  <feature.icon className="h-5 w-5" />
-                </span>
-                <p className="mt-10 text-[10px] tracking-[0.18em] text-white/30 uppercase">
+                <p className="text-[10px] tracking-[0.18em] text-white/30 uppercase">
                   {feature.eyebrow}
                 </p>
                 <h3 className="mt-4 text-xl font-medium tracking-[-0.03em] text-white">
@@ -485,7 +461,7 @@ export default function Home() {
                 href="/register"
                 className="mt-8 inline-flex items-center gap-2 text-sm text-white hover:text-[#6dce9a]"
               >
-                Start protecting <ArrowRight className="h-4 w-4" />
+                Start protecting
               </Link>
             </div>
             <div className="relative rounded-2xl border border-white/[0.09] bg-[#101217] p-5 sm:p-8">
@@ -602,8 +578,7 @@ export default function Home() {
                 whileHover={{ y: -4 }}
                 className="rounded-2xl border border-white/[0.08] bg-[#101217] p-6 transition-colors hover:bg-[#13161c]"
               >
-                <ShieldCheck className="h-5 w-5 text-[#6dce9a]" />
-                <h3 className="mt-4 text-sm font-medium text-white">{item.title}</h3>
+                <h3 className="text-sm font-medium text-white">{item.title}</h3>
                 <p className="mt-2 text-xs leading-5 text-white/45">{item.detail}</p>
               </motion.div>
             ))}
@@ -635,7 +610,7 @@ export default function Home() {
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
               className="relative flex shrink-0 items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-black"
             >
-              Protect your wallet <ArrowRight className="h-4 w-4" />
+              Protect your wallet
             </MotionLink>
           </motion.div>
         </section>

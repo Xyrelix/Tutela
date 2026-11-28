@@ -3,18 +3,7 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import NumberFlow from '@number-flow/react';
-import {
-  ArrowRight,
-  Check,
-  CheckCircle,
-  ListChecks,
-  ArrowSquareOut,
-  Key,
-  ShieldWarning,
-  ShieldCheck,
-  X,
-} from '@phosphor-icons/react';
-import type { Icon } from '@phosphor-icons/react';
+import { X } from '@phosphor-icons/react';
 import {
   Approval,
   confirmRevoke,
@@ -44,28 +33,24 @@ export default function ApprovalsPage() {
     label: string;
     value: number;
     detail: string;
-    Icon: Icon;
     color: string;
   }> = [
     {
       label: 'Active approvals',
       value: activeCount,
       detail: 'Review before signing',
-      Icon: ShieldWarning,
       color: '#ffb15c',
     },
     {
       label: 'Protected approvals',
       value: approvals.length - activeCount,
       detail: 'Revoked by your team',
-      Icon: ShieldCheck,
       color: '#6dce9a',
     },
     {
       label: 'Wallets covered',
       value: new Set(approvals.map((approval) => approval.walletId)).size,
       detail: 'Across monitored chains',
-      Icon: ListChecks,
       color: '#8b9eff',
     },
   ];
@@ -154,13 +139,12 @@ export default function ApprovalsPage() {
             </p>
           </div>
           <div className="flex items-center gap-2 rounded-full border border-[#ffb15c]/20 bg-[#ffb15c]/[0.06] px-4 py-2 text-xs text-[#ffcb8b]">
-            <ShieldWarning className="h-3.5 w-3.5" />
             {activeCount} active approvals
           </div>
         </div>
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
-          {summaryCards.map(({ label, value, detail, Icon, color }, index) => (
+          {summaryCards.map(({ label, value, detail, color }, index) => (
             <motion.div
               key={label as string}
               initial={{ opacity: 0, y: 10 }}
@@ -170,7 +154,6 @@ export default function ApprovalsPage() {
             >
               <div className="flex items-center justify-between text-[11px] text-white/40">
                 <span>{label}</span>
-                <Icon className="h-4 w-4" style={{ color }} />
               </div>
               <p className="mt-5 text-3xl font-medium tracking-[-0.05em]">
                 <NumberFlow value={value} format={{ minimumIntegerDigits: 2 }} />
@@ -228,11 +211,6 @@ export default function ApprovalsPage() {
                 >
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                     <div className="flex min-w-0 flex-1 items-start gap-4">
-                      <span
-                        className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl border ${active ? 'border-[#ffb15c]/25 bg-[#ffb15c]/[0.08] text-[#ffb15c]' : 'border-[#6dce9a]/25 bg-[#6dce9a]/[0.08] text-[#6dce9a]'}`}
-                      >
-                        <Key className="h-4 w-4" />
-                      </span>
                       <div className="min-w-0 flex-1">
                         <p className="font-mono text-base font-medium" title={approval.tokenAddress}>
                           {shortAddress(approval.tokenAddress)}
@@ -289,11 +267,6 @@ export default function ApprovalsPage() {
                           Status
                         </p>
                         <p className="mt-1 flex items-center gap-1.5 text-xs text-white/60">
-                          {active ? (
-                            <ShieldWarning className="h-3.5 w-3.5 text-[#ffb15c]" />
-                          ) : (
-                            <CheckCircle className="h-3.5 w-3.5 text-[#6dce9a]" />
-                          )}
                           {approval.status}
                         </p>
                       </div>
@@ -310,7 +283,7 @@ export default function ApprovalsPage() {
                           transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                           className="inline-flex items-center gap-2 rounded-lg bg-[#2457ff] px-4 py-2.5 text-xs font-medium"
                         >
-                          Prepare revoke <ArrowRight className="h-3.5 w-3.5" />
+                          Prepare revoke
                         </motion.button>
                       ) : (
                         <div className="flex flex-col justify-between gap-3 rounded-xl border border-[#2457ff]/30 bg-[#2457ff]/[0.07] p-4 sm:flex-row sm:items-center">
@@ -325,7 +298,7 @@ export default function ApprovalsPage() {
                             onClick={() => handleConfirm(approval)}
                             className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#6dce9a] px-4 py-2 text-xs font-medium text-[#08110d]"
                           >
-                            Sign &amp; revoke <Check className="h-3.5 w-3.5" />
+                            Sign &amp; revoke
                           </button>
                         </div>
                       )}
@@ -338,7 +311,7 @@ export default function ApprovalsPage() {
                       rel="noreferrer"
                       className="mt-5 inline-flex items-center gap-1 text-xs text-white/40 hover:text-white"
                     >
-                      View revoke transaction <ArrowSquareOut className="h-3 w-3" />
+                      View revoke transaction
                     </a>
                   )}
                 </motion.article>
@@ -360,7 +333,6 @@ export default function ApprovalsPage() {
               onClick={() => setNotice(null)}
               className="fixed right-5 bottom-5 z-30 flex items-center gap-3 rounded-xl border border-[#6dce9a]/30 bg-[#111a17] px-4 py-3 text-xs text-[#b8f0d1] shadow-2xl"
             >
-              <Check className="h-4 w-4" />
               {notice}
               <X className="ml-2 h-3.5 w-3.5 opacity-50" />
             </motion.button>

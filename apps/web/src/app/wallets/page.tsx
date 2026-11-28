@@ -5,16 +5,11 @@ import { isAxiosError } from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import NumberFlow from '@number-flow/react';
 import {
-  Pulse,
   ArrowUpRight,
   Check,
   Copy,
-  Plus,
   MagnifyingGlass,
-  ShieldCheck,
-  Sparkle,
   Trash,
-  Wallet as WalletIcon,
   X,
 } from '@phosphor-icons/react';
 import { deleteWallet, getMe, listWallets, Me, registerWallet, Wallet } from '@/lib/api-client';
@@ -155,17 +150,16 @@ export default function WalletsPage() {
             }
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2457ff] px-5 py-3 text-sm font-medium shadow-[0_0_30px_rgba(36,87,255,0.2)] disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <WalletIcon className="h-4 w-4" />
             Add a wallet
           </motion.button>
         </div>
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.08] md:grid-cols-3">
           {[
-            { label: 'Wallets protected', value: wallets.length, detail: 'All systems monitored', Icon: ShieldCheck },
-            { label: 'Networks active', value: activeChains.length, detail: networksDetail, Icon: Pulse },
-            { label: 'Protection status', value: null, detail: 'No urgent action needed', Icon: Sparkle },
-          ].map(({ label, value, detail, Icon }, index) => (
+            { label: 'Wallets protected', value: wallets.length, detail: 'All systems monitored' },
+            { label: 'Networks active', value: activeChains.length, detail: networksDetail },
+            { label: 'Protection status', value: null, detail: 'No urgent action needed' },
+          ].map(({ label, value, detail }, index) => (
             <motion.div
               key={label}
               initial={{ opacity: 0, y: 10 }}
@@ -175,7 +169,6 @@ export default function WalletsPage() {
             >
               <div className="flex items-center justify-between text-[11px] text-white/40">
                 <span>{label}</span>
-                <Icon className="h-4 w-4 text-[#6dce9a]" />
               </div>
               <p className="mt-5 text-3xl font-medium tracking-[-0.05em] text-white">
                 {value === null ? 'Good' : <NumberFlow value={value} format={{ minimumIntegerDigits: 2 }} />}
@@ -342,7 +335,6 @@ export default function WalletsPage() {
               onClick={() => setNotice(null)}
               className="fixed right-5 bottom-5 z-30 flex items-center gap-3 rounded-xl border border-[#6dce9a]/30 bg-[#111a17] px-4 py-3 text-xs text-[#b8f0d1] shadow-2xl"
             >
-              <Check className="h-4 w-4" />
               {notice}
               <X className="ml-2 h-3.5 w-3.5 opacity-50" />
             </motion.button>
@@ -415,7 +407,6 @@ export default function WalletsPage() {
                     transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                     className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2457ff] px-4 py-3 text-sm font-medium disabled:opacity-50"
                   >
-                    <Plus className="h-4 w-4" />
                     {submitting ? 'Adding…' : 'Add wallet'}
                   </motion.button>
                 </form>

@@ -6,28 +6,20 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ArrowLeft,
-  Bell,
   Gear,
-  Key,
   List,
-  ShieldWarning,
-  SignOut,
-  SquaresFour,
-  Wallet as WalletIcon,
   X,
 } from '@phosphor-icons/react';
-import type { Icon } from '@phosphor-icons/react';
 import { AUTH_CHANGE_EVENT, hasSession, logout } from '@/lib/api-client';
 
 const MotionLink = motion.create(Link);
 
-const LINKS: Array<{ href: string; label: string; Icon: Icon }> = [
-  { href: '/dashboard', label: 'Dashboard', Icon: SquaresFour },
-  { href: '/wallets', label: 'Wallets', Icon: WalletIcon },
-  { href: '/risk-feed', label: 'Risk Feed', Icon: ShieldWarning },
-  { href: '/approvals', label: 'Approvals', Icon: Key },
-  { href: '/alerts', label: 'Alerts', Icon: Bell },
+const LINKS: Array<{ href: string; label: string }> = [
+  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/wallets', label: 'Wallets' },
+  { href: '/risk-feed', label: 'Risk Feed' },
+  { href: '/approvals', label: 'Approvals' },
+  { href: '/alerts', label: 'Alerts' },
 ];
 
 function useAuthed() {
@@ -87,7 +79,7 @@ export function NavBar() {
             href="/"
             className="inline-flex items-center gap-2 text-[13px] text-white/60 transition-colors hover:text-white"
           >
-            <ArrowLeft className="h-4 w-4" /> Return to homepage
+            Return to homepage
           </Link>
         </nav>
       </header>
@@ -214,7 +206,6 @@ export function Sidebar() {
                   />
                 )}
                 <span className="relative flex items-center gap-2.5">
-                  <link.Icon className="h-4 w-4" />
                   {link.label}
                 </span>
               </Link>
@@ -225,7 +216,6 @@ export function Sidebar() {
           onClick={handleLogout}
           className="mt-auto flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[13px] text-white/55 transition-colors hover:bg-white/5 hover:text-white"
         >
-          <SignOut className="h-4 w-4" />
           Log out
         </button>
       </aside>

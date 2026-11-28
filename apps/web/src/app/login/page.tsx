@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { DeviceMobile, Wallet } from '@phosphor-icons/react';
 import { authenticateWallet } from '@/lib/api-client';
 import { isMobileBrowser } from '@/lib/wagmi';
 
@@ -62,7 +61,6 @@ export default function LoginPage() {
 
         {isMobile && (
           <p className="mt-6 flex items-start gap-2 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-3 text-xs leading-5 text-white/55">
-            <DeviceMobile className="mt-0.5 h-4 w-4 shrink-0 text-[#8b9eff]" />
             On mobile, open this page in your wallet app&apos;s browser (e.g. Rabby or MetaMask → Browser).
           </p>
         )}
@@ -81,7 +79,6 @@ export default function LoginPage() {
           transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           className="mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white text-sm font-medium text-[#06070a] transition-colors hover:bg-white/90 disabled:cursor-wait disabled:opacity-60"
         >
-          <Wallet className="h-4 w-4" weight="bold" />
           {pending ? 'Waiting for signature…' : 'Continue with wallet'}
         </motion.button>
 

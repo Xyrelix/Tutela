@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, EnvelopeSimple, GithubLogo, WhatsappLogo, XLogo } from '@phosphor-icons/react';
+import { EnvelopeSimple, GithubLogo, WhatsappLogo, XLogo } from '@phosphor-icons/react';
 
 const linkGroups = [
   {
@@ -39,7 +39,6 @@ export function HoverFooter() {
               className="group mt-7 inline-flex items-center gap-2 text-sm text-white transition-colors hover:text-[#6dce9a]"
             >
               Protect a wallet
-              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
 
@@ -58,7 +57,6 @@ export function HoverFooter() {
                       <span className="relative after:absolute after:right-0 after:-bottom-1 after:left-0 after:h-px after:origin-left after:scale-x-0 after:bg-[#6dce9a] after:transition-transform after:duration-300 group-hover:after:scale-x-100">
                         {link.label}
                       </span>
-                      <ArrowUpRight className="h-3 w-3 opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
                     </Link>
                   </li>
                 ))}
@@ -120,7 +118,6 @@ export function HoverFooter() {
               className="group mt-4 inline-flex items-center gap-1.5 text-sm text-white/60 transition-colors hover:text-white"
             >
               How we keep you secure
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
         </div>
